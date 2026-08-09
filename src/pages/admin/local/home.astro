@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import HomeEditor from '../../../components/admin/local/HomeEditor';
+---
+<AdminLayout title="Página inicial" activeSection="local-home">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-ink">Página inicial</h1>
+        <p class="text-ink-muted mt-1">Edite as seções da home e escolha quais aparecem.</p>
+    </div>
+    <HomeEditor client:load />
+</AdminLayout>

@@ -1,0 +1,91 @@
+/* Fontes self-hosted (mesmo set do site público — sistema Epic).
+   Substitui os @import do Google Fonts (render-blocking + vazamento de IP/LGPD). */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/geist-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/lora-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/geist-mono-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist Fallback';
+  src: local('Arial');
+  ascent-override: 95.94%;
+  descent-override: 28.16%;
+  line-gap-override: 0%;
+  size-adjust: 104.76%;
+}
+@font-face {
+  font-family: 'Lora Fallback';
+  src: local('Times New Roman');
+  ascent-override: 87.33%;
+  descent-override: 23.78%;
+  line-gap-override: 0%;
+  size-adjust: 115.2%;
+}
+@font-face {
+  font-family: 'Geist Mono Fallback';
+  src: local('Arial');
+  ascent-override: 74.67%;
+  descent-override: 21.92%;
+  line-gap-override: 0%;
+  size-adjust: 134.59%;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Painel admin: paleta neutra (preto / branco / cinza), sem tinta de marca.
+     Escala zinc — o chrome fica calmo pra não competir com o conteúdo. */
+  :root {
+    --c-bg:          250 250 250;   /* canvas near-white (zinc-50) */
+    --c-surface:     255 255 255;   /* cards, inputs — branco */
+    --c-elev:        244 244 245;   /* elevação sutil, fundo de code (zinc-100) */
+    --c-border:      228 228 231;   /* borders hairline (zinc-200) */
+    --c-rule:        212 212 216;   /* divisores (zinc-300) */
+    --c-ink:          24  24  27;   /* texto/heading (zinc-900) */
+    --c-ink-muted:    82  82  91;   /* body/descrições (zinc-600) */
+    --c-ink-faint:   113 113 122;   /* helper/labels (zinc-500) */
+    --c-primary:      24  24  27;   /* ações/CTA — near-black */
+    --c-primary-soft:228 228 231;   /* estados soft/active (zinc-200) */
+  }
+
+  html, body {
+    font-family: 'Geist', 'Geist Fallback', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Geist', 'Geist Fallback', system-ui, sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+
+  code, pre, kbd, samp, .mono {
+    font-family: 'Geist Mono', 'Geist Mono Fallback', ui-monospace, 'SF Mono', Menlo, monospace;
+    font-feature-settings: 'ss01';
+  }
+
+  input, select, textarea, button {
+    font-family: inherit;
+  }
+}

@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import SiteWizard from '../../../components/admin/local/SiteWizard';
+---
+<AdminLayout title="Usar um template" activeSection="local-templates">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-ink">Usar um template</h1>
+        <p class="text-ink-muted mt-1">Comece de um modelo pronto: escolha o ramo, diga onde você atende e suas páginas são criadas.</p>
+    </div>
+    <SiteWizard client:load />
+</AdminLayout>

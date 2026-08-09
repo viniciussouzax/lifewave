@@ -1,0 +1,10 @@
+---
+/**
+ * CustomCodeHead.astro — injeta código customizado dentro do <head>.
+ * Fonte: pluginsConfig.customCode.head (editável em /admin/custom-code).
+ */
+import { readData } from '../../lib/readData';
+const cfg = readData<any>('pluginsConfig.json', {});
+const raw = String(cfg?.customCode?.head || '').trim();
+---
+{raw && <Fragment set:html={raw} />}

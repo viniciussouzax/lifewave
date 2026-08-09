@@ -1,0 +1,43 @@
+{
+  "trust": [
+    "Orçamento sem compromisso",
+    "Atendemos {cidade} e região",
+    "Resposta rápida no WhatsApp"
+  ],
+  "benefits": [
+    "Atendimento rápido em {cidade}",
+    "Orçamento gratuito",
+    "Equipamentos revisados"
+  ],
+  "steps": [
+    {
+      "title": "Você pede o orçamento",
+      "description": "Fale com a gente pelo WhatsApp ou telefone e conte o que você precisa."
+    },
+    {
+      "title": "A gente combina tudo",
+      "description": "Confirmamos prazo, valor e detalhes, sem compromisso nenhum."
+    },
+    {
+      "title": "Atendemos você",
+      "description": "Atendimento em {cidade} e região, no horário combinado."
+    }
+  ],
+  "ctaTitle": "Precisa de um orçamento?",
+  "ctaSubtitle": "Fale agora e receba um orçamento sem compromisso.",
+  "sections": {
+    "servicos": { "eyebrow": "o que fazemos", "title": "Nossos serviços" },
+    "comoFunciona": { "eyebrow": "simples assim", "title": "Como funciona" },
+    "ondeAtendemos": { "eyebrow": "onde atendemos", "title": "Áreas de atendimento" },
+    "contato": { "eyebrow": "fale com a gente", "title": "Contato" }
+  },
+  "show": {
+    "trust": true,
+    "benefits": true,
+    "comoFunciona": true,
+    "quemSomos": true,
+    "ondeAtendemos": true,
+    "contato": true,
+    "ctaFinal": true
+  }
+}

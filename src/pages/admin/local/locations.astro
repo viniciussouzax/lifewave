@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import LocationsManager from '../../../components/admin/local/LocationsManager';
+---
+<AdminLayout title="Onde atendemos" activeSection="local-locations">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-ink">Onde atendemos</h1>
+        <p class="text-ink-muted mt-1">As cidades e bairros que você atende. Cada um, junto com um serviço, vira uma página no Google.</p>
+    </div>
+    <LocationsManager client:load />
+</AdminLayout>

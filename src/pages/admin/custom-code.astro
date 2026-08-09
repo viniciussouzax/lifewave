@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import SettingsCustomCode from '../../plugins/custom-code/SettingsCustomCode';
+---
+<AdminLayout title="Código Personalizado" activeSection="custom-code">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-slate-900">Código Personalizado</h1>
+        <p class="text-slate-500 mt-1">Injete HTML/JS de terceiros (AdCash, Hotjar, GTM, Meta Pixel custom, etc) em 3 slots do seu site.</p>
+    </div>
+    <SettingsCustomCode client:load />
+</AdminLayout>

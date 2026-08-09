@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { readData } from '../lib/readData';
+import { loadContactPage } from '../lib/localPagesData';
+import { mapSrc } from '../lib/localHomeData';
+
+const siteConfig = readData('siteConfig.json');
+const contato = readData('contato.json', {}) as any;
+const { biz, waUrl, phoneHref } = loadContactPage();
+
+const hero = contato.hero || {};
+const cards = contato.cards || {};
+const seo = contato.seo || {};
+const email = siteConfig.contact?.email || '';
+const mapEmbed = mapSrc(contato.googleMapsUrl || biz.mapEmbed);
+
+const pageTitle = seo.title || hero.title || 'Contato';
+const pageDesc = seo.description || hero.subtitle || `Fale com ${siteConfig.name}`;
+---
+
+<BaseLayout title={pageTitle} description={pageDesc} image={seo.image || ''}>
+  <section class="border-b border-rule">
+    <div class="container-x pt-16 md:pt-20 pb-12">
+      <p class="mono uppercase text-ink-faint mb-5">contato</p>
+      <h1 class="font-display text-3xl md:text-4xl font-normal tracking-tight text-ink leading-[1.1] mb-6 max-w-3xl">
+        {hero.title || 'Vamos conversar.'}
+      </h1>
+      <p class="text-xl text-ink-muted leading-relaxed max-w-2xl">
+        {hero.subtitle || contato.intro || 'Peça seu orçamento ou tire suas dúvidas. A gente responde rápido.'}
+      </p>
+    </div>
+  </section>
+
+  <div class="container-x py-14 md:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-12 md:gap-20">
+      <div class="space-y-8">
+        {cards.napTitle && (
+          <h2 class="font-display text-xl text-ink">{cards.napTitle}</h2>
+        )}
+        {biz.phone && (
+          <div>
+            <div class="mono uppercase text-ink-faint mb-2">telefone</div>
+            <a href={phoneHref} class="text-lg font-medium text-ink hover:text-primary transition-colors">{biz.phone}</a>
+            {cards.phoneLabel && <p class="text-sm text-ink-faint mt-1">{cards.phoneLabel}</p>}
+          </div>
+        )}
+        {waUrl && (
+          <div>
+            <div class="mono uppercase text-ink-faint mb-2">whatsapp</div>
+            <a href={waUrl} target="_blank" rel="noopener noreferrer" class="text-lg font-medium text-ink hover:text-primary transition-colors">Falar no WhatsApp</a>
+          </div>
+        )}
+        {email && (
+          <div>
+            <div class="mono uppercase text-ink-faint mb-2">email</div>
+            <a href={`mailto:${email}`} class="text-lg font-medium text-ink hover:text-primary transition-colors">{email}</a>
+            {cards.emailLabel && <p class="text-sm text-ink-faint mt-1">{cards.emailLabel}</p>}
+          </div>
+        )}
+        {biz.address && (
+          <div>
+            <div class="mono uppercase text-ink-faint mb-2">endereço</div>
+            <p class="text-base text-ink leading-relaxed">{biz.address}</p>
+            {cards.addressLabel && <p class="text-sm text-ink-faint mt-1">{cards.addressLabel}</p>}
+          </div>
+        )}
+        {biz.hours && (
+          <div>
+            <div class="mono uppercase text-ink-faint mb-2">horário</div>
+            <p class="text-base text-ink leading-relaxed">{biz.hours}</p>
+          </div>
+        )}
+      </div>
+
+      <form class="space-y-6" action="/api/subscribe" method="POST">
+        <div>
+          <label class="mono uppercase text-ink-faint block mb-2" for="name">nome</label>
+          <input type="text" id="name" name="name" required class="w-full bg-transparent border-b border-rule focus:border-ink py-2 text-ink outline-none transition-colors" />
+        </div>
+        <div>
+          <label class="mono uppercase text-ink-faint block mb-2" for="email">email</label>
+          <input type="email" id="email" name="email" required class="w-full bg-transparent border-b border-rule focus:border-ink py-2 text-ink outline-none transition-colors" />
+        </div>
+        <div>
+          <label class="mono uppercase text-ink-faint block mb-2" for="message">mensagem</label>
+          <textarea id="message" name="message" rows="5" required class="w-full bg-transparent border-b border-rule focus:border-ink py-2 text-ink outline-none transition-colors resize-y"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          {cards.formSubmitText || 'enviar'}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+    </div>
+
+    {mapEmbed && (
+      <div class="mt-14 md:mt-20 rounded-md overflow-hidden border border-rule">
+        <iframe src={mapEmbed} width="100%" height="380" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa da localização" aria-label="Mapa da localização"></iframe>
+      </div>
+    )}
+  </div>
+</BaseLayout>

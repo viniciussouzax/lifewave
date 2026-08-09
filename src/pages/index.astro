@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LocalHome from '../components/local/LocalHome.astro';
+import { readData } from '../lib/readData';
+
+const siteConfig = readData('siteConfig.json');
+---
+
+<BaseLayout title={siteConfig.name} description={siteConfig.description}>
+  <LocalHome />
+</BaseLayout>

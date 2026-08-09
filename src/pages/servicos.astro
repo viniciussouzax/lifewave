@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadServicesPage } from '../lib/localPagesData';
+import { pickInk } from '../lib/contrastInk';
+
+const { services, serviceHref, nicheOf, accent, accentInk, company, region, waUrl, labels, ctaTitle, ctaSubtitle, ctaButton, empty } = loadServicesPage();
+
+const title = `Serviços | ${company}`;
+const description = `Conheça os serviços da ${company}${region ? ` em ${region} e região` : ''}.`;
+---
+
+<BaseLayout title={title} description={description}>
+
+  <!-- ===== HEADER ===== -->
+  <section class="border-b border-rule">
+    <div class="container-x pt-16 md:pt-20 pb-10 md:pb-12">
+      <p class="mono uppercase text-ink-faint mb-5">{labels.eyebrow}</p>
+      <h1 class="font-display text-3xl md:text-4xl font-normal tracking-tight text-ink leading-[1.1] mb-6 max-w-3xl">
+        {labels.title}
+      </h1>
+      <p class="text-xl text-ink-muted leading-relaxed max-w-2xl">
+        {region
+          ? `Atendimento em ${region} e região. Escolha um serviço para ver os detalhes e pedir orçamento.`
+          : 'Escolha um serviço para ver os detalhes e pedir orçamento.'}
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== LISTA DE SERVIÇOS ===== -->
+  <div class="container-x py-12 md:py-16">
+    {empty ? (
+      <p class="text-ink-muted">
+        Nenhum serviço cadastrado ainda. Adicione em
+        <a href="/admin/local/services" class="underline underline-offset-4 hover:text-ink ml-1">/admin/local/services</a>.
+      </p>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {services.map((svc) => {
+          const cardColor = svc.color || nicheOf(svc.niche)?.color || accent;
+          const cink = pickInk(cardColor);
+          return (
+            <a href={serviceHref(svc)}
+              class="group block rounded-lg overflow-hidden bg-surface border border-border shadow-sm no-underline hover:shadow-md transition-shadow">
+              <div class="relative aspect-[4/3] overflow-hidden bg-elev">
+                {svc.image ? (
+                  <img src={svc.image} alt={svc.title} loading="lazy" width="1200" height="800"
+                    class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center text-5xl" style={`background-color: ${cardColor}; color: ${cink.color}`} aria-hidden="true">{svc.icon || '🏗️'}</div>
+                )}
+              </div>
+              <div class="p-5">
+                <h2 class="font-display text-lg md:text-xl text-ink leading-tight tracking-tight">{svc.title}</h2>
+                {svc.shortDescription && <p class="text-sm text-ink-muted mt-1.5 leading-relaxed line-clamp-2">{svc.shortDescription}</p>}
+                <span class="mono uppercase text-xs mt-4 inline-flex items-center gap-2 font-semibold" style={`color: ${accent}`}>
+                  ver detalhes
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                </span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    )}
+  </div>
+
+  <!-- ===== CTA ===== -->
+  {waUrl && (ctaTitle || ctaSubtitle || ctaButton) && (
+    <section class="border-t border-rule" style={`background-color: ${accent}; color: ${accentInk};`}>
+      <div class="container-x py-12 md:py-14 text-center">
+        {ctaTitle && <h2 class="font-display text-2xl md:text-3xl mb-3" style={`color: ${accentInk};`}>{ctaTitle}</h2>}
+        {ctaSubtitle && <p class="mb-6 opacity-90">{ctaSubtitle}</p>}
+        <a href={waUrl} target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center justify-center min-h-[48px] px-6 py-3 rounded font-semibold no-underline bg-[rgba(255,255,255,0.16)] hover:bg-[rgba(255,255,255,0.28)] transition-colors"
+          style={`color: ${accentInk};`}>
+          {ctaButton}
+        </a>
+      </div>
+    </section>
+  )}
+
+</BaseLayout>

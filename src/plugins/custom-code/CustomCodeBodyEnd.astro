@@ -1,0 +1,11 @@
+---
+/**
+ * CustomCodeBodyEnd.astro — injeta código antes de </body>.
+ * Fonte: pluginsConfig.customCode.bodyEnd.
+ * Melhor slot pra maioria dos analytics/pixels (Hotjar, Amplitude, Clarity, custom).
+ */
+import { readData } from '../../lib/readData';
+const cfg = readData<any>('pluginsConfig.json', {});
+const raw = String(cfg?.customCode?.bodyEnd || '').trim();
+---
+{raw && <Fragment set:html={raw} />}

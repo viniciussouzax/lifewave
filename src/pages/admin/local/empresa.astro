@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import BusinessEditor from '../../../components/admin/local/BusinessEditor';
+---
+<AdminLayout title="Minha empresa" activeSection="local-empresa">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-ink">Minha empresa</h1>
+        <p class="text-ink-muted mt-1">Seus dados de contato. Aparecem no site e nos botões de WhatsApp e telefone.</p>
+    </div>
+    <BusinessEditor client:load />
+</AdminLayout>

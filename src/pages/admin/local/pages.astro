@@ -1,0 +1,18 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PageMatrix from '../../../components/admin/local/PageMatrix';
+import DeployManager from '../../../components/admin/DeployManager';
+---
+<AdminLayout title="Publicar" activeSection="local-pages">
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-ink">Publicar</h1>
+            <p class="text-ink-muted mt-1">Veja quantas páginas vão pro ar, escolha o que entra e publique tudo de uma vez.</p>
+        </div>
+        <div class="w-full sm:w-auto sm:min-w-[20rem]">
+            <DeployManager client:load />
+        </div>
+    </div>
+    <PageMatrix client:load />
+</AdminLayout>

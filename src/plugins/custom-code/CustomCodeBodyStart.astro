@@ -1,0 +1,11 @@
+---
+/**
+ * CustomCodeBodyStart.astro — injeta código logo após <body>.
+ * Fonte: pluginsConfig.customCode.bodyStart.
+ * Usado por scripts que precisam rodar antes do DOM montar (ex: AdCash, alguns ad networks).
+ */
+import { readData } from '../../lib/readData';
+const cfg = readData<any>('pluginsConfig.json', {});
+const raw = String(cfg?.customCode?.bodyStart || '').trim();
+---
+{raw && <Fragment set:html={raw} />}

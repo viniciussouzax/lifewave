@@ -1,0 +1,177 @@
+---
+import '../styles/global.css';
+import { readData } from '../lib/readData';
+import HeadPlugins from '../plugins/_slots/HeadPlugins.astro';
+import BodyEndPlugins from '../plugins/_slots/BodyEndPlugins.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+
+const siteConfig = readData('siteConfig.json');
+const pluginsConfig = readData('pluginsConfig.json', {});
+const gscVerificationTag = (pluginsConfig as any)?.searchConsole?.verificationTag?.trim() || '';
+
+const primaryHex = siteConfig.theme?.primary || '#1c64c8';
+// Combinações de fonte selecionáveis no admin (Configurações → Combinação de Fontes).
+// Cada combo carrega as famílias que precisa via <link> no <head> (default = fontes do tema, já no global.css).
+const FONT_MAP: Record<string, { display: string; body: string; href: string }> = {
+  default:    { display: 'Lora', body: 'Geist', href: '' },
+  inter:      { display: 'Inter', body: 'Inter', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' },
+  outfit:     { display: 'Outfit', body: 'Inter', href: 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap' },
+  roboto:     { display: 'Roboto', body: 'Open Sans', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap' },
+  poppins:    { display: 'Poppins', body: 'Lora', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@400;500&display=swap' },
+  montserrat: { display: 'Montserrat', body: 'Merriweather', href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap' },
+  playfair:   { display: 'Playfair Display', body: 'Source Sans 3', href: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&display=swap' },
+  lora:       { display: 'Lora', body: 'Merriweather', href: 'https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap' },
+};
+const font = FONT_MAP[siteConfig.theme?.font || 'default'] || FONT_MAP.default;
+
+function hexToRgbTriplet(hex: string): string {
+  const h = hex.replace('#', '').trim();
+  if (h.length !== 6) return '28 100 200';
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `${r} ${g} ${b}`;
+}
+function soften(hex: string): string {
+  const h = hex.replace('#', '').trim();
+  if (h.length !== 6) return '228 235 247';
+  const r = Math.round(parseInt(h.substring(0, 2), 16) * 0.1 + 255 * 0.9);
+  const g = Math.round(parseInt(h.substring(2, 4), 16) * 0.1 + 255 * 0.9);
+  const b = Math.round(parseInt(h.substring(4, 6), 16) * 0.1 + 255 * 0.9);
+  return `${r} ${g} ${b}`;
+}
+
+// ── Fonte da marca (override por projeto) — afeta só os títulos (--font-display).
+// Duas origens: Google Fonts (por nome) ou arquivo próprio self-hosted (upload no
+// admin, commitado em /public/fonts). Guardas: sanitiza a família e valida a URL/caminho
+// pra não injetar CSS/HTML arbitrário no <head>.
+const brand = siteConfig.theme?.brandFont || null;
+const brandFamily = String(brand?.family || '').replace(/["'\\;{}<>]/g, '').trim();
+const brandFilePath = typeof brand?.filePath === 'string' && /^\/fonts\/[\w.-]+\.(woff2|woff|ttf|otf)$/i.test(brand.filePath) ? brand.filePath : '';
+const brandGoogleUrl = typeof brand?.googleUrl === 'string' && /^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(brand.googleUrl) ? brand.googleUrl : '';
+const brandActive = !!(brandFamily && ((brand?.source === 'google' && brandGoogleUrl) || (brand?.source === 'upload' && brandFilePath)));
+const brandFmt = brandFilePath.endsWith('.ttf') ? 'truetype' : brandFilePath.endsWith('.otf') ? 'opentype' : brandFilePath.endsWith('.woff') ? 'woff' : 'woff2';
+const brandType = brandFilePath.endsWith('.ttf') ? 'font/ttf' : brandFilePath.endsWith('.otf') ? 'font/otf' : brandFilePath.endsWith('.woff') ? 'font/woff' : 'font/woff2';
+// @font-face sem font-weight fixo (default 400) → aceita fonte de peso único sem
+// impedir faux-bold nos títulos mais pesados; os títulos-base já são weight 400.
+const brandFontFace = brandActive && brand.source === 'upload'
+  ? `@font-face{font-family:'${brandFamily}';font-style:normal;font-display:swap;src:url('${brandFilePath}') format('${brandFmt}');}`
+  : '';
+
+// No set default (self-hosted Lora/Geist) incluímos as famílias "Fallback" com
+// métricas calibradas na cadeia — o style inline sobrescreve o :root do global.css,
+// então precisam estar aqui pra o anti-CLS valer. Sets do Google usam fallback genérico.
+const displayStack = brandActive
+  ? `'${brandFamily}', Georgia, system-ui, sans-serif`
+  : font.href
+    ? `'${font.display}', Georgia, system-ui, sans-serif`
+    : `'${font.display}', 'Lora Fallback', Georgia, serif`;
+const bodyStack = font.href
+  ? `'${font.body}', system-ui, -apple-system, sans-serif`
+  : `'${font.body}', 'Geist Fallback', system-ui, -apple-system, sans-serif`;
+
+const cssVars = `
+  --c-primary: ${hexToRgbTriplet(primaryHex)};
+  --c-primary-soft: ${soften(primaryHex)};
+  --font-display: ${displayStack};
+  --font-body: ${bodyStack};
+`;
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  bodyClass?: string;
+}
+
+const defaultTitle = siteConfig.seo?.title || siteConfig.name;
+const {
+  title = defaultTitle,
+  description = siteConfig.seo?.description || siteConfig.description,
+  image = '',
+  type = 'website',
+  bodyClass = '',
+} = Astro.props;
+
+const formattedTitle = title === defaultTitle ? title : `${title} | ${siteConfig.name}`;
+// Normaliza a base: domínio salvo no admin pode vir sem protocolo (ex.: "exemplo.com.br").
+// new URL() exige base absoluta — sem isso o build quebra com "Invalid URL" (BUILD-05).
+const rawSiteUrl = (siteConfig.url || Astro.url.origin || '').trim();
+const siteUrl = rawSiteUrl && !/^https?:\/\//i.test(rawSiteUrl) ? `https://${rawSiteUrl}` : rawSiteUrl;
+// Nenhum new URL com base de dado do usuário pode derrubar o build → try/catch com fallback seguro.
+function toAbsoluteUrl(path: string, base: string): string {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  try {
+    return new URL(path, base).toString();
+  } catch {
+    return path; // fallback: path relativo (não derruba o build)
+  }
+}
+const socialImage = toAbsoluteUrl(image, siteUrl);
+import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astro';
+---
+<!DOCTYPE html>
+<html lang={siteConfig.language || 'pt-BR'} style={cssVars}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{formattedTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="icon" href={siteConfig.favicon || '/favicon.svg'} />
+  {font.href && <link rel="stylesheet" href={font.href} />}
+  {/* Fonte da marca (override dos títulos): Google Fonts ou arquivo self-hosted */}
+  {brandActive && brand.source === 'google' && <link rel="stylesheet" href={brandGoogleUrl} />}
+  {brandActive && brand.source === 'upload' && (
+    <>
+      <link rel="preload" as="font" type={brandType} href={brandFilePath} crossorigin />
+      <style set:html={brandFontFace}></style>
+    </>
+  )}
+  {/* Tema default (Lora/Geist self-hosted): preload do display + body acima da dobra */}
+  {!font.href && (
+    <>
+      <link rel="preload" as="font" type="font/woff2" href="/fonts/lora-var.woff2" crossorigin />
+      <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-var.woff2" crossorigin />
+    </>
+  )}
+
+  {gscVerificationTag && (
+    gscVerificationTag.startsWith('<')
+      ? <Fragment set:html={gscVerificationTag} />
+      : <meta name="google-site-verification" content={gscVerificationTag} />
+  )}
+
+  <meta property="og:type" content={type} />
+  <meta property="og:title" content={formattedTitle} />
+  <meta property="og:description" content={description} />
+  {socialImage && <meta property="og:image" content={socialImage} />}
+  <meta property="og:url" content={Astro.url} />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={formattedTitle} />
+  <meta name="twitter:description" content={description} />
+  {socialImage && <meta name="twitter:image" content={socialImage} />}
+
+  <HeadPlugins />
+</head>
+
+<body class={bodyClass}>
+<CustomCodeBodyStart />
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-ink focus:text-bg focus:px-4 focus:py-2 focus:rounded focus:mono">
+    pular pro conteúdo
+  </a>
+
+  <Header />
+
+  <main id="main">
+    <slot />
+  </main>
+
+  <Footer />
+
+  <BodyEndPlugins />
+</body>
+</html>

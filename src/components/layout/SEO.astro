@@ -1,0 +1,97 @@
+---
+import { readData } from '../../lib/readData';
+const siteConfig = readData('siteConfig.json');
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonicalURL?: string | URL;
+  type?: 'website' | 'article';
+}
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.description,
+  image = "/og-image.jpg",
+  canonicalURL = Astro.url,
+  type = 'website',
+} = Astro.props;
+
+const formattedTitle = title === siteConfig.name ? title : `${title} | ${siteConfig.name}`;
+
+// Garantir que a imagem seja uma URL absoluta para redes sociais.
+// Aluno pode salvar `siteConfig.url` sem protocolo (ex: "MEUSITE.COM") — o `new URL()` quebra
+// com "Invalid URL" e mata o build. Normaliza prefixando https:// e cai pra Astro.url.origin se ainda inválido.
+function normalizeBaseUrl(raw: unknown): string {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^https?:\/\//i.test(s)) return s;
+  return 'https://' + s.replace(/^\/+/, '');
+}
+
+const candidates = [normalizeBaseUrl(siteConfig.url), String(Astro.site || ''), Astro.url.origin];
+let siteUrl = '';
+for (const c of candidates) {
+  try { new URL(c); siteUrl = c; break; } catch { /* tenta o próximo */ }
+}
+
+function resolveAbsolute(path: string, base: string): string {
+  if (path.startsWith('http')) return path;
+  try { return new URL(path, base).toString(); }
+  catch { return path; } // último fallback: deixa relativo (não quebra o build)
+}
+
+const socialImage = resolveAbsolute(image, siteUrl);
+
+// Schema.org JSON-LD
+const schema = type === 'article'
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": title,
+      "image": [socialImage],
+      "datePublished": new Date().toISOString(),
+      "author": {
+        "@type": "Person",
+        "name": siteConfig.author
+      }
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": siteConfig.name,
+      "url": siteUrl
+    };
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Primary Meta Tags -->
+<title>{formattedTitle}</title>
+<meta name="title" content={formattedTitle} />
+<meta name="description" content={description} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={formattedTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImage} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={formattedTitle} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={socialImage} />
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
