@@ -6,11 +6,11 @@
   "language": "pt-BR",
   "logo": "/uploads/1786342963073-logo.png",
   "theme": {
-    "primary": "#194f90",
+    "primary": "#2196F3",
     "dark": "#0D2137",
     "fontDisplay": "Switzer",
     "fontBody": "Switzer",
-    "accent": "#194f90",
+    "accent": "#64B5F6",
     "font": "default"
   },
   "social": {
