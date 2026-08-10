@@ -30,5 +30,6 @@
     "privacy_last_updated": ""
   },
   "menuHoverEnabled": true,
-  "favicon": "/favicon.png"
+  "favicon": "/favicon.png",
+  "logoHeight": 70
 }
