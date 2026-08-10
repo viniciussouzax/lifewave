@@ -95,7 +95,7 @@
         "sequences": []
     },
     "customCode": {
-        "head": "<style>\n.bg {\n    --tw-bg-opacity: 1;\n    background-color: #194f90;\n}\n</style>",
+        "head": "<style>\n.bg-\\[\\#194f90\\] {\n    --tw-bg-opacity: 1;\n    background-color: #194f90 !important;\n}\n</style>",
         "bodyStart": "",
         "bodyEnd": ""
     }
