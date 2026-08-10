@@ -4,7 +4,7 @@
   "url": "https://meublog.com.br",
   "author": "Equipe do Blog",
   "language": "pt-BR",
-  "logo": "/uploads/1786303452248-logo.png",
+  "logo": "/uploads/1786342887745-logo.png",
   "theme": {
     "primary": "#2196F3",
     "dark": "#0D2137",
@@ -29,5 +29,6 @@
     "terms_last_updated": "",
     "privacy_last_updated": ""
   },
-  "menuHoverEnabled": true
+  "menuHoverEnabled": true,
+  "favicon": "/favicon.png"
 }
