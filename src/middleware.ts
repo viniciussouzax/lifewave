@@ -3,7 +3,7 @@ import { validateSession, COOKIE_NAME_EXPORT as COOKIE_NAME } from './lib/auth';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const ADMIN_SECRET = import.meta.env.ADMIN_SECRET;
+const getAdminSecret = () => process.env.ADMIN_SECRET ?? import.meta.env.ADMIN_SECRET;
 
 // Redirects cache (1 minute TTL)
 let redirectsCache: any[] | null = null;
@@ -46,7 +46,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     // Sem ADMIN_SECRET configurado → aviso
-    if (!ADMIN_SECRET) {
+    if (!getAdminSecret()) {
         if (pathname === '/admin' || pathname.startsWith('/admin/')) {
             return new Response(`
 <!DOCTYPE html>

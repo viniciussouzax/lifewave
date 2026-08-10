@@ -35,7 +35,7 @@ function timingSafeEqual(a: string, b: string): boolean {
 
 /** Cria a string de cookie assinada. Retorna null se ADMIN_SECRET não definido. */
 export async function createSession(password: string): Promise<string | null> {
-    const secret = import.meta.env.ADMIN_SECRET;
+    const secret = (process.env.ADMIN_SECRET ?? import.meta.env.ADMIN_SECRET);
     if (!secret) return null;
     if (!timingSafeEqual(password, secret)) return null;
 
@@ -48,7 +48,7 @@ export async function createSession(password: string): Promise<string | null> {
 /** Valida cookie. Retorna true se válido. */
 export async function validateSession(cookieValue: string | undefined): Promise<boolean> {
     if (!cookieValue) return false;
-    const secret = import.meta.env.ADMIN_SECRET;
+    const secret = (process.env.ADMIN_SECRET ?? import.meta.env.ADMIN_SECRET);
     if (!secret) return false;
 
     const parts = cookieValue.split('.');
@@ -69,7 +69,7 @@ export interface AttemptsPayload { count: number; since: number }
 
 /** Cria cookie de tentativas assinado. */
 export async function signAttempts(count: number, since: number): Promise<string> {
-    const secret = import.meta.env.ADMIN_SECRET || 'fallback';
+    const secret = (process.env.ADMIN_SECRET ?? import.meta.env.ADMIN_SECRET) || 'fallback';
     const payload = `${count}:${since}`;
     const sig = await hmac(secret, payload);
     return `${payload}.${sig}`;
@@ -78,7 +78,7 @@ export async function signAttempts(count: number, since: number): Promise<string
 /** Lê e valida cookie de tentativas. Retorna null se inválido ou expirado (15min). */
 export async function readAttempts(cookieValue: string | undefined): Promise<AttemptsPayload | null> {
     if (!cookieValue) return null;
-    const secret = import.meta.env.ADMIN_SECRET || 'fallback';
+    const secret = (process.env.ADMIN_SECRET ?? import.meta.env.ADMIN_SECRET) || 'fallback';
     const dotIdx = cookieValue.lastIndexOf('.');
     if (dotIdx === -1) return null;
     const payload = cookieValue.slice(0, dotIdx);
