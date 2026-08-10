@@ -157,7 +157,7 @@ const faqSchema = faqItems.length > 0 ? {
 
     <!-- BENEFÍCIOS -->
     {benefits.length > 0 && (
-      <section class="bg-surface border-b border-rule">
+      <section class="bg-surface">
         <div class="container-x py-8 md:py-10">
           <ul class="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-8">
             {benefits.map((b) => (
@@ -203,7 +203,7 @@ const faqSchema = faqItems.length > 0 ? {
                 </a>
               )}
             </div>
-            <dl class="mt-5 space-y-3 text-sm border-t border-border pt-5">
+            <dl class="mt-5 space-y-3 text-sm pt-5">
               {biz.hours && (<div><dt class="text-ink-faint">Horário</dt><dd class="text-ink">{biz.hours}</dd></div>)}
               {biz.address && (<div><dt class="text-ink-faint">Endereço</dt><dd class="text-ink">{biz.address}</dd></div>)}
               {biz.companyName && (<div><dt class="text-ink-faint">Empresa</dt><dd class="text-ink font-medium">{biz.companyName}</dd></div>)}
@@ -213,10 +213,10 @@ const faqSchema = faqItems.length > 0 ? {
       </div>
 
       {faqItems.length > 0 && (
-        <section class="mt-12 md:mt-16 border-t border-rule pt-10 lg:max-w-[68ch]">
+        <section class="mt-12 md:mt-16 pt-10 lg:max-w-[68ch]">
           <h2 class="font-display text-2xl mb-1">Perguntas frequentes</h2>
           <p class="text-ink-faint text-sm mb-6">Dúvidas sobre {svc.title} em {loc.name}</p>
-          <div class="divide-y divide-border border border-border rounded-lg overflow-hidden">
+          <div class="border border-border rounded-lg overflow-hidden">
             {faqItems.map((f) => (
               <details class="group">
                 <summary class="flex items-center justify-between gap-4 px-4 py-4 cursor-pointer font-semibold text-ink list-none [&::-webkit-details-marker]:hidden hover:bg-elev transition-colors">
@@ -268,7 +268,7 @@ const faqSchema = faqItems.length > 0 ? {
 
     <!-- TAMBÉM ATENDEMOS (interlink, este serviço em outras cidades) -->
     {otherCities.length > 0 && (
-      <section class="border-b border-rule">
+      <section class="">
         <div class="container-x py-12 md:py-16">
           <p class="mono uppercase text-ink-faint mb-2">cobertura</p>
           <h2 class="font-display text-2xl md:text-3xl text-ink mb-6">{svc.title} em outras cidades</h2>

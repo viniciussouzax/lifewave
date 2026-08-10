@@ -20,7 +20,7 @@ const ogImage = seo.image || hero.image || '';
 <BaseLayout title={title} description={description} image={ogImage}>
 
   <!-- ===== HERO 2 colunas: texto + imagem ===== -->
-  <section class="border-b border-rule">
+  <section class="">
     <div class="container-x pt-16 md:pt-20 pb-16 md:pb-20">
       <p class="mono uppercase text-ink-faint mb-8">sobre</p>
 
@@ -66,7 +66,7 @@ const ogImage = seo.image || hero.image || '';
 
   <!-- ===== MISSÃO ===== -->
   {(content.missionTitle || content.missionText) && (
-    <section class="border-b border-rule">
+    <section class="">
       <div class="container-x py-14 md:py-20">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
           <div class="md:col-span-4">
@@ -147,7 +147,7 @@ const ogImage = seo.image || hero.image || '';
 
                 <!-- Redes sociais -->
                 {hasSocial && (
-                  <div class="flex items-center gap-4 mono uppercase text-ink-faint pt-4 border-t border-rule">
+                  <div class="flex items-center gap-4 mono uppercase text-ink-faint pt-4">
                     {social.twitter && (
                       <a href={social.twitter} target="_blank" rel="noopener" class="hover:text-ink transition-colors inline-flex items-center gap-1.5" aria-label={`Twitter de ${author.name}`}>
                         twitter

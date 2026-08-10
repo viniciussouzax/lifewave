@@ -131,7 +131,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
           </p>
         )}
 
-        <div class="mono uppercase text-white/70 flex items-center gap-3 flex-wrap pt-6 border-t border-white/20">
+        <div class="mono uppercase text-white/70 flex items-center gap-3 flex-wrap pt-6">
           <span>{fmtDate(data.pubDate || data.date)}</span>
           <span class="opacity-50">·</span>
           <span>{readingMinutes} min</span>
@@ -141,7 +141,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
     </header>
 
     {hasValidVideo && videoPosition === 'hero' ? (
-      <div class="border-b border-rule">
+      <div class="">
         <div class="container-x py-8">
           <PostVideo
             url={videoUrl}
@@ -153,7 +153,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
         </div>
       </div>
     ) : (data.heroImage || data.cover || data.coverImage) ? (
-      <div class="border-b border-rule">
+      <div class="">
         <div class="container-x py-8">
           <img
             src={data.heroImage || data.cover || data.coverImage}
@@ -166,7 +166,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
     ) : null}
 
     {hasValidVideo && videoPosition === 'after-hero' && (
-      <div class="border-b border-rule">
+      <div class="">
         <div class="container-x py-8">
           <PostVideo
             url={videoUrl}
@@ -196,7 +196,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
             </div>
           )}
           <AffiliateProducts />
-          <div class="mt-10 pt-6 border-t border-rule">
+          <div class="mt-10 pt-6">
             <PostBottomPlugins title={data.title} />
           </div>
         </div>
@@ -205,7 +205,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
 
     <!-- BLOCOS RELACIONADOS -->
     {related.length > 0 && (
-      <section class="border-t border-rule">
+      <section class="">
         <div class="container-x py-14 md:py-20">
           <p class="mono uppercase text-ink-faint mb-8">continuar lendo</p>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">

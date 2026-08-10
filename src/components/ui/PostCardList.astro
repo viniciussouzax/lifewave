@@ -15,7 +15,7 @@ const url = `${BLOG_BASE}/${slug}`;
 const date = pubDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 ---
 
-<article class="group flex items-start gap-3 py-3 border-b border-rule last:border-0">
+<article class="group flex items-start gap-3 py-3">
   {index !== undefined && (
     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-elev text-ink-faint text-xs font-medium flex items-center justify-center mono tabular-nums">
       {index + 1}

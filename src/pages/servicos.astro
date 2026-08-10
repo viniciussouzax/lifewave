@@ -12,7 +12,7 @@ const description = `Conheça os serviços da ${company}${region ? ` em ${region
 <BaseLayout title={title} description={description}>
 
   <!-- ===== HEADER ===== -->
-  <section class="border-b border-rule">
+  <section class="">
     <div class="container-x pt-16 md:pt-20 pb-10 md:pb-12">
       <p class="mono uppercase text-ink-faint mb-5">{labels.eyebrow}</p>
       <h1 class="font-display text-3xl md:text-4xl font-normal tracking-tight text-ink leading-[1.1] mb-6 max-w-3xl">
@@ -66,7 +66,7 @@ const description = `Conheça os serviços da ${company}${region ? ` em ${region
 
   <!-- ===== CTA ===== -->
   {waUrl && (ctaTitle || ctaSubtitle || ctaButton) && (
-    <section class="border-t border-rule" style={`background-color: ${accent}; color: ${accentInk};`}>
+    <section class="" style={`background-color: ${accent}; color: ${accentInk};`}>
       <div class="container-x py-12 md:py-14 text-center">
         {ctaTitle && <h2 class="font-display text-2xl md:text-3xl mb-3" style={`color: ${accentInk};`}>{ctaTitle}</h2>}
         {ctaSubtitle && <p class="mb-6 opacity-90">{ctaSubtitle}</p>}

@@ -19,7 +19,7 @@ const results = q
 ---
 
 <BaseLayout title={q ? `Busca: ${q}` : 'Buscar'} description={`Resultados pra ${q}`}>
-  <section class="border-b border-rule">
+  <section class="">
     <div class="container-x pt-16 md:pt-20 pb-10">
       <p class="mono uppercase text-ink-faint mb-5">busca</p>
       <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-[1.05] mb-3 max-w-3xl">
@@ -37,7 +37,7 @@ const results = q
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-12 lg:gap-20">
       <main>
         {q && results.length === 0 && (
-          <div class="py-16 border-t border-rule">
+          <div class="py-16">
             <p class="mono uppercase text-ink-faint mb-3">vazio</p>
             <p class="text-ink-muted text-lg">Nada encontrado pra <strong class="text-ink">"{q}"</strong>.</p>
             <p class="text-sm text-ink-faint mt-3">Tenta uma palavra diferente.</p>

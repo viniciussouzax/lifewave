@@ -260,8 +260,6 @@
     font-weight: 500;
     color: rgb(var(--c-ink-faint));
     margin-bottom: 1rem;
-    padding-bottom: 0.625rem;
-    border-bottom: 1px solid rgb(var(--c-rule));
   }
 
   /* ===== Buttons ===== */
@@ -351,11 +349,10 @@
   .prose-msia img { border-radius: 4px; margin: 2rem 0; }
   .prose-msia ul, .prose-msia ol { padding-left: 1.5rem; margin: 1rem 0; }
   .prose-msia li { margin-bottom: 0.5rem; }
-  .prose-msia hr { border: 0; border-top: 1px solid rgb(var(--c-rule)); margin: 3rem 0; }
+  .prose-msia hr { border: 0; margin: 2.5rem 0; }
 
-  /* listicle items */
+  /* listicle items — separação por espaço, sem linha divisora */
   .prose-msia .listicle-item {
-    border-top: 1px solid rgb(var(--c-rule));
     padding-top: 2rem;
     margin-top: 3rem;
   }

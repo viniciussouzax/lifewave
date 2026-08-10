@@ -34,7 +34,7 @@ const igItems = (Array.isArray(siteConfig.instagramFeed) ? siteConfig.instagramF
 const igProfile = siteConfig.social?.instagram || '';
 ---
 
-<footer class="border-t border-rule mt-24">
+<footer class="mt-24">
   <div class="container-x py-14 md:py-20">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-10 mb-14">
       <div class="md:col-span-5">
@@ -47,7 +47,7 @@ const igProfile = siteConfig.social?.instagram || '';
       </div>
 
       <div class="md:col-span-3">
-        <div class="mono uppercase text-ink-faint mb-4 pb-3 border-b border-rule">navegação</div>
+        <div class="mono uppercase text-ink-faint mb-4 pb-3">navegação</div>
         <ul class="space-y-2.5 text-sm">
           {menuItems.map((item: any) => (
             <li><a href={item.href} class="text-ink-muted hover:text-ink transition-colors">{item.label}</a></li>
@@ -57,7 +57,7 @@ const igProfile = siteConfig.social?.instagram || '';
 
       {allCategories.length > 0 && (
         <div class="md:col-span-2">
-          <div class="mono uppercase text-ink-faint mb-4 pb-3 border-b border-rule">tópicos</div>
+          <div class="mono uppercase text-ink-faint mb-4 pb-3">tópicos</div>
           <ul class="space-y-2.5 text-sm">
             {allCategories.map((cat) => (
               <li><a href={`/categoria/${cat.slug}`} class="text-ink-muted hover:text-ink transition-colors">{cat.name}</a></li>
@@ -68,7 +68,7 @@ const igProfile = siteConfig.social?.instagram || '';
 
       {socials.length > 0 && (
         <div class="md:col-span-2">
-          <div class="mono uppercase text-ink-faint mb-4 pb-3 border-b border-rule">social</div>
+          <div class="mono uppercase text-ink-faint mb-4 pb-3">social</div>
           <ul class="space-y-2.5 text-sm">
             {socials.map(([_, label, href]: any) => (
               <li>
@@ -84,7 +84,7 @@ const igProfile = siteConfig.social?.instagram || '';
     </div>
 
     {igItems.length > 0 && (
-      <div class="border-t border-rule pt-10 mb-10">
+      <div class="pt-10 mb-10">
         <div class="mono uppercase text-ink-faint mb-4">instagram</div>
         <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 md:gap-3">
           {igItems.map((item: any) => (
@@ -96,7 +96,7 @@ const igProfile = siteConfig.social?.instagram || '';
       </div>
     )}
 
-    <div class="border-t border-rule pt-6 flex items-center justify-between flex-wrap gap-3 text-xs">
+    <div class="pt-6 flex items-center justify-between flex-wrap gap-3 text-xs">
       <span class="mono text-ink-faint">© {year} {siteConfig.footer?.copyright || siteConfig.name}</span>
       <div class="flex gap-5">
         <a href="/privacidade" class="text-ink-faint hover:text-ink transition-colors">privacidade</a>
