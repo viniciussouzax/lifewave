@@ -1,5 +1,5 @@
 {
-  "name": "Meu Blog",
+  "name": "Lifewave Team",
   "description": "Conteúdo direto sobre o que importa. Sem ornamento, sem ruído.",
   "url": "https://meublog.com.br",
   "author": "Equipe do Blog",
@@ -36,5 +36,6 @@
   "footer": {
     "copyright": "Lifewave Team Brand Partner",
     "description": "Somos um portal independente formado por Brand Partners, representantes autorizados da LifeWave, dedicado a promover seus produtos e sua oportunidade de negócio com responsabilidade e transparência."
-  }
+  },
+  "hidePostDate": true
 }
