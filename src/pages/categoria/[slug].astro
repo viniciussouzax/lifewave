@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/ui/PostCard.astro';
 import { getCollection } from 'astro:content';
-import { colorForCategory } from '../../lib/categoryColors';
 import { readData } from '../../lib/readData';
 import {
   normalizeCategories,
@@ -34,36 +33,32 @@ const posts = allPosts
     return db - da;
   });
 
-const catColor = colorForCategory(entry.name);
 ---
 
 <BaseLayout title={entry.name} description={entry.description || `Artigos sobre ${entry.name}`}>
-  <section class={`bg-cat-${catColor} relative overflow-hidden isolate`}>
-    <span class="color-block-num" style="bottom:-3rem;right:-1rem;font-size:clamp(14rem,32vw,26rem)">
-      ·
-    </span>
-    <div class="container-x relative z-10 pt-16 md:pt-24 pb-16 md:pb-20">
-      <p class="mono uppercase opacity-75 mb-5 text-white">tópico</p>
-      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.92] mb-4 text-white">
+  <section>
+    <div class="container-x pt-12 md:pt-16 pb-6">
+      <p class="mono uppercase text-ink-faint mb-4">tópico</p>
+      <h1 class="font-display text-3xl md:text-4xl font-normal tracking-tight text-ink leading-[1.1] mb-3">
         {entry.name}
       </h1>
       {entry.description && (
-        <p class="text-lg md:text-xl text-white/85 max-w-3xl mb-6 leading-relaxed">{entry.description}</p>
+        <p class="text-lg text-ink-muted max-w-2xl mb-3 leading-relaxed">{entry.description}</p>
       )}
-      <p class="mono text-white/80">
+      <p class="mono text-ink-faint">
         {posts.length} {posts.length === 1 ? 'artigo' : 'artigos'}
       </p>
     </div>
   </section>
 
-  <div class="container-x py-10 md:py-14">
+  <div class="container-x pb-20">
     {posts.length === 0 ? (
-      <div class="py-20">
+      <div class="py-16">
         <p class="mono uppercase text-ink-faint mb-3">vazio</p>
         <p class="text-ink-muted">Nenhum artigo nesta categoria ainda.</p>
       </div>
     ) : (
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+      <div class="max-w-3xl flex flex-col">
         {posts.map((post: any, i: number) => (
           <PostCard post={post} index={i} />
         ))}

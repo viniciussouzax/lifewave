@@ -4,7 +4,7 @@ import {
     Shield, Settings, LogOut, ExternalLink, Navigation,
     Package, FileArchive, PenLine, ChevronRight, Home, Sparkles,
     Wrench, MapPin, LayoutTemplate, Store, Rocket, Wand2, Layers,
-    Code2,
+    Code2, Megaphone,
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,6 +29,7 @@ const localItems: NavItem[] = [
 
 const pageItems: NavItem[] = [
     { label: 'Navegação do site', href: '/admin/menu', icon: Navigation, section: 'menu' },
+    { label: 'CTA dos artigos', href: '/admin/article-cta', icon: Megaphone, section: 'article-cta' },
     { label: 'Sobre', href: '/admin/sobre', icon: Info, section: 'sobre' },
     { label: 'Contato', href: '/admin/contato', icon: Phone, section: 'contato' },
     { label: 'Privacidade & Termos', href: '/admin/legal', icon: Shield, section: 'legal' },

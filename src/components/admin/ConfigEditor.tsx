@@ -237,16 +237,15 @@ export default function ConfigEditor() {
                         <div>
                             <label className={labelClass}>Combinação de Fontes</label>
                             <select value={config?.theme?.font || 'default'} onChange={e => setConfig({ ...config, theme: { ...config.theme, font: e.target.value } })} className={inputClass}>
-                                <option value="default">Lora & Geist (Padrão do tema)</option>
-                                <option value="inter">Inter & Roboto Mono (Moderno / Tech)</option>
-                                <option value="outfit">Outfit & Inter (Clean / SaaS)</option>
-                                <option value="roboto">Roboto & Open Sans (Corporativo / Neutro)</option>
-                                <option value="poppins">Poppins & Lora (Criativo / Boutique)</option>
-                                <option value="montserrat">Montserrat & Merriweather (Profissional / Textual)</option>
-                                <option value="playfair">Playfair Display & Source Sans (Elegante / Editorial)</option>
-                                <option value="lora">Lora & Merriweather (Revista / Narrativa)</option>
+                                <option value="default">Lora & Geist (Padrão — título serifado)</option>
+                                <option value="montserrat">Montserrat & Geist (Padrão alternativo)</option>
+                                <option value="inter">Inter & Geist (Moderno / Tech)</option>
+                                <option value="outfit">Outfit & Geist (Clean / SaaS)</option>
+                                <option value="roboto">Roboto & Geist (Corporativo / Neutro)</option>
+                                <option value="poppins">Poppins & Geist (Criativo / Boutique)</option>
+                                <option value="playfair">Playfair Display & Geist (Elegante / Editorial)</option>
                             </select>
-                            <p className="text-xs text-ink-faint mt-2 ml-1">Define o par de fontes base. O corpo do texto sempre usa a fonte body deste combo (Geist no padrão).</p>
+                            <p className="text-xs text-ink-faint mt-2 ml-1">O corpo do texto usa <strong>sempre Geist</strong>; a combinação muda só a fonte dos <strong>títulos</strong>.</p>
                         </div>
 
                         {/* Fonte da marca — override só dos títulos (por projeto) */}

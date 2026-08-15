@@ -1,52 +1,45 @@
 ---
-import { colorForCategory } from '../../lib/categoryColors';
-
 interface Props {
   post: any;
   index?: number;
 }
 
-const { post, index = 0 } = Astro.props;
+const { post } = Astro.props;
 
 const data = post.data ?? post;
 const slug = post.slug ?? post.id;
 const url = `/${slug}`;
 const title = data.title || 'Sem título';
-const excerpt = data.description || data.excerpt || '';
-const category = data.category || 'Geral';
+const category = data.category || '';
 const date = data.pubDate || data.date || data.publishedAt;
+const img = data.heroImage || data.cover || data.coverImage || '';
 
-const catColor = colorForCategory(category, index);
-
+const MONTHS_PT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 function fmtDate(d: any): string {
-  if (!d) return '';
   const dt = new Date(d);
   if (isNaN(dt.getTime())) return '';
-  return dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: '2-digit' }).replace('.', '');
+  return `${String(dt.getUTCDate()).padStart(2, '0')} ${MONTHS_PT[dt.getUTCMonth()]} ${String(dt.getUTCFullYear()).slice(-2)}`;
 }
-
-const num = String(index + 1).padStart(2, '0');
+function isoDate(d: any): string | undefined {
+  const dt = new Date(d);
+  return isNaN(dt.getTime()) ? undefined : dt.toISOString().slice(0, 10);
+}
 ---
 
-<a href={url} class={`color-block color-block-md bg-cat-${catColor} group`}>
-  <span class="color-block-num">{num}</span>
-  <div>
-    <p class="mono uppercase opacity-80 mb-3">
-      {category} · {fmtDate(date)}
-    </p>
-    <h2 class="font-display text-2xl md:text-3xl font-normal leading-[1.05] tracking-tight max-w-md">
+<a href={url} class="group flex items-start gap-4 sm:gap-6 py-3 no-underline -mx-3 px-3 rounded-md hover:bg-elev/60 transition-colors">
+  {img && (
+    <div class="shrink-0 w-24 h-16 sm:w-28 sm:h-[4.5rem] rounded overflow-hidden">
+      <img src={img} alt="" loading="lazy" class="w-full h-full object-cover transition-opacity group-hover:opacity-85" />
+    </div>
+  )}
+  <div class="flex-1 min-w-0">
+    <h2 class="font-display text-lg md:text-xl text-ink leading-snug group-hover:text-primary transition-colors">
       {title}
     </h2>
-  </div>
-  <div class="flex items-end justify-between gap-4 mt-6">
-    {excerpt && (
-      <p class="text-sm md:text-base leading-relaxed max-w-xs opacity-85 line-clamp-2">
-        {excerpt}
-      </p>
-    )}
-    <span class="mono uppercase shrink-0 inline-flex items-center gap-2 border-b border-current pb-1 group-hover:gap-3 transition-all self-end">
-      abrir
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </span>
+    <div class="mono uppercase text-xs mt-2 flex items-center gap-2 flex-wrap">
+      {category && <span class="text-ink-muted">{category}</span>}
+      {category && date && <span class="text-ink-faint opacity-50" aria-hidden="true">·</span>}
+      {date && <time datetime={isoDate(date)} class="text-ink-faint tabular-nums">{fmtDate(date)}</time>}
+    </div>
   </div>
 </a>

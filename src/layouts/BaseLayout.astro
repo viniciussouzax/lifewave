@@ -12,16 +12,17 @@ const gscVerificationTag = (pluginsConfig as any)?.searchConsole?.verificationTa
 
 const primaryHex = siteConfig.theme?.primary || '#1c64c8';
 // Combinações de fonte selecionáveis no admin (Configurações → Combinação de Fontes).
-// Cada combo carrega as famílias que precisa via <link> no <head> (default = fontes do tema, já no global.css).
+// REGRA: o CORPO é sempre Geist (base do tema, self-hosted em global.css). O combo
+// muda SÓ a fonte dos TÍTULOS (display). Cada combo carrega apenas a fonte de título
+// que precisa via <link> no <head> (default/lora usam a Lora self-hosted).
 const FONT_MAP: Record<string, { display: string; body: string; href: string }> = {
   default:    { display: 'Lora', body: 'Geist', href: '' },
-  inter:      { display: 'Inter', body: 'Inter', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' },
-  outfit:     { display: 'Outfit', body: 'Inter', href: 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap' },
-  roboto:     { display: 'Roboto', body: 'Open Sans', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap' },
-  poppins:    { display: 'Poppins', body: 'Lora', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@400;500&display=swap' },
-  montserrat: { display: 'Montserrat', body: 'Merriweather', href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap' },
-  playfair:   { display: 'Playfair Display', body: 'Source Sans 3', href: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&display=swap' },
-  lora:       { display: 'Lora', body: 'Merriweather', href: 'https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap' },
+  montserrat: { display: 'Montserrat', body: 'Geist', href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap' },
+  inter:      { display: 'Inter', body: 'Geist', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' },
+  outfit:     { display: 'Outfit', body: 'Geist', href: 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap' },
+  roboto:     { display: 'Roboto', body: 'Geist', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap' },
+  poppins:    { display: 'Poppins', body: 'Geist', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap' },
+  playfair:   { display: 'Playfair Display', body: 'Geist', href: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap' },
 };
 const font = FONT_MAP[siteConfig.theme?.font || 'default'] || FONT_MAP.default;
 
@@ -67,9 +68,8 @@ const displayStack = brandActive
   : font.href
     ? `'${font.display}', Georgia, system-ui, sans-serif`
     : `'${font.display}', 'Lora Fallback', Georgia, serif`;
-const bodyStack = font.href
-  ? `'${font.body}', system-ui, -apple-system, sans-serif`
-  : `'${font.body}', 'Geist Fallback', system-ui, -apple-system, sans-serif`;
+// Corpo é sempre Geist self-hosted → sempre com o fallback de métricas calibradas.
+const bodyStack = `'${font.body}', 'Geist Fallback', system-ui, -apple-system, sans-serif`;
 
 const cssVars = `
   --c-primary: ${hexToRgbTriplet(primaryHex)};
@@ -130,12 +130,10 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
       <style set:html={brandFontFace}></style>
     </>
   )}
-  {/* Tema default (Lora/Geist self-hosted): preload do display + body acima da dobra */}
-  {!font.href && (
-    <>
-      <link rel="preload" as="font" type="font/woff2" href="/fonts/lora-var.woff2" crossorigin />
-      <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-var.woff2" crossorigin />
-    </>
+  {/* Corpo é sempre Geist self-hosted → preload sempre. Lora (título default) só quando não há combo Google. */}
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-var.woff2" crossorigin />
+  {!font.href && !brandActive && (
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/lora-var.woff2" crossorigin />
   )}
 
   {gscVerificationTag && (

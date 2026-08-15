@@ -3,7 +3,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostVideo from '../components/ui/PostVideo.astro';
 import { getCollection } from 'astro:content';
 import { readData } from '../lib/readData';
-import { colorForCategory } from '../lib/categoryColors';
 import { normalizeCategories, getCategorySlug } from '../lib/categorySlug';
 import { parseVideoUrl } from '../lib/videoEmbed';
 import { renderShortcodes, hasShortcodes } from '../lib/shortcodes';
@@ -32,6 +31,8 @@ const data = post.data;
 const siteConfig = readData('siteConfig.json');
 const authorsData = readData('authors.json', []) as any[];
 const currentAuthor = authorsData.find((a: any) => a.id === data.author) || authorsData[0] || { name: 'Equipe' };
+// Byline fixo: todos os artigos assinam como a equipe.
+const AUTHOR_NAME = 'Lifewave Team';
 const postUrl = `${siteConfig.url || Astro.url.origin}/${post.slug ?? post.id}`;
 
 // Plugins (e-mail inline + posts relacionados) — config compartilhada com /blog/[slug].
@@ -43,7 +44,15 @@ const relCfg = pluginsConfig?.relatedPosts || {};
 const relEnabled = relCfg.enabled !== false;
 const relCount = Number(relCfg.count ?? 3);
 
-const catColor = colorForCategory(data.category);
+// CTA de artigo (webinar) + banner lateral — editável em src/data/articleCta.json (admin).
+const articleCta = readData('articleCta.json', {}) as any;
+const webinar = articleCta?.webinar || {};
+const inlineCta = articleCta?.inline || {};
+const banner = articleCta?.banner || {};
+const ctaUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '#';
+const inlineEveryN = Math.max(1, Number(inlineCta?.everyNHeadings ?? 3));
+
+const cover = data.heroImage || data.cover || data.coverImage || '';
 
 function fmtDate(d: any): string {
   if (!d) return '';
@@ -85,154 +94,217 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
 <BaseLayout
   title={data.title}
   description={data.description || ''}
-  image={data.heroImage || data.cover || ''}
+  image={cover}
   type="article"
 >
   <PostSchemaPlugins
     title={data.title}
     description={data.description || ''}
     url={postUrl}
-    image={data.heroImage || data.cover || ''}
+    image={cover}
     datePublished={(data.pubDate || data.date) instanceof Date ? (data.pubDate || data.date).toISOString() : String(data.pubDate || data.date || '')}
-    authorName={currentAuthor?.name}
+    authorName={AUTHOR_NAME}
     category={data.category}
     videoUrl={hasValidVideo ? videoUrl : undefined}
   />
 
-  <article>
-    <!-- HERO BLOCK — cor da categoria dominante -->
-    <header class={`bg-cat-${catColor} relative overflow-hidden isolate`}>
-      <span class="color-block-num" style="bottom:-4rem;right:-2rem;font-size:clamp(16rem,40vw,32rem)">
-        {String(data.order || '#').padStart(2, '0')}
-      </span>
+  <article class="container-x py-10 md:py-14">
+    <!-- BREADCRUMB -->
+    <nav class="mono uppercase text-ink-faint text-xs mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-ink transition-colors">início</a>
+      <span class="mx-2 opacity-50">/</span>
+      {data.category && (
+        <>
+          <a href={`/categoria/${getCategorySlug(data.category, allCategories)}`} class="hover:text-ink transition-colors">
+            {data.category}
+          </a>
+          <span class="mx-2 opacity-50">/</span>
+        </>
+      )}
+      <span class="text-ink-muted">leitura atual</span>
+    </nav>
 
-      <div class="container-x relative z-10 pt-16 md:pt-24 pb-20 md:pb-28">
-        <nav class="mono opacity-75 mb-12" aria-label="Breadcrumb">
-          <a href="/" class="hover:opacity-100 transition-opacity">início</a>
-          <span class="mx-2 opacity-60">/</span>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+      <!-- COLUNA PRINCIPAL -->
+      <div class="lg:col-span-8 min-w-0">
+
+        <!-- HEADER LIMPO (sem hero): título, descrição, meta -->
+        <header class="mb-8 max-w-[68ch]">
           {data.category && (
-            <>
-              <a href={`/categoria/${getCategorySlug(data.category, allCategories)}`} class="hover:opacity-100 transition-opacity uppercase">
-                {data.category}
-              </a>
-              <span class="mx-2 opacity-60">/</span>
-            </>
+            <a href={`/categoria/${getCategorySlug(data.category, allCategories)}`}
+               class="mono uppercase text-xs tracking-widest no-underline text-ink-faint hover:text-ink transition-colors">
+              {data.category}
+            </a>
           )}
-          <span class="opacity-100">leitura atual</span>
-        </nav>
+          <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-ink leading-[1.1] mt-3 mb-4">
+            {data.title}
+          </h1>
+          {data.description && (
+            <p class="text-lg md:text-xl text-ink-muted leading-snug mb-5">
+              {data.description}
+            </p>
+          )}
+          <div class="mono uppercase text-ink-faint text-xs flex items-center gap-3 flex-wrap">
+            <span>{fmtDate(data.pubDate || data.date)}</span>
+            <span class="opacity-40">·</span>
+            <span>{readingMinutes} min de leitura</span>
+            <span class="opacity-40">·</span>
+            <span>por {AUTHOR_NAME}</span>
+          </div>
+        </header>
 
-        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-semibold leading-[1.02] tracking-tight text-white max-w-4xl mb-8">
-          {data.title}
-        </h1>
-
-        {data.description && (
-          <p class="text-xl md:text-2xl leading-snug max-w-3xl text-white/85 mb-12">
-            {data.description}
-          </p>
-        )}
-
-        <div class="mono uppercase text-white/70 flex items-center gap-3 flex-wrap pt-6">
-          <span>{fmtDate(data.pubDate || data.date)}</span>
-          <span class="opacity-50">·</span>
-          <span>{readingMinutes} min</span>
-          {data.author && (<><span class="opacity-50">·</span><span>por {data.author}</span></>)}
-        </div>
-      </div>
-    </header>
-
-    {hasValidVideo && videoPosition === 'hero' ? (
-      <div class="">
-        <div class="container-x py-8">
-          <PostVideo
-            url={videoUrl}
-            title={data.title}
-            description={data.description}
-            uploadDate={(data.pubDate || data.date) instanceof Date ? (data.pubDate || data.date).toISOString() : String(data.pubDate || data.date || '')}
-            lite={true}
-          />
-        </div>
-      </div>
-    ) : (data.heroImage || data.cover || data.coverImage) ? (
-      <div class="">
-        <div class="container-x py-8">
+        <!-- CAPA (opcional) — alt = título pra SEO -->
+        {hasValidVideo && videoPosition === 'hero' ? (
+          <div class="mb-8">
+            <PostVideo
+              url={videoUrl}
+              title={data.title}
+              description={data.description}
+              uploadDate={(data.pubDate || data.date) instanceof Date ? (data.pubDate || data.date).toISOString() : String(data.pubDate || data.date || '')}
+              lite={true}
+            />
+          </div>
+        ) : cover ? (
           <img
-            src={data.heroImage || data.cover || data.coverImage}
-            alt=""
-            class="w-full aspect-[21/9] object-cover"
+            src={cover}
+            alt={data.title}
+            class="w-full aspect-[16/9] object-cover rounded mb-8"
             loading="eager"
           />
+        ) : null}
+
+        {hasValidVideo && videoPosition === 'after-hero' && (
+          <div class="mb-8">
+            <PostVideo
+              url={videoUrl}
+              title={data.title}
+              description={data.description}
+              uploadDate={(data.pubDate || data.date) instanceof Date ? (data.pubDate || data.date).toISOString() : String(data.pubDate || data.date || '')}
+              lite={true}
+            />
+          </div>
+        )}
+
+        <!-- CONTEÚDO (intro → FAQ) — preservado -->
+        <div class="prose-msia max-w-none">
+          {processedHtml ? (
+            <Fragment set:html={processedHtml} />
+          ) : (
+            <Content />
+          )}
+        </div>
+
+        {inlineEnabled && (
+          <div id="email-inline-source" data-position={inlinePosition} style="display:none">
+            <EmailInlineBanner />
+          </div>
+        )}
+
+        <AffiliateProducts />
+
+        <!-- CTA INLINE (distribuída no meio da leitura via script) -->
+        {inlineCta?.enabled !== false && (
+          <div id="inline-cta-source" data-every={inlineEveryN} style="display:none">
+            <div class="inline-cta my-8 rounded-md bg-elev border border-border p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div class="flex-1">
+                {inlineCta?.title && <p class="font-semibold text-ink">{inlineCta.title}</p>}
+                {inlineCta?.text && <p class="text-sm text-ink-muted mt-0.5">{inlineCta.text}</p>}
+              </div>
+              <a href={ctaUrl(inlineCta?.buttonUrl)} class="btn btn-primary shrink-0 justify-center">
+                {inlineCta?.buttonLabel || 'Saiba mais'}
+              </a>
+            </div>
+          </div>
+        )}
+
+        <!-- CTA PADRÃO PÓS-FAQ (webinar) -->
+        {webinar?.enabled !== false && (
+          <section class="mt-12 rounded-lg bg-primary-soft/60 border border-primary/25 p-8 md:p-10 text-center">
+            {webinar?.eyebrow && (
+              <p class="mono uppercase text-primary text-xs tracking-widest mb-3">{webinar.eyebrow}</p>
+            )}
+            <h2 class="font-display text-2xl md:text-3xl text-ink mb-3">{webinar?.title || 'Participe da apresentação ao vivo'}</h2>
+            {webinar?.text && <p class="text-ink-muted max-w-xl mx-auto mb-6 leading-relaxed">{webinar.text}</p>}
+            <a href={ctaUrl(webinar?.buttonUrl)} class="btn btn-primary inline-flex items-center gap-2 px-6 py-3 text-base">
+              {webinar?.buttonLabel || 'Quero participar'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </section>
+        )}
+
+        <!-- COMPARTILHAR -->
+        <div class="mt-10">
+          <PostBottomPlugins title={data.title} />
         </div>
       </div>
-    ) : null}
 
-    {hasValidVideo && videoPosition === 'after-hero' && (
-      <div class="">
-        <div class="container-x py-8">
-          <PostVideo
-            url={videoUrl}
-            title={data.title}
-            description={data.description}
-            uploadDate={(data.pubDate || data.date) instanceof Date ? (data.pubDate || data.date).toISOString() : String(data.pubDate || data.date || '')}
-            lite={true}
-          />
-        </div>
-      </div>
-    )}
-
-    <!-- CONTEÚDO DO POST -->
-    <div class="container-x py-16 md:py-24">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-        <div class="lg:col-span-8 lg:col-start-2">
-          <div class="prose-msia max-w-none">
-            {processedHtml ? (
-              <Fragment set:html={processedHtml} />
+      <!-- COLUNA LATERAL — banner fixo (sticky) no desktop -->
+      <aside class="hidden lg:block lg:col-span-4">
+        {banner?.enabled !== false && (
+          <div class="sticky top-24">
+            {banner?.image ? (
+              <a href={ctaUrl(banner?.imageLink || banner?.buttonUrl)} class="block rounded-lg overflow-hidden border border-border">
+                <img src={banner.image} alt={banner?.title || 'Banner'} class="w-full h-auto" loading="lazy" />
+              </a>
             ) : (
-              <Content />
+              <div class="rounded-lg border border-border bg-surface p-6 text-center">
+                <p class="mono uppercase text-primary text-[11px] tracking-widest mb-2">ao vivo</p>
+                <h3 class="font-display text-xl text-ink leading-tight mb-2">{banner?.title || 'Apresentação ao vivo'}</h3>
+                {banner?.text && <p class="text-sm text-ink-muted mb-5 leading-relaxed">{banner.text}</p>}
+                <a href={ctaUrl(banner?.buttonUrl)} class="btn btn-primary w-full justify-center">
+                  {banner?.buttonLabel || 'Garantir vaga'}
+                </a>
+              </div>
             )}
           </div>
-          {inlineEnabled && (
-            <div id="email-inline-source" data-position={inlinePosition} style="display:none">
-              <EmailInlineBanner />
-            </div>
-          )}
-          <AffiliateProducts />
-          <div class="mt-10 pt-6">
-            <PostBottomPlugins title={data.title} />
-          </div>
-        </div>
-      </div>
+        )}
+      </aside>
     </div>
 
-    <!-- BLOCOS RELACIONADOS -->
+    <!-- SUGESTÕES DE ARTIGOS — complementar a leitura -->
     {related.length > 0 && (
-      <section class="">
-        <div class="container-x py-14 md:py-20">
-          <p class="mono uppercase text-ink-faint mb-8">continuar lendo</p>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-            {related.map((p: any, i: number) => {
-              const c = colorForCategory(p.data.category, i);
-              const s = p.slug ?? p.id;
-              return (
-                <a href={`/${s}`} class={`color-block color-block-md bg-cat-${c} group`}>
-                  <span class="color-block-num">{String(i + 1).padStart(2, '0')}</span>
-                  <div>
-                    <p class="mono uppercase opacity-80 mb-3">{p.data.category}</p>
-                    <h3 class="font-display text-xl md:text-2xl font-bold leading-[1.1] tracking-tight">
-                      {p.data.title}
-                    </h3>
-                  </div>
-                  <span class="mono uppercase mt-4 inline-flex items-center gap-2 self-start border-b border-current pb-1 group-hover:gap-3 transition-all">
-                    abrir
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </span>
-                </a>
-              );
-            })}
-          </div>
+      <section class="mt-16 md:mt-20">
+        <p class="mono uppercase text-ink-faint text-xs mb-6">Complementar a leitura</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {related.map((p: any) => {
+            const s = p.slug ?? p.id;
+            const img = p.data.heroImage || p.data.cover || p.data.coverImage || '';
+            return (
+              <a href={`/${s}`} class="group block no-underline">
+                {img && (
+                  <img src={img} alt={p.data.title} class="w-full aspect-[16/9] object-cover rounded mb-3" loading="lazy" />
+                )}
+                {p.data.category && <p class="mono uppercase text-[11px] mb-1.5 text-ink-faint">{p.data.category}</p>}
+                <h3 class="font-display text-lg text-ink leading-snug group-hover:text-primary transition-colors">
+                  {p.data.title}
+                </h3>
+              </a>
+            );
+          })}
         </div>
       </section>
     )}
   </article>
+
+  <!-- Distribui a CTA inline a cada N títulos h2 do conteúdo -->
+  {inlineCta?.enabled !== false && (
+    <script is:inline>
+    (function() {
+      var src = document.getElementById('inline-cta-source');
+      if (!src) return;
+      var every = Number(src.getAttribute('data-every')) || 3;
+      var tpl = src.querySelector('.inline-cta');
+      var prose = document.querySelector('.prose-msia');
+      if (!tpl || !prose) return;
+      var h2s = Array.prototype.slice.call(prose.querySelectorAll(':scope > h2'));
+      if (!h2s.length) h2s = Array.prototype.slice.call(prose.querySelectorAll('h2'));
+      for (var i = every; i < h2s.length; i += every) {
+        var clone = tpl.cloneNode(true);
+        h2s[i].parentNode.insertBefore(clone, h2s[i]);
+      }
+    })();
+    </script>
+  )}
 
   {inlineEnabled && (
     <script>

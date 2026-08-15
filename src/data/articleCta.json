@@ -1,0 +1,27 @@
+{
+  "webinar": {
+    "enabled": true,
+    "eyebrow": "Apresentação ao vivo",
+    "title": "Participe da nossa apresentação ao vivo",
+    "text": "Descubra na prática como funciona, tire suas dúvidas e converse com a nossa equipe numa demonstração ao vivo e gratuita.",
+    "buttonLabel": "Quero participar",
+    "buttonUrl": ""
+  },
+  "inline": {
+    "enabled": true,
+    "everyNHeadings": 3,
+    "title": "Quer ver ao vivo?",
+    "text": "Participe da nossa apresentação e tire suas dúvidas em tempo real.",
+    "buttonLabel": "Participar",
+    "buttonUrl": ""
+  },
+  "banner": {
+    "enabled": true,
+    "title": "Apresentação ao vivo",
+    "text": "Entre na próxima sessão e veja como funciona, sem compromisso.",
+    "buttonLabel": "Garantir minha vaga",
+    "buttonUrl": "",
+    "image": "",
+    "imageLink": ""
+  }
+}

@@ -1,41 +1,66 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/ui/PostCard.astro';
 import { getCollection } from 'astro:content';
-import { CATEGORY_ORDER } from '../../lib/categoryColors';
 
 const allPosts = await getCollection('blog');
 
-function orderForCategory(cat: string | undefined) {
-  if (!cat) return 999;
-  const idx = CATEGORY_ORDER.indexOf(cat);
-  return idx >= 0 ? idx : 999;
-}
+// Lista cronológica (mais recentes primeiro) — estilo arquivo/feed.
+const posts = allPosts.sort((a: any, b: any) =>
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
 
-const posts = allPosts.sort((a: any, b: any) => {
-  const oa = orderForCategory(a.data.category);
-  const ob = orderForCategory(b.data.category);
-  if (oa !== ob) return oa - ob;
-  return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
-});
+const MONTHS_PT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+function fmtDate(d: any): string {
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return '';
+  const day = String(dt.getUTCDate()).padStart(2, '0');
+  const mon = MONTHS_PT[dt.getUTCMonth()];
+  const year = String(dt.getUTCFullYear()).slice(-2);
+  return `${day} ${mon} ${year}`;
+}
+function isoDate(d: any): string | undefined {
+  const dt = new Date(d);
+  return isNaN(dt.getTime()) ? undefined : dt.toISOString().slice(0, 10);
+}
 ---
 
 <BaseLayout title="Todos os artigos" description="Arquivo completo">
   <section class="">
-    <div class="container-x pt-16 md:pt-24 pb-12">
-      <p class="mono uppercase text-ink-faint mb-5">arquivo</p>
-      <h1 class="font-display text-5xl md:text-7xl font-extrabold tracking-tight text-ink leading-[0.95] mb-4">
+    <div class="container-x pt-12 md:pt-16 pb-6">
+      <p class="mono uppercase text-ink-faint mb-4">arquivo</p>
+      <h1 class="font-display text-3xl md:text-4xl font-normal tracking-tight text-ink leading-[1.1] mb-3">
         Todos os artigos
       </h1>
       <p class="mono text-ink-faint">{posts.length} {posts.length === 1 ? 'publicado' : 'publicados'}</p>
     </div>
   </section>
 
-  <div class="container-x py-10 md:py-14">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-      {posts.map((post: any, i: number) => (
-        <PostCard post={post} index={i} />
-      ))}
+  <div class="container-x pb-20">
+    <div class="max-w-3xl flex flex-col">
+      {posts.map((post: any, i: number) => {
+        const data = post.data;
+        const slug = post.slug ?? post.id;
+        const img = data.heroImage || data.cover || data.coverImage || '';
+        return (
+          <a href={`/${slug}`} class="group flex items-start gap-4 sm:gap-6 py-3 no-underline -mx-3 px-3 rounded-md hover:bg-elev/60 transition-colors">
+            {img && (
+              <div class="shrink-0 w-24 h-16 sm:w-28 sm:h-[4.5rem] rounded overflow-hidden">
+                <img src={img} alt="" loading="lazy" class="w-full h-full object-cover transition-opacity group-hover:opacity-85" />
+              </div>
+            )}
+            <div class="flex-1 min-w-0">
+              <h2 class="font-display text-lg md:text-xl text-ink leading-snug group-hover:text-primary transition-colors">
+                {data.title}
+              </h2>
+              <div class="mono uppercase text-xs mt-2 flex items-center gap-2 flex-wrap">
+                {data.category && <span class="text-ink-muted">{data.category}</span>}
+                {data.category && <span class="text-ink-faint opacity-50" aria-hidden="true">·</span>}
+                <time datetime={isoDate(data.pubDate)} class="text-ink-faint tabular-nums">{fmtDate(data.pubDate)}</time>
+              </div>
+            </div>
+          </a>
+        );
+      })}
     </div>
   </div>
 </BaseLayout>

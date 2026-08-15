@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ArticleCtaEditor from '../../components/admin/ArticleCtaEditor';
+---
+<AdminLayout title="CTA dos artigos" activeSection="article-cta">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-ink">CTA dos artigos</h1>
+        <p class="text-ink-muted mt-1">Chamadas exibidas em todos os artigos: bloco após a FAQ, faixa inline no meio da leitura e banner fixo na lateral.</p>
+    </div>
+    <ArticleCtaEditor client:load />
+</AdminLayout>
