@@ -28,13 +28,13 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
 const menuHover = siteConfig.menuHoverEnabled !== false;
 ---
 
-<header class="bg-[#194f90] text-white sticky top-0 z-40">
+<header class="bg-bg text-ink border-b border-border/60">
   <div class="container-x flex items-center justify-between h-[68px] gap-6">
     <a href="/" class="flex items-baseline gap-3 no-underline" aria-label="Home">
       {siteConfig.logo ? (
         <img src={siteConfig.logo} alt={siteConfig.name} style={`height: ${siteConfig.logoHeight ?? 40}px`} class="w-auto" />
       ) : (
-        <span class="font-display text-lg font-bold text-white tracking-tight">{siteConfig.name}</span>
+        <span class="font-display text-lg font-bold text-ink tracking-tight">{siteConfig.name}</span>
       )}
     </a>
 
@@ -45,7 +45,7 @@ const menuHover = siteConfig.menuHoverEnabled !== false;
             <button
               type="button"
               data-submenu-toggle
-              class={`text-sm font-medium transition-colors flex items-center gap-1 ${isActive(item.href) ? 'text-white' : 'text-white/70 hover:text-white'}`}
+              class={`text-sm font-medium transition-colors flex items-center gap-1 ${isActive(item.href) ? 'text-ink' : 'text-ink-muted hover:text-ink'}`}
               aria-haspopup="true"
               aria-expanded="false"
             >
@@ -63,7 +63,7 @@ const menuHover = siteConfig.menuHoverEnabled !== false;
           <a
             href={item.href}
             aria-current={isActive(item.href) ? 'page' : undefined}
-            class={`text-sm font-medium transition-colors ${isActive(item.href) ? 'text-white' : 'text-white/70 hover:text-white'}`}
+            class={`text-sm font-medium transition-colors ${isActive(item.href) ? 'text-ink' : 'text-ink-muted hover:text-ink'}`}
           >
             {item.label}
           </a>
@@ -77,15 +77,15 @@ const menuHover = siteConfig.menuHoverEnabled !== false;
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="hidden sm:inline-flex items-center justify-center min-h-[40px] px-4 rounded bg-primary text-bg text-sm font-semibold no-underline hover:brightness-90 transition-[filter] mr-1"
+          class="hidden sm:inline-flex items-center justify-center min-h-[40px] px-5 rounded-full bg-primary text-bg text-sm font-semibold no-underline hover:brightness-90 transition-[filter] mr-1"
         >
           WhatsApp
         </a>
       )}
-      <button id="search-toggle" class="w-10 h-10 flex items-center justify-center rounded text-white/70 hover:text-white hover:bg-white/10 transition-colors" aria-label="Buscar">
+      <button id="search-toggle" class="w-10 h-10 flex items-center justify-center rounded text-ink-muted hover:text-ink hover:bg-elev transition-colors" aria-label="Buscar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-      <button id="menu-toggle" class="lg:hidden w-10 h-10 flex items-center justify-center rounded text-white/70 hover:text-white hover:bg-white/10 transition-colors" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+      <button id="menu-toggle" class="lg:hidden w-10 h-10 flex items-center justify-center rounded text-ink-muted hover:text-ink hover:bg-elev transition-colors" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
         <svg id="menu-icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         <svg id="menu-icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -102,13 +102,13 @@ const menuHover = siteConfig.menuHoverEnabled !== false;
     </form>
   </div>
 
-  <div id="mobile-menu" class="hidden lg:hidden bg-[#194f90]">
+  <div id="mobile-menu" class="hidden lg:hidden bg-bg">
     <nav class="container-x py-4 space-y-1" aria-label="Mobile">
       {menuItems.map((item: any) => (
         <a
           href={item.href}
           aria-current={isActive(item.href) ? 'page' : undefined}
-          class={`block py-2.5 text-base ${isActive(item.href) ? 'text-white font-semibold' : 'text-white/70'}`}
+          class={`block py-2.5 text-base ${isActive(item.href) ? 'text-ink font-semibold' : 'text-ink-muted'}`}
         >
           {item.label}
         </a>
@@ -168,9 +168,9 @@ const menuHover = siteConfig.menuHoverEnabled !== false;
         if (e.key !== 'Tab') return;
         const focusable = Array.from(
           popup.querySelectorAll('button, input, [href], [tabindex]:not([tabindex="-1"])')
-        ).filter(el => !(el as HTMLElement).hasAttribute('disabled'));
-        const first = focusable[0] as HTMLElement;
-        const last  = focusable[focusable.length - 1] as HTMLElement;
+        ).filter(el => !el.hasAttribute('disabled'));
+        const first = focusable[0];
+        const last  = focusable[focusable.length - 1];
         if (e.shiftKey) {
           if (document.activeElement === first) { e.preventDefault(); last.focus(); }
         } else {

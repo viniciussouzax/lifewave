@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostVideo from '../components/ui/PostVideo.astro';
+import PostCard from '../components/ui/PostCard.astro';
 import { getCollection } from 'astro:content';
 import { readData } from '../lib/readData';
 import { normalizeCategories, getCategorySlug } from '../lib/categorySlug';
@@ -9,7 +10,6 @@ import { renderShortcodes, hasShortcodes } from '../lib/shortcodes';
 import EmailInlineBanner from '../plugins/email-list/EmailInlineBanner.astro';
 import AffiliateProducts from '../plugins/affiliates/AffiliateProducts.astro';
 import PostSchemaPlugins from '../plugins/_slots/PostSchemaPlugins.astro';
-import PostBottomPlugins from '../plugins/_slots/PostBottomPlugins.astro';
 
 const allCategories = normalizeCategories(readData('categories.json', []));
 
@@ -42,13 +42,15 @@ const inlineEnabled = inlineConfig?.enabled === true;
 const inlinePosition = Number(inlineConfig?.position ?? 3);
 const relCfg = pluginsConfig?.relatedPosts || {};
 const relEnabled = relCfg.enabled !== false;
-const relCount = Number(relCfg.count ?? 3);
+const relCount = Math.min(9, Number(relCfg.count ?? 9));
 
 // CTA de artigo (webinar) + banner lateral — editável em src/data/articleCta.json (admin).
 const articleCta = readData('articleCta.json', {}) as any;
 const webinar = articleCta?.webinar || {};
 const inlineCta = articleCta?.inline || {};
 const banner = articleCta?.banner || {};
+const bannerVideo = banner?.video ? parseVideoUrl(banner.video) : null;
+const hasBannerVideo = !!(bannerVideo && bannerVideo.provider !== 'unknown');
 const ctaUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '#';
 const inlineEveryN = Math.max(1, Number(inlineCta?.everyNHeadings ?? 3));
 
@@ -130,13 +132,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
 
         <!-- HEADER LIMPO (sem hero): título, descrição, meta -->
         <header class="mb-8 max-w-[68ch]">
-          {data.category && (
-            <a href={`/categoria/${getCategorySlug(data.category, allCategories)}`}
-               class="mono uppercase text-xs tracking-widest no-underline text-ink-faint hover:text-ink transition-colors">
-              {data.category}
-            </a>
-          )}
-          <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-ink leading-[1.1] mt-3 mb-4">
+          <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-ink leading-[1.1] mb-4">
             {data.title}
           </h1>
           {data.description && (
@@ -145,6 +141,13 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
             </p>
           )}
           <div class="mono uppercase text-ink-faint text-xs flex items-center gap-3 flex-wrap">
+            {data.category && (
+              <>
+                <a href={`/categoria/${getCategorySlug(data.category, allCategories)}`}
+                   class="no-underline hover:text-ink transition-colors">{data.category}</a>
+                <span class="opacity-40">·</span>
+              </>
+            )}
             <span>{fmtDate(data.pubDate || data.date)}</span>
             <span class="opacity-40">·</span>
             <span>{readingMinutes} min de leitura</span>
@@ -192,6 +195,11 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
           ) : (
             <Content />
           )}
+
+          <!-- FAQ padrão LifeWave — sempre as últimas perguntas de toda matéria -->
+          <p><strong>Fototerapia – O que é fototerapia?</strong><br />A ciência da fototerapia, que existe há cerca de 100 anos, utiliza a luz para melhorar a saúde do corpo. Há dois mil anos, os antigos gregos já possuíam um centro para estudar os efeitos de diferentes cores de luz no corpo. Até mesmo os antigos egípcios, que promoviam a saúde concentrando a luz solar através de vidros coloridos em determinadas áreas do corpo, compreendiam esse conceito.</p>
+          <p><strong>Como funcionam nossos patches?</strong><br />Seu corpo emite calor, incluindo calor no espectro infravermelho.<br /><br />Nossos adesivos são projetados para captar essa energia infravermelha quando colocados sobre a pele, fazendo com que ela seja refletida e estimule pontos específicos que podem promover um estado geral de saúde e atividade física, únicos para cada adesivo LifeWave.</p>
+          <p><strong>O que diferencia um patch LifeWave de outro?</strong><br />Cada adesivo é projetado exclusivamente para refletir comprimentos de onda específicos de energia que estimulam pontos específicos da pele. Isso permite que cada adesivo proporcione benefícios únicos de bem-estar ao usuário. Nenhum medicamento ou estimulante entra em contato com o seu corpo.</p>
         </div>
 
         {inlineEnabled && (
@@ -205,13 +213,13 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
         <!-- CTA INLINE (distribuída no meio da leitura via script) -->
         {inlineCta?.enabled !== false && (
           <div id="inline-cta-source" data-every={inlineEveryN} style="display:none">
-            <div class="inline-cta my-8 rounded-md bg-elev border border-border p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-              <div class="flex-1">
-                {inlineCta?.title && <p class="font-semibold text-ink">{inlineCta.title}</p>}
-                {inlineCta?.text && <p class="text-sm text-ink-muted mt-0.5">{inlineCta.text}</p>}
+            <div class="inline-cta my-6 rounded-lg bg-[#ECF5FA] px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-5">
+              <div class="text-lg text-ink-muted leading-snug min-w-0 md:flex-1">
+                <span class="cta-live-dot mr-1.5"></span>Nossa próxima apresentação sobre a LifeWave começa em <span class="whitespace-nowrap text-ink"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-[-0.15em] mr-1" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg><strong class="font-semibold tabular-nums" data-countdown>00:00:00</strong></span>. Participe e tire suas dúvidas em tempo real.
               </div>
-              <a href={ctaUrl(inlineCta?.buttonUrl)} class="btn btn-primary shrink-0 justify-center">
-                {inlineCta?.buttonLabel || 'Saiba mais'}
+              <a href={ctaUrl(inlineCta?.buttonUrl)} class="!no-underline !text-white shrink-0 self-start md:self-auto inline-flex items-center gap-1.5 bg-primary text-base font-semibold px-5 py-2.5 rounded-full hover:brightness-95 transition-[filter]">
+                {inlineCta?.buttonLabel || 'Participar'}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
             </div>
           </div>
@@ -219,12 +227,34 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
 
         <!-- CTA PADRÃO PÓS-FAQ (webinar) -->
         {webinar?.enabled !== false && (
-          <section class="mt-12 rounded-lg bg-primary-soft/60 border border-primary/25 p-8 md:p-10 text-center">
-            {webinar?.eyebrow && (
-              <p class="mono uppercase text-primary text-xs tracking-widest mb-3">{webinar.eyebrow}</p>
+          <section class="mt-12 rounded-xl bg-[#ECF5FA] p-8 md:p-10 text-center">
+            <span class="inline-flex items-center gap-2 mono uppercase text-primary text-xs tracking-widest mb-4">
+              <span class="cta-live-dot"></span>{webinar?.eyebrow || 'Apresentação ao vivo'}
+            </span>
+            <p class="text-ink-muted text-sm md:text-base mb-1">A próxima apresentação começa em</p>
+            <p class="mono text-4xl md:text-5xl font-semibold text-[#194f90] tabular-nums tracking-tight mb-6 flex items-center justify-center gap-2.5">
+              <svg viewBox="0 0 24 24" width="0.82em" height="0.82em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+              <span data-countdown>00:00:00</span>
+            </p>
+            {/* Vídeo de convite — só no mobile (no desktop ele vive no banner lateral fixo) */}
+            {hasBannerVideo && (
+              <div
+                class="banner-video lg:hidden group relative w-full max-w-md mx-auto aspect-video rounded-md overflow-hidden mb-6 cursor-pointer"
+                data-embed={bannerVideo!.embedUrl}
+                role="button"
+                tabindex="0"
+                aria-label="Assistir vídeo"
+              >
+                <img src={bannerVideo!.thumbnail} alt="Vídeo da apresentação" class="w-full h-full object-cover" loading="lazy" />
+                <span class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                  <span class="w-14 h-14 rounded-full bg-[#194f90] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                  </span>
+                </span>
+              </div>
             )}
-            <h2 class="font-display text-2xl md:text-3xl text-ink mb-3">{webinar?.title || 'Participe da apresentação ao vivo'}</h2>
-            {webinar?.text && <p class="text-ink-muted max-w-xl mx-auto mb-6 leading-relaxed">{webinar.text}</p>}
+            <p class="text-ink-muted max-w-xl mx-auto mb-2 leading-relaxed">Participe da nossa apresentação sobre a LifeWave e tire suas dúvidas em tempo real.</p>
+            <p class="text-ink-faint text-sm max-w-xl mx-auto mb-6 leading-relaxed">Entenda como a tecnologia dos produtos LifeWave pode ajudar você a viver melhor, conheça os descontos para Clientes Preferenciais e descubra a oportunidade de se tornar um Brand Partner.</p>
             <a href={ctaUrl(webinar?.buttonUrl)} class="btn btn-primary inline-flex items-center gap-2 px-6 py-3 text-base">
               {webinar?.buttonLabel || 'Quero participar'}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -232,27 +262,53 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
           </section>
         )}
 
-        <!-- COMPARTILHAR -->
-        <div class="mt-10">
-          <PostBottomPlugins title={data.title} />
-        </div>
+        <!-- AVISO LEGAL -->
+        <aside class="mt-10 text-xs text-ink-faint leading-relaxed" aria-label="Aviso legal">
+          <p>
+            <strong class="text-ink-muted font-semibold">AVISO LEGAL:</strong>
+            Os produtos LifeWave destinam-se ao bem-estar geral e têm como objetivo apenas manter ou promover um estado geral de saúde ou uma atividade saudável. O conteúdo fornecido pela LifeWave é apresentado de forma resumida, é de natureza geral e tem caráter meramente informativo. Consulte sempre o seu médico ou outro profissional de saúde qualificado antes de iniciar um novo regime de saúde, dieta ou programa de exercícios. Não ignore qualquer conselho médico que tenha recebido nem demore a procurá-lo. A LifeWave reserva-se o direito de alterar os preços ou a seleção dos produtos.
+          </p>
+        </aside>
       </div>
 
       <!-- COLUNA LATERAL — banner fixo (sticky) no desktop -->
       <aside class="hidden lg:block lg:col-span-4">
         {banner?.enabled !== false && (
-          <div class="sticky top-24">
+          <div class="sticky top-8">
             {banner?.image ? (
-              <a href={ctaUrl(banner?.imageLink || banner?.buttonUrl)} class="block rounded-lg overflow-hidden border border-border">
+              <a href={ctaUrl(banner?.imageLink || banner?.buttonUrl)} class="block rounded-lg overflow-hidden">
                 <img src={banner.image} alt={banner?.title || 'Banner'} class="w-full h-auto" loading="lazy" />
               </a>
             ) : (
-              <div class="rounded-lg border border-border bg-surface p-6 text-center">
-                <p class="mono uppercase text-primary text-[11px] tracking-widest mb-2">ao vivo</p>
-                <h3 class="font-display text-xl text-ink leading-tight mb-2">{banner?.title || 'Apresentação ao vivo'}</h3>
-                {banner?.text && <p class="text-sm text-ink-muted mb-5 leading-relaxed">{banner.text}</p>}
+              <div class="rounded-xl bg-[#ECF5FA] p-5 text-center shadow-sm">
+                <span class="inline-flex items-center gap-1.5 mono uppercase text-primary text-[11px] tracking-widest mb-3">
+                  <span class="cta-live-dot"></span>{banner?.eyebrow || 'Ao vivo'}
+                </span>
+                <p class="text-ink-muted text-xs mb-0.5">A próxima apresentação começa em</p>
+                <p class="mono text-2xl font-semibold text-[#194f90] tabular-nums mb-3 flex items-center justify-center gap-2">
+                  <svg viewBox="0 0 24 24" width="0.82em" height="0.82em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                  <span data-countdown>00:00:00</span>
+                </p>
+                {hasBannerVideo && (
+                  <div
+                    class="banner-video group relative w-full aspect-video rounded-md overflow-hidden mb-4 cursor-pointer"
+                    data-embed={bannerVideo!.embedUrl}
+                    role="button"
+                    tabindex="0"
+                    aria-label="Assistir vídeo"
+                  >
+                    <img src={bannerVideo!.thumbnail} alt="Vídeo da apresentação" class="w-full h-full object-cover" loading="lazy" />
+                    <span class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                      <span class="w-12 h-12 rounded-full bg-[#194f90] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                      </span>
+                    </span>
+                  </div>
+                )}
+                <p class="text-sm text-ink-muted mb-1.5 leading-relaxed">Participe da nossa apresentação sobre a LifeWave e tire suas dúvidas em tempo real.</p>
+                <p class="text-xs text-ink-faint mb-4 leading-relaxed">Entenda como a tecnologia dos produtos LifeWave pode ajudar você a viver melhor, conheça os descontos para Clientes Preferenciais e descubra a oportunidade de se tornar um Brand Partner.</p>
                 <a href={ctaUrl(banner?.buttonUrl)} class="btn btn-primary w-full justify-center">
-                  {banner?.buttonLabel || 'Garantir vaga'}
+                  {banner?.buttonLabel || 'Garantir minha vaga'}
                 </a>
               </div>
             )}
@@ -261,26 +317,12 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
       </aside>
     </div>
 
-    <!-- SUGESTÕES DE ARTIGOS — complementar a leitura -->
+    <!-- SUGESTÕES DE ARTIGOS — lista de coluna única (até 9), igual à página de todos os artigos -->
     {related.length > 0 && (
-      <section class="mt-16 md:mt-20">
-        <p class="mono uppercase text-ink-faint text-xs mb-6">Complementar a leitura</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {related.map((p: any) => {
-            const s = p.slug ?? p.id;
-            const img = p.data.heroImage || p.data.cover || p.data.coverImage || '';
-            return (
-              <a href={`/${s}`} class="group block no-underline">
-                {img && (
-                  <img src={img} alt={p.data.title} class="w-full aspect-[16/9] object-cover rounded mb-3" loading="lazy" />
-                )}
-                {p.data.category && <p class="mono uppercase text-[11px] mb-1.5 text-ink-faint">{p.data.category}</p>}
-                <h3 class="font-display text-lg text-ink leading-snug group-hover:text-primary transition-colors">
-                  {p.data.title}
-                </h3>
-              </a>
-            );
-          })}
+      <section class="mt-16 md:mt-20 max-w-3xl">
+        <p class="mono uppercase text-ink-faint text-xs mb-4">Continue lendo</p>
+        <div class="flex flex-col">
+          {related.map((p: any) => <PostCard post={p} />)}
         </div>
       </section>
     )}
@@ -321,4 +363,172 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
     })();
     </script>
   )}
+
+  {hasBannerVideo && (
+    <script is:inline>
+    (function(){
+      document.querySelectorAll('.banner-video').forEach(function(el){
+        function play(){
+          var embed = el.getAttribute('data-embed');
+          if(!embed || el.dataset.loaded) return;
+          el.dataset.loaded = '1';
+          var sep = embed.indexOf('?') > -1 ? '&' : '?';
+          var f = document.createElement('iframe');
+          f.src = embed + sep + 'autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1';
+          f.title = 'Vídeo';
+          f.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+          f.setAttribute('allowfullscreen','');
+          f.className = 'absolute inset-0 w-full h-full border-0';
+          el.innerHTML = '';
+          el.appendChild(f);
+        }
+        el.addEventListener('click', play);
+        el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); play(); }});
+      });
+    })();
+    </script>
+  )}
+
+  <!-- Transforma a FAQ num accordion <details>. Robusto: reconhece variações de
+       título (Perguntas/Dúvidas frequentes/comuns, FAQ), perguntas em <p><strong>
+       ou em subtítulo <hN>, e tem fallback pras 3 perguntas fixas quando a matéria
+       não traz nenhuma seção de FAQ. -->
+  <script is:inline>
+    (function(){
+      var prose = document.querySelector('.prose-msia');
+      if(!prose) return;
+      var FAQ_RE = /perguntas frequentes|d[uú]vidas frequentes|d[uú]vidas comuns|perguntas comuns|\bfaq\b/i;
+
+      function isHeading(el){ return !!el && /^H[1-6]$/.test(el.tagName); }
+      function levelOf(el){ return parseInt(el.tagName.charAt(1), 10); }
+      function isStrongP(el){ return !!el && el.tagName === 'P' && el.firstElementChild && el.firstElementChild.tagName === 'STRONG'; }
+
+      // Extrai (pergunta, resposta) de um <p><strong>Pergunta</strong> resposta</p>.
+      function fromStrongP(p){
+        var strong = p.querySelector('strong');
+        var div = document.createElement('div');
+        var node = strong.nextSibling;
+        while(node){
+          if(node.nodeType === 1 && node.tagName === 'BR' && !div.hasChildNodes()){ node = node.nextSibling; continue; }
+          div.appendChild(node.cloneNode(true));
+          node = node.nextSibling;
+        }
+        return { q: strong.textContent.trim(), ans: div };
+      }
+
+      // Monta os itens (pergunta/resposta) a partir de uma sequência de nós.
+      function buildItems(nodes){
+        var items = [];
+        for(var i = 0; i < nodes.length; i++){
+          var n = nodes[i];
+          if(isStrongP(n)){
+            var r = fromStrongP(n);
+            items.push({ q: r.q, ans: r.ans, src: [n] });
+          } else if(isHeading(n)){
+            // Pergunta como subtítulo → resposta = nós seguintes até a próxima pergunta.
+            var div = document.createElement('div');
+            var src = [n];
+            var j = i + 1;
+            while(j < nodes.length && !isHeading(nodes[j]) && !isStrongP(nodes[j])){
+              div.appendChild(nodes[j].cloneNode(true));
+              src.push(nodes[j]);
+              j++;
+            }
+            items.push({ q: n.textContent.trim(), ans: div, src: src });
+            i = j - 1;
+          }
+        }
+        return items;
+      }
+
+      function render(items){
+        if(!items.length) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'faq-accordion';
+        items.forEach(function(it){
+          var det = document.createElement('details'); det.className = 'faq-item';
+          var sum = document.createElement('summary'); sum.textContent = it.q; det.appendChild(sum);
+          it.ans.className = 'faq-answer'; det.appendChild(it.ans);
+          wrap.appendChild(det);
+        });
+        var anchor = items[0].src[0];
+        anchor.parentNode.insertBefore(wrap, anchor);
+        items.forEach(function(it){ it.src.forEach(function(s){ s.remove(); }); });
+      }
+
+      // 1) Seção de FAQ reconhecível pelo título.
+      var head = null;
+      prose.querySelectorAll('h1,h2,h3,h4').forEach(function(h){ if(!head && FAQ_RE.test(h.textContent)) head = h; });
+      if(head){
+        var hl = levelOf(head);
+        var nodes = [];
+        var el = head.nextElementSibling;
+        while(el){
+          if(isHeading(el) && levelOf(el) <= hl) break; // fim da seção
+          nodes.push(el);
+          el = el.nextElementSibling;
+        }
+        render(buildItems(nodes));
+        return;
+      }
+
+      // 2) Fallback: sem seção de FAQ, mas há perguntas fixas (<p><strong>) no fim.
+      var children = Array.prototype.slice.call(prose.children);
+      var trailing = [];
+      for(var k = children.length - 1; k >= 0; k--){
+        if(isStrongP(children[k])) trailing.unshift(children[k]);
+        else break;
+      }
+      if(trailing.length){
+        var h2 = document.createElement('h2');
+        h2.textContent = 'Perguntas frequentes';
+        trailing[0].parentNode.insertBefore(h2, trailing[0]);
+        render(buildItems(trailing));
+      }
+    })();
+  </script>
+
+  <style is:global>
+    /* Accordion da FAQ (elementos criados em runtime → estilo global). */
+    .prose-msia .faq-accordion { display: flex; flex-direction: column; gap: .6rem; margin: 1.5rem 0; }
+    .prose-msia .faq-item {
+      border: 1px solid rgba(94, 179, 228, .4);
+      border-radius: .7rem;
+      background: #fff;
+      overflow: hidden;
+    }
+    .prose-msia .faq-item > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .95rem 1.15rem;
+      margin: 0;
+      font-weight: 600;
+      color: #194f90;
+      line-height: 1.35;
+    }
+    .prose-msia .faq-item > summary::-webkit-details-marker { display: none; }
+    .prose-msia .faq-item > summary::after {
+      content: "";
+      flex-shrink: 0;
+      width: .6rem;
+      height: .6rem;
+      border-right: 2px solid #5EB3E4;
+      border-bottom: 2px solid #5EB3E4;
+      transform: rotate(45deg);
+      transition: transform .2s ease;
+    }
+    .prose-msia .faq-item[open] > summary::after { transform: rotate(-135deg); }
+    .prose-msia .faq-answer {
+      padding: 0 1.15rem 1.05rem;
+      color: #373f41;
+      line-height: 1.6;
+    }
+    .prose-msia .faq-answer > :first-child { margin-top: 0; }
+    .prose-msia .faq-answer > :last-child { margin-bottom: 0; }
+  </style>
+
 </BaseLayout>

@@ -95,6 +95,23 @@ const {
   bodyClass = '',
 } = Astro.props;
 
+// Barra de aviso/CTA no topo (acima da nav), só nas páginas de artigo. Editável em articleCta.json.
+const articleCta = readData('articleCta.json', {}) as any;
+const announcement = articleCta?.announcement || {};
+// A barra clara acima da nav vira o aviso da "próxima apresentação" (com timer).
+const showAnnouncement = announcement?.enabled !== false;
+const annUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '#';
+const hexOr = (v: any, fb: string) => (typeof v === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(v.trim())) ? v.trim() : fb;
+const annBg = hexOr(announcement?.bg, '#ECF5FA');
+const annColor = hexOr(announcement?.textColor, '#373F41');
+
+// Barra de aviso ESCURA no topo (acima da faixa clara), só em artigos.
+const topNotice = articleCta?.topNotice || {};
+const showTopNotice = topNotice?.enabled !== false
+  && !!((topNotice?.text || '').trim() || (topNotice?.buttonLabel || '').trim());
+const topBg = hexOr(topNotice?.bg, '#194F90');
+const topColor = hexOr(topNotice?.textColor, '#ffffff');
+
 const formattedTitle = title === defaultTitle ? title : `${title} | ${siteConfig.name}`;
 // Normaliza a base: domínio salvo no admin pode vir sem protocolo (ex.: "exemplo.com.br").
 // new URL() exige base absoluta — sem isso o build quebra com "Invalid URL" (BUILD-05).
@@ -162,6 +179,32 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
     pular pro conteúdo
   </a>
 
+  {showTopNotice && (
+    <a
+      href={annUrl(topNotice.buttonUrl)}
+      class="block text-center text-[0.768rem] font-medium py-[0.4rem] px-[0.64rem] no-underline hover:brightness-110 transition-[filter]"
+      style={`background:${topBg};color:${topColor}`}
+    >
+      <span>{topNotice.text}</span>
+      {topNotice.buttonLabel && (
+        <span class="font-semibold underline underline-offset-2 ml-1.5 whitespace-nowrap text-[#5EB3E4]">{topNotice.buttonLabel} →</span>
+      )}
+    </a>
+  )}
+
+  {showAnnouncement && (
+    <a
+      href={annUrl(announcement.buttonUrl)}
+      class="block text-center text-[0.768rem] font-medium py-[0.4rem] px-[0.64rem] no-underline border-b-2 border-[#8DC9EC] hover:brightness-95 transition-[filter]"
+      style={`background:${annBg};color:${annColor}`}
+    >
+      <span class="cta-live-dot mr-1.5"></span><span>Nossa próxima apresentação sobre a LifeWave começa em <span class="whitespace-nowrap"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-[-0.15em] mr-1" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg><strong class="font-semibold tabular-nums" data-countdown>00:00:00</strong></span>. Participe e tire suas dúvidas em tempo real.</span>
+      {announcement.buttonLabel && (
+        <span class="font-semibold underline underline-offset-2 ml-1.5 whitespace-nowrap text-[#5EB3E4]">{announcement.buttonLabel} →</span>
+      )}
+    </a>
+  )}
+
   <Header />
 
   <main id="main">
@@ -171,5 +214,40 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
   <Footer />
 
   <BodyEndPlugins />
+
+  <!-- Contador regressivo até o próximo webinar do dia (11:00, 15:00, 20:00).
+       Após o último horário, conta para o primeiro do dia seguinte. Horário local.
+       Alimenta todos os [data-countdown] da página (barra de aviso + cards do artigo). -->
+  <script is:inline>
+    (function(){
+      var els = document.querySelectorAll('[data-countdown]');
+      if(!els.length) return;
+      var TIMES = [[11, 0], [15, 0], [20, 0]];
+      function pad(n){ return (n < 10 ? '0' : '') + n; }
+      function nextStart(now){
+        for(var i = 0; i < TIMES.length; i++){
+          var d = new Date(now);
+          d.setHours(TIMES[i][0], TIMES[i][1], 0, 0);
+          if(d.getTime() > now.getTime()) return d;
+        }
+        var t = new Date(now);
+        t.setDate(t.getDate() + 1);
+        t.setHours(TIMES[0][0], TIMES[0][1], 0, 0);
+        return t;
+      }
+      function tick(){
+        var now = new Date();
+        var target = nextStart(now);
+        var remaining = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000));
+        var h = Math.floor(remaining / 3600);
+        var m = Math.floor((remaining % 3600) / 60);
+        var s = remaining % 60;
+        var txt = pad(h) + ':' + pad(m) + ':' + pad(s);
+        for(var i = 0; i < els.length; i++){ els[i].textContent = txt; }
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
 </body>
 </html>

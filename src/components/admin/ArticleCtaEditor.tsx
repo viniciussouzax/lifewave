@@ -7,7 +7,7 @@
  *  - banner: card fixo (sticky) na lateral direita (desktop); aceita imagem
  */
 import { useState, useEffect } from 'react';
-import { Save, Loader2, AlertCircle, CheckCircle, Megaphone, Rows3, PanelRight } from 'lucide-react';
+import { Save, Loader2, AlertCircle, CheckCircle, Megaphone, Rows3, PanelRight, Bell } from 'lucide-react';
 import { triggerToast } from './CmsToaster';
 import { githubApi } from '../../lib/adminApi';
 
@@ -59,7 +59,7 @@ export default function ArticleCtaEditor() {
 
     const inputCls = 'w-full bg-surface border border-border rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-primary/80 focus:ring-2 focus:ring-primary/20 transition-all';
     const labelCls = 'block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5';
-    const w = cfg.webinar || {}, i = cfg.inline || {}, b = cfg.banner || {};
+    const t = cfg.topNotice || {}, a = cfg.announcement || {}, w = cfg.webinar || {}, i = cfg.inline || {}, b = cfg.banner || {};
 
     const Toggle = ({ on, onClick }: { on: boolean; onClick: () => void }) => (
         <button type="button" onClick={onClick} role="switch" aria-checked={on}
@@ -81,6 +81,88 @@ export default function ArticleCtaEditor() {
 
     return (
         <div className="max-w-2xl space-y-6 pb-32">
+            {/* TOP NOTICE — barra escura no topo (acima da faixa clara) */}
+            <section className={card}>
+                <div className={head}>
+                    <div className="flex items-center gap-2">
+                        <Bell className="w-5 h-5 text-primary" aria-hidden="true" />
+                        <div>
+                            <h3 className="font-bold text-ink">Barra do topo (aviso escuro)</h3>
+                            <p className="text-xs text-ink-faint">Barra no topo de tudo (acima da faixa clara), nos artigos.</p>
+                        </div>
+                    </div>
+                    <Toggle on={t.enabled !== false} onClick={() => patch('topNotice', 'enabled', !(t.enabled !== false))} />
+                </div>
+                <div className="space-y-4">
+                    <div>
+                        <label className={labelCls}>Texto</label>
+                        <textarea value={t.text ?? ''} onChange={e => patch('topNotice', 'text', e.target.value)} rows={2}
+                            placeholder="Novidade: conheça a nova tecnologia…" className={inputCls} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Field label="Texto do link" value={t.buttonLabel} onChange={(v: any) => patch('topNotice', 'buttonLabel', v)} placeholder="Saiba mais" />
+                        <Field label="Link" value={t.buttonUrl} onChange={(v: any) => patch('topNotice', 'buttonUrl', v)} placeholder="https://…" mono />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelCls}>Cor de fundo</label>
+                            <div className="flex items-center gap-2">
+                                <input type="color" value={/^#[0-9a-fA-F]{6}$/.test(t.bg || '') ? t.bg : '#194F90'} onChange={e => patch('topNotice', 'bg', e.target.value)} className="w-10 h-10 rounded border border-border bg-surface cursor-pointer shrink-0" aria-label="Cor de fundo" />
+                                <input type="text" value={t.bg ?? ''} onChange={e => patch('topNotice', 'bg', e.target.value)} placeholder="#194F90" className={`${inputCls} font-mono`} />
+                            </div>
+                        </div>
+                        <div>
+                            <label className={labelCls}>Cor do texto</label>
+                            <div className="flex items-center gap-2">
+                                <input type="color" value={/^#[0-9a-fA-F]{6}$/.test(t.textColor || '') ? t.textColor : '#ffffff'} onChange={e => patch('topNotice', 'textColor', e.target.value)} className="w-10 h-10 rounded border border-border bg-surface cursor-pointer shrink-0" aria-label="Cor do texto" />
+                                <input type="text" value={t.textColor ?? ''} onChange={e => patch('topNotice', 'textColor', e.target.value)} placeholder="#ffffff" className={`${inputCls} font-mono`} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ANNOUNCEMENT — faixa clara acima da nav */}
+            <section className={card}>
+                <div className={head}>
+                    <div className="flex items-center gap-2">
+                        <Bell className="w-5 h-5 text-primary" aria-hidden="true" />
+                        <div>
+                            <h3 className="font-bold text-ink">Faixa acima da nav (clara)</h3>
+                            <p className="text-xs text-ink-faint">Faixa logo acima da navegação — clicável, funciona como CTA.</p>
+                        </div>
+                    </div>
+                    <Toggle on={a.enabled !== false} onClick={() => patch('announcement', 'enabled', !(a.enabled !== false))} />
+                </div>
+                <div className="space-y-4">
+                    <div>
+                        <label className={labelCls}>Texto do aviso</label>
+                        <textarea value={a.text ?? ''} onChange={e => patch('announcement', 'text', e.target.value)} rows={2}
+                            placeholder="Novidade: participe da apresentação ao vivo…" className={inputCls} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Field label="Texto do link" value={a.buttonLabel} onChange={(v: any) => patch('announcement', 'buttonLabel', v)} placeholder="Garantir vaga" />
+                        <Field label="Link" value={a.buttonUrl} onChange={(v: any) => patch('announcement', 'buttonUrl', v)} placeholder="https://…" mono />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelCls}>Cor de fundo</label>
+                            <div className="flex items-center gap-2">
+                                <input type="color" value={/^#[0-9a-fA-F]{6}$/.test(a.bg || '') ? a.bg : '#c2410c'} onChange={e => patch('announcement', 'bg', e.target.value)} className="w-10 h-10 rounded border border-border bg-surface cursor-pointer shrink-0" aria-label="Cor de fundo" />
+                                <input type="text" value={a.bg ?? ''} onChange={e => patch('announcement', 'bg', e.target.value)} placeholder="#c2410c" className={`${inputCls} font-mono`} />
+                            </div>
+                        </div>
+                        <div>
+                            <label className={labelCls}>Cor do texto</label>
+                            <div className="flex items-center gap-2">
+                                <input type="color" value={/^#[0-9a-fA-F]{6}$/.test(a.textColor || '') ? a.textColor : '#ffffff'} onChange={e => patch('announcement', 'textColor', e.target.value)} className="w-10 h-10 rounded border border-border bg-surface cursor-pointer shrink-0" aria-label="Cor do texto" />
+                                <input type="text" value={a.textColor ?? ''} onChange={e => patch('announcement', 'textColor', e.target.value)} placeholder="#ffffff" className={`${inputCls} font-mono`} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* WEBINAR — pós-FAQ */}
             <section className={card}>
                 <div className={head}>

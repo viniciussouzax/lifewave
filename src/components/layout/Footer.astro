@@ -2,6 +2,7 @@
 import { readData } from '../../lib/readData';
 import { normalizeCategories, collectOrphanCategories } from '../../lib/categorySlug';
 import { getCollection } from 'astro:content';
+import { BRAND_ICONS } from '../../lib/brandIcons';
 
 const siteConfig = readData('siteConfig.json');
 const menuItems: any[] = readData('menu.json', { items: [] }).items || [];
@@ -14,19 +15,27 @@ const orphans = collectOrphanCategories(postCats, registered);
 const allCategories = (registered.length > 0 ? [...registered, ...orphans] : orphans).slice(0, 6);
 
 const year = new Date().getFullYear();
+const BRAND = '#194f90';
 
 const socials: Array<[string, string, string]> = [
-  ['instagram', 'instagram', siteConfig.social?.instagram],
-  ['twitter', 'twitter / x', siteConfig.social?.twitter],
-  ['facebook', 'facebook', siteConfig.social?.facebook],
-  ['youtube', 'youtube', siteConfig.social?.youtube],
-  ['linkedin', 'linkedin', siteConfig.social?.linkedin],
-  ['github', 'github', siteConfig.social?.github],
-  ['pinterest', 'pinterest', siteConfig.social?.pinterest],
+  ['instagram', 'Instagram', siteConfig.social?.instagram],
+  ['twitter', 'Twitter / X', siteConfig.social?.twitter],
+  ['facebook', 'Facebook', siteConfig.social?.facebook],
+  ['youtube', 'YouTube', siteConfig.social?.youtube],
+  ['linkedin', 'LinkedIn', siteConfig.social?.linkedin],
+  ['pinterest', 'Pinterest', siteConfig.social?.pinterest],
+  ['github', 'GitHub', siteConfig.social?.github],
 ].filter(([_, __, href]: any) => href) as any;
 
-// Galeria do Instagram (configurada em Configurações). Cada imagem linka pro post
-// (se informado) ou pro perfil do Instagram.
+// Links legais/institucionais do rodapé (páginas reais do site)
+const legal = [
+  ['Quem somos', '/quem-somos'],
+  ['Contato', '/contato'],
+  ['Privacidade', '/privacidade'],
+  ['Termos', '/termos'],
+];
+
+// Galeria do Instagram (opcional)
 const igItems = (Array.isArray(siteConfig.instagramFeed) ? siteConfig.instagramFeed : [])
   .map((i: any) => (typeof i === 'string' ? { src: i, link: '' } : (i || {})))
   .filter((i: any) => i.src)
@@ -35,73 +44,111 @@ const igProfile = siteConfig.social?.instagram || '';
 ---
 
 <footer class="mt-24">
-  <div class="container-x py-14 md:py-20">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 mb-14">
-      <div class="md:col-span-5">
-        <a href="/" class="font-display text-2xl font-bold text-ink tracking-tight no-underline inline-block mb-3">
-          {siteConfig.name}
-        </a>
-        <p class="text-sm text-ink-muted leading-relaxed max-w-sm">
-          {siteConfig.footer?.description || siteConfig.description}
-        </p>
-      </div>
+  <!-- Área principal (fundo com o padrão de bolhas) -->
+  <div class="footer-bubbles">
+    <div class="container-x py-14 md:py-16">
+      <div class="grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10">
 
-      <div class="md:col-span-3">
-        <div class="mono uppercase text-ink-faint mb-4 pb-3">navegação</div>
-        <ul class="space-y-2.5 text-sm">
-          {menuItems.map((item: any) => (
-            <li><a href={item.href} class="text-ink-muted hover:text-ink transition-colors">{item.label}</a></li>
-          ))}
-        </ul>
-      </div>
+        <!-- Marca -->
+        <div class="col-span-2 md:col-span-4">
+          <a href="/" class="no-underline inline-block mb-4" aria-label={siteConfig.name}>
+            {siteConfig.logo ? (
+              <img src={siteConfig.logo} alt={siteConfig.name} style={`height: ${siteConfig.logoHeight ?? 40}px`} class="w-auto" />
+            ) : (
+              <span class="font-display text-2xl font-bold text-[#194f90] tracking-tight">{siteConfig.name}</span>
+            )}
+          </a>
+          <p class="text-sm text-[#194f90] leading-relaxed max-w-xs">
+            {siteConfig.footer?.description || siteConfig.description}
+          </p>
+        </div>
 
-      {allCategories.length > 0 && (
-        <div class="md:col-span-2">
-          <div class="mono uppercase text-ink-faint mb-4 pb-3">tópicos</div>
+        <!-- Navegação -->
+        <div class="md:col-span-3">
+          <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">navegação</p>
           <ul class="space-y-2.5 text-sm">
-            {allCategories.map((cat) => (
-              <li><a href={`/categoria/${cat.slug}`} class="text-ink-muted hover:text-ink transition-colors">{cat.name}</a></li>
+            {menuItems.map((item: any) => (
+              <li><a href={item.href} class="text-[#194f90] hover:text-[#5EB3E4] transition-colors">{item.label}</a></li>
             ))}
           </ul>
         </div>
-      )}
 
-      {socials.length > 0 && (
-        <div class="md:col-span-2">
-          <div class="mono uppercase text-ink-faint mb-4 pb-3">social</div>
-          <ul class="space-y-2.5 text-sm">
-            {socials.map(([_, label, href]: any) => (
-              <li>
-                <a href={href} target="_blank" rel="noopener" class="text-ink-muted hover:text-ink transition-colors inline-flex items-center gap-1.5">
-                  {label}
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <!-- Tópicos -->
+        {allCategories.length > 0 && (
+          <div class="md:col-span-2">
+            <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">tópicos</p>
+            <ul class="space-y-2.5 text-sm">
+              {allCategories.map((cat) => (
+                <li><a href={`/categoria/${cat.slug}`} class="text-[#194f90] hover:text-[#5EB3E4] transition-colors">{cat.name}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <!-- Participe da conversa -->
+        {socials.length > 0 && (
+          <div class="col-span-2 md:col-span-3">
+            <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">participe da conversa</p>
+            <div class="flex flex-wrap gap-2.5">
+              {socials.map(([key, label, href]: any) => (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  class="w-9 h-9 rounded-full flex items-center justify-center text-white hover:brightness-110 transition-[filter]"
+                  style={`background:${BRAND}`}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={BRAND_ICONS[key] || ''} /></svg>
                 </a>
-              </li>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {igItems.length > 0 && (
+        <div class="pt-12 mt-2">
+          <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">instagram</p>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 md:gap-3">
+            {igItems.map((item: any) => (
+              <a href={item.link || igProfile || '#'} target="_blank" rel="noopener noreferrer" class="block aspect-square overflow-hidden rounded-md bg-elev group" aria-label="Ver no Instagram">
+                <img src={item.src} alt="Instagram" loading="lazy" class="w-full h-full object-cover group-hover:opacity-85 transition-opacity" />
+              </a>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>
+  </div>
 
-    {igItems.length > 0 && (
-      <div class="pt-10 mb-10">
-        <div class="mono uppercase text-ink-faint mb-4">instagram</div>
-        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 md:gap-3">
-          {igItems.map((item: any) => (
-            <a href={item.link || igProfile || '#'} target="_blank" rel="noopener" class="block aspect-square overflow-hidden rounded-md bg-elev group" aria-label="Ver no Instagram">
-              <img src={item.src} alt="Instagram" loading="lazy" class="w-full h-full object-cover group-hover:opacity-85 transition-opacity" />
-            </a>
-          ))}
-        </div>
-      </div>
-    )}
-
-    <div class="pt-6 flex items-center justify-between flex-wrap gap-3 text-xs">
-      <span class="mono text-ink-faint">© {year} {siteConfig.footer?.copyright || siteConfig.name}</span>
-      <div class="flex gap-5">
-        <a href="/privacidade" class="text-ink-faint hover:text-ink transition-colors">privacidade</a>
-        <a href="/termos" class="text-ink-faint hover:text-ink transition-colors">termos</a>
-      </div>
+  <!-- Barra inferior (azul da marca) -->
+  <div style={`background:${BRAND}`}>
+    <div class="container-x py-4 flex items-center justify-between flex-wrap gap-x-6 gap-y-2 text-xs text-white/80">
+      <span>© {year} {siteConfig.footer?.copyright || siteConfig.name} | All rights reserved</span>
+      <nav class="flex flex-wrap gap-x-5 gap-y-1" aria-label="Links do rodapé">
+        {legal.map(([label, href]) => (
+          <a href={href} class="hover:text-white transition-colors">{label}</a>
+        ))}
+      </nav>
     </div>
   </div>
 </footer>
+
+<style>
+  /* Fundo de bolhas responsivo: escala com a largura, mas cresce nas telas
+     menores pra não virar uma faixa fininha no rodapé. */
+  .footer-bubbles {
+    background-color: #ECF5FA;
+    background-image: url('/assets/footer-background.svg');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% auto;
+  }
+  @media (max-width: 768px) {
+    .footer-bubbles { background-size: 180% auto; }
+  }
+  @media (max-width: 480px) {
+    .footer-bubbles { background-size: 280% auto; }
+  }
+</style>

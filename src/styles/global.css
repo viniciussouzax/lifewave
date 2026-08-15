@@ -70,21 +70,22 @@
 
 @layer base {
   :root {
-    /* ===== Base canvas (light, warm off-white) ===== */
-    --c-bg:          250 248 244;     /* oklch(97% 0.008 80) — warm off-white */
-    --c-surface:     255 254 251;     /* essentially white, microtinted */
-    --c-elev:        244 240 232;     /* oklch(94% 0.012 80) — subtle elev */
-    --c-border:      224 218 206;     /* oklch(86% 0.014 80) */
-    --c-rule:        212 204 188;     /* oklch(81% 0.014 80) — divisores */
+    /* ===== Base canvas ===== */
+    --c-bg:          250 248 244;     /* off-white warm (fundo geral) */
+    --c-surface:     255 254 251;     /* branco microtintado — cards */
+    --c-elev:        240 245 250;     /* elevação sutil (#F0F5FA) */
+    --c-border:       94 179 228;     /* #5EB3E4 — bordas / divisores */
+    --c-rule:         94 179 228;     /* #5EB3E4 */
 
-    /* ===== Ink on light ===== */
-    --c-ink:           20  20  24;    /* oklch(15% 0.008 80) — deep ink */
-    --c-ink-muted:     76  74  82;    /* oklch(40% 0.012 80) */
-    --c-ink-faint:    136 130 130;    /* oklch(60% 0.014 80) */
+    /* ===== Texto (sistema de cores da marca) ===== */
+    --c-ink:          25  79 144;     /* #194F90 — títulos */
+    --c-ink-muted:    55  63  65;     /* #373F41 — corpo / secundário */
+    --c-ink-faint:   126 141 150;     /* #7E8D96 — helper / labels */
+    --c-link:         94 179 228;     /* #5EB3E4 — links */
 
-    /* ===== Primary (override CMS color) ===== */
-    --c-primary:      139  74  54;   /* oklch(45% 0.080 35) — coral-terra */
-    --c-primary-soft: 237 216 207;   /* oklch(88% 0.025 35) — coral-wash */
+    /* ===== Primary (botões) — override em runtime pelo siteConfig ===== */
+    --c-primary:      25  79 144;     /* #194F90 */
+    --c-primary-soft:236 245 250;     /* #ECF5FA */
 
     /* ===== 5 CATEGORIA COLORS (OKLCH committed) — SAME PALETTE =====
        Funcionam tanto em light quanto dark — só o contraste muda. */
@@ -270,9 +271,10 @@
     gap: 0.5rem;
     padding: 0.6875rem 1.125rem;
     font-family: var(--font-body);
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.875rem;
-    border-radius: 3px;
+    border-radius: 9999px;
+    text-decoration: none;
     transition: all 0.15s ease;
     cursor: pointer;
     border: 1px solid transparent;
@@ -309,11 +311,11 @@
   .prose-msia p { margin-bottom: 1.25rem; }
   .prose-msia p strong { color: rgb(var(--c-ink)); font-weight: 600; }
   .prose-msia a {
-    color: rgb(var(--c-ink));
+    color: rgb(var(--c-link));
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
-    text-decoration-color: rgb(var(--c-rule));
+    text-decoration-color: rgb(var(--c-link) / 0.5);
   }
   .prose-msia a:hover { text-decoration-color: currentColor; }
   .prose-msia blockquote {
@@ -380,4 +382,21 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Ponto "ao vivo" pulsante (verde) — usado em todas as CTAs de apresentação. */
+.cta-live-dot {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  animation: ctaLivePulse 1.6s infinite;
+}
+@keyframes ctaLivePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70%  { box-shadow: 0 0 0 0.45rem rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }

@@ -4,7 +4,6 @@ import Sidebar from '../../components/Sidebar.astro';
 import EmailInlineBanner from '../../plugins/email-list/EmailInlineBanner.astro';
 import AffiliateProducts from '../../plugins/affiliates/AffiliateProducts.astro';
 import PostSchemaPlugins from '../../plugins/_slots/PostSchemaPlugins.astro';
-import PostBottomPlugins from '../../plugins/_slots/PostBottomPlugins.astro';
 import PostAfterPlugins from '../../plugins/_slots/PostAfterPlugins.astro';
 import SocialShare from '../../plugins/social-share/SocialShare.astro';
 import PostVideo from '../../components/ui/PostVideo.astro';
@@ -146,18 +145,11 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
             )}
             <AffiliateProducts />
             <!-- post bottom section -->
-            <div class="post-bottom">
-              <div class="row d-flex align-items-center">
-                <div class="col-md-6 col-12 text-center text-md-start">
-                  {post.data.category && (
-                    <a href={`/categoria/${categorySlug}`} class="tag">#{post.data.category}</a>
-                  )}
-                </div>
-                <div class="col-md-6 col-12 float-md-end">
-                  <PostBottomPlugins title={post.data.title} />
-                </div>
+            {post.data.category && (
+              <div class="post-bottom">
+                <a href={`/categoria/${categorySlug}`} class="tag">#{post.data.category}</a>
               </div>
-            </div>
+            )}
           </div>
 
           <div class="spacer" data-height="50"></div>

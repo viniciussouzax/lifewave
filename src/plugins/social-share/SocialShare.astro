@@ -2,10 +2,11 @@
 /**
  * SocialShare.astro — Plugin Social Share
  *
- * Renderiza título + botões de compartilhamento com URLs funcionais.
- * Lê configurações de pluginsConfig.socialShare.
+ * Renderiza botões de compartilhamento com URLs funcionais.
+ * Ícones oficiais via Simple Icons (lib/brandIcons). Lê config de pluginsConfig.socialShare.
  */
 import { readData } from '../../lib/readData';
+import { BRAND_ICONS } from '../../lib/brandIcons';
 
 interface Props {
   title?: string;
@@ -18,19 +19,21 @@ const pluginsConfig = readData('pluginsConfig.json', {}) as any;
 const shareConfig = pluginsConfig?.socialShare;
 const enabled = shareConfig?.enabled !== false;
 const style = shareConfig?.style || 'icon';
-const sectionTitle: string = shareConfig?.sectionTitle || 'Compartilhe nas redes sociais';
 const platforms: string[] = shareConfig?.platforms || [
   'facebook', 'twitter', 'whatsapp', 'linkedin', 'telegram', 'copy'
 ];
 
-const platformDefs: Record<string, { icon: string; label: string }> = {
-  facebook:  { icon: 'fab fa-facebook-f',    label: 'Facebook'  },
-  twitter:   { icon: 'fab fa-twitter',        label: 'Twitter/X' },
-  whatsapp:  { icon: 'fab fa-whatsapp',       label: 'WhatsApp'  },
-  linkedin:  { icon: 'fab fa-linkedin-in',    label: 'LinkedIn'  },
-  telegram:  { icon: 'fab fa-telegram-plane', label: 'Telegram'  },
-  pinterest: { icon: 'fab fa-pinterest',      label: 'Pinterest' },
-  copy:      { icon: 'far fa-copy',           label: 'Copiar'    },
+// Ícone de "copiar" (não é marca — glyph genérico) e "check" de feedback.
+const COPY_PATH = 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z';
+
+const platformDefs: Record<string, { path: string; label: string }> = {
+  facebook:  { path: BRAND_ICONS.facebook,  label: 'Facebook'  },
+  twitter:   { path: BRAND_ICONS.x,         label: 'Twitter/X' },
+  whatsapp:  { path: BRAND_ICONS.whatsapp,  label: 'WhatsApp'  },
+  linkedin:  { path: BRAND_ICONS.linkedin,  label: 'LinkedIn'  },
+  telegram:  { path: BRAND_ICONS.telegram,  label: 'Telegram'  },
+  pinterest: { path: BRAND_ICONS.pinterest, label: 'Pinterest' },
+  copy:      { path: COPY_PATH,             label: 'Copiar'    },
 };
 
 const activePlatforms = platforms.filter(p => platformDefs[p]);
@@ -38,9 +41,6 @@ const activePlatforms = platforms.filter(p => platformDefs[p]);
 
 {enabled && activePlatforms.length > 0 && (
   <div class="walker-share-wrap" data-context={context}>
-    {sectionTitle && (
-      <p class="walker-share-title">{sectionTitle}</p>
-    )}
     <ul
       class="social-icons list-unstyled list-inline mb-0 walker-share-list"
       data-style={style}
@@ -50,7 +50,7 @@ const activePlatforms = platforms.filter(p => platformDefs[p]);
         return (
           <li class="list-inline-item" data-platform={p}>
             <a href="#" class="walker-share-btn" aria-label={`Compartilhar no ${def.label}`} title={def.label}>
-              <i class={def.icon}></i>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d={def.path}></path></svg>
               {(style === 'label' || style === 'both') && (
                 <span class="share-label ms-1">{def.label}</span>
               )}
@@ -74,19 +74,45 @@ const activePlatforms = platforms.filter(p => platformDefs[p]);
     align-items: flex-end;
   }
 
-  .walker-share-title {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #8f9bac;
+  .walker-share-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
     margin: 0;
-    line-height: 1;
+    list-style: none;
   }
+
+  .walker-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    background: #194f90;
+    color: #fff;
+    text-decoration: none;
+    transition: filter .15s ease, transform .15s ease;
+  }
+
+  .walker-share-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  /* Variantes com rótulo: vira pílula com texto ao lado do ícone. */
+  .walker-share-list[data-style="label"] .walker-share-btn,
+  .walker-share-list[data-style="both"] .walker-share-btn {
+    width: auto;
+    padding: 0 14px;
+    gap: 7px;
+    font-size: .82rem;
+    font-weight: 600;
+  }
+  .walker-share-list[data-style="label"] .walker-share-btn svg { display: none; }
 </style>
 
 <script>
 (function() {
+  var CHECK_PATH = 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z';
   function initShareButtons() {
     var lists = document.querySelectorAll('.walker-share-list');
     lists.forEach(function(list) {
@@ -114,15 +140,16 @@ const activePlatforms = platforms.filter(p => platformDefs[p]);
           if (url === 'copy') {
             navigator.clipboard?.writeText(window.location.href).then(function() {
               var label = (btn as HTMLElement).querySelector('.share-label');
-              var icon = (btn as HTMLElement).querySelector('i');
-              var original = label ? label.textContent : null;
-              var originalIcon = icon ? icon.className : null;
-              if (label) label.textContent = 'Copiado!';
-              if (icon && !label) {
-                icon.className = 'fas fa-check';
-                setTimeout(function() { if (icon && originalIcon) icon.className = originalIcon; }, 2000);
+              var pathEl = (btn as HTMLElement).querySelector('svg path');
+              if (label) {
+                var original = label.textContent;
+                label.textContent = 'Copiado!';
+                setTimeout(function() { if (label) label.textContent = original; }, 2000);
+              } else if (pathEl) {
+                var originalD = pathEl.getAttribute('d');
+                pathEl.setAttribute('d', CHECK_PATH);
+                setTimeout(function() { if (pathEl && originalD) pathEl.setAttribute('d', originalD); }, 2000);
               }
-              setTimeout(function() { if (label) label.textContent = original; }, 2000);
             });
           } else {
             window.open(url, '_blank', 'noopener,width=600,height=450');
