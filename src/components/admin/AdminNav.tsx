@@ -38,9 +38,11 @@ const pageItems: NavItem[] = [
 interface AdminNavProps {
     activeSection?: string;
     extraItems?: NavItem[];
+    logo?: string;
+    siteName?: string;
 }
 
-export default function AdminNav({ activeSection = '', extraItems = [] }: AdminNavProps) {
+export default function AdminNav({ activeSection = '', extraItems = [], logo, siteName }: AdminNavProps) {
     const inContentSection = contentSections.includes(activeSection);
 
     return (
@@ -61,10 +63,10 @@ export default function AdminNav({ activeSection = '', extraItems = [] }: AdminN
             <div className="h-16 flex items-center px-5 border-b border-border">
                 <a
                     href="/admin"
-                    aria-label="CNX 2.0 — início do painel"
+                    aria-label={`${siteName || 'Painel'} — início do painel`}
                     className="flex items-center no-underline"
                 >
-                    <img src="/cnx-logo.svg" alt="CNX 2.0" className="h-8 w-auto" />
+                    <img src={logo || '/cnx-logo.svg'} alt={siteName || 'Logo'} className="h-8 w-auto" />
                 </a>
             </div>
 
