@@ -2,7 +2,7 @@
 title: "Lifewave X39 para que serve: benefícios, uso e onde comprar"
 description: "Descubra para que serve o Lifewave X39, seus benefícios, como usar corretamente e onde comprar com segurança no Brasil. Tudo sobre o adesivo de fototerapia."
 pubDate: "2026-08-10T00:32:03.037Z"
-heroImage: "/uploads/1786800036194-blog-cover.jpg"
+heroImage: "blob:https://lifewave-beta.vercel.app/43c16fb0-eb2d-4ad9-a15f-299993b0ae86"
 category: "Bem-estar"
 author: "Equipe LifeWave"
 draft: false
