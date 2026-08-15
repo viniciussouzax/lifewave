@@ -1,4 +1,20 @@
 {
+  "topNotice": {
+    "enabled": true,
+    "text": "Novidade: conheça a nova tecnologia LifeWave.",
+    "buttonLabel": "Saiba mais",
+    "buttonUrl": "",
+    "bg": "#194F90",
+    "textColor": "#ffffff"
+  },
+  "announcement": {
+    "enabled": true,
+    "text": "Novidade: participe da nossa apresentação ao vivo e gratuita.",
+    "buttonLabel": "Garantir vaga",
+    "buttonUrl": "",
+    "bg": "#ECF5FA",
+    "textColor": "#373F41"
+  },
   "webinar": {
     "enabled": true,
     "eyebrow": "Apresentação ao vivo",
@@ -21,6 +37,7 @@
     "text": "Entre na próxima sessão e veja como funciona, sem compromisso.",
     "buttonLabel": "Garantir minha vaga",
     "buttonUrl": "",
+    "video": "https://www.youtube.com/watch?v=oKF-ZNFz92M",
     "image": "",
     "imageLink": ""
   }

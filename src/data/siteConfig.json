@@ -4,20 +4,22 @@
   "url": "https://meublog.com.br",
   "author": "Equipe do Blog",
   "language": "pt-BR",
-  "logo": "/uploads/1786342963073-logo.png",
+  "logo": "/logo.svg",
   "theme": {
-    "primary": "#2196F3",
+    "primary": "#194F90",
     "dark": "#0D2137",
     "fontDisplay": "Switzer",
     "fontBody": "Switzer",
-    "accent": "#64B5F6",
-    "font": "default"
+    "accent": "#5EB3E4",
+    "font": "montserrat"
   },
   "social": {
     "instagram": "",
     "twitter": "",
     "facebook": "",
-    "youtube": ""
+    "youtube": "",
+    "linkedin": "",
+    "pinterest": ""
   },
   "contact": {
     "email": "contato@meublog.com.br",
@@ -30,6 +32,9 @@
     "privacy_last_updated": ""
   },
   "menuHoverEnabled": true,
-  "favicon": "/favicon.png",
-  "logoHeight": 50
+  "logoHeight": 44,
+  "footer": {
+    "copyright": "Lifewave Team Brand Partner",
+    "description": "Somos um portal independente formado por Brand Partners, representantes autorizados da LifeWave, dedicado a promover seus produtos e sua oportunidade de negócio com responsabilidade e transparência."
+  }
 }
