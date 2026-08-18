@@ -5,8 +5,6 @@
  * system (h1 do sistema, título do card como h3). Contador preenchido em BaseLayout.
  */
 
-import CountdownBoxes from '../ui/CountdownBoxes.astro';
-
 const heroBullets = [
   'Peptídeos, regeneração celular e longevidade',
   'GHK-Cu e envelhecimento saudável',
@@ -70,16 +68,16 @@ const heroBullets = [
           <script is:inline src="https://event.webinarjam.com/register/13qvo4by/embed-form?formButtonText=Register&formAccentColor=%2329b6f6&formAccentOpacity=0.95&formBgColor=%23ffffff&formBgOpacity=1"></script>
         </div>
 
-        <div class="mt-5">
-          <p class="text-center text-xs text-ink-muted mb-2">A próxima apresentação começa em</p>
-          <CountdownBoxes size="sm" />
-          <p class="text-center text-[0.72rem] text-ink-faint mt-3">Evento online · Gratuito · Vagas limitadas</p>
-        </div>
       </div>
 
     </div>
   </div>
 </section>
+
+<style>
+  /* O embed-form do WebinarJam tem largura fixa (~500px) — centraliza no card. */
+  .wj-embed-wrapper { margin-left: auto; margin-right: auto; max-width: 100%; }
+</style>
 
 <script is:inline>
   (function () {
