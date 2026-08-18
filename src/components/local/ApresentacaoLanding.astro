@@ -1,0 +1,105 @@
+---
+/**
+ * ApresentacaoLanding.astro — home: hero em duas colunas (proposta + form de inscrição).
+ * Só a hero; o restante da página é o footer (BaseLayout). Tipografia segue o design
+ * system (h1 do sistema, título do card como h3). Contador preenchido em BaseLayout.
+ */
+
+import CountdownBoxes from '../ui/CountdownBoxes.astro';
+
+const heroBullets = [
+  'Peptídeos, regeneração celular e longevidade',
+  'GHK-Cu e envelhecimento saudável',
+  'Fototerapia e fotobiomodulação',
+  'A tecnologia patenteada LifeWave X39®',
+  'Dúvidas ao vivo e próximos passos',
+];
+---
+
+<!-- ══════════════ HERO (2 colunas, fundo azul escuro) ══════════════ -->
+<section class="bg-[#194F90]">
+  <div class="container-x py-10 md:py-16">
+    <div class="grid lg:grid-cols-[1fr_440px] gap-8 lg:gap-14 items-start">
+
+      <!-- COLUNA ESQUERDA -->
+      <div>
+        <span class="inline-flex items-center gap-2 mono uppercase text-white/80 text-[0.68rem] tracking-widest mb-4">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+          <span data-next-session>Próxima sessão ao vivo</span>
+        </span>
+        <h1 class="!text-white tracking-tight mb-4">
+          Assista à apresentação das tecnologias e oportunidades da LifeWave.
+        </h1>
+        <p class="text-white/80 text-base leading-relaxed max-w-xl mb-6">
+          Participe da apresentação online e entenda, de forma clara e acessível, como peptídeos, regeneração celular e fotobiomodulação estão redefinindo o cuidado com a saúde e a longevidade.
+        </p>
+        <ul class="space-y-2.5">
+          {heroBullets.map((b) => (
+            <li class="flex items-start gap-2.5">
+              <span class="shrink-0 w-5 h-5 rounded-full bg-white flex items-center justify-center mt-0.5">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#194F90" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span class="text-white/90 text-sm md:text-base leading-snug">{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- COLUNA DIREITA — card de inscrição (com vídeo abaixo do título) -->
+      <div id="hero-form" class="bg-[#ECF5FA] rounded-[6px] p-6 md:p-8 shadow-[0_16px_48px_rgba(0,0,0,0.16)] scroll-mt-24">
+        <h3 class="text-ink text-center mb-3">Reserve sua vaga na apresentação</h3>
+        <!-- Vídeo abaixo do título -->
+        <div
+          class="banner-video group relative w-full aspect-video rounded-xl overflow-hidden mb-4 cursor-pointer"
+          data-embed="https://www.youtube.com/embed/oKF-ZNFz92M"
+          role="button"
+          tabindex="0"
+          aria-label="Assistir vídeo"
+        >
+          <img src="https://i.ytimg.com/vi/oKF-ZNFz92M/hqdefault.jpg" alt="Vídeo da apresentação" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+            <span class="w-12 h-12 rounded-full bg-[#194f90] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+          </span>
+        </div>
+        <p class="text-center text-sm text-ink-muted mb-5">Preencha seus dados para receber o link do evento e os lembretes.</p>
+
+        <!-- Formulário de inscrição do WebinarJam (embed-form) -->
+        <div class="wj-embed-wrapper" data-webinar-hash="13qvo4by">
+          <script is:inline src="https://event.webinarjam.com/register/13qvo4by/embed-form?formButtonText=Register&formAccentColor=%2329b6f6&formAccentOpacity=0.95&formBgColor=%23ffffff&formBgOpacity=1"></script>
+        </div>
+
+        <div class="mt-5">
+          <p class="text-center text-xs text-ink-muted mb-2">A próxima apresentação começa em</p>
+          <CountdownBoxes size="sm" />
+          <p class="text-center text-[0.72rem] text-ink-faint mt-3">Evento online · Gratuito · Vagas limitadas</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    document.querySelectorAll('.banner-video').forEach(function (el) {
+      function play() {
+        var embed = el.getAttribute('data-embed');
+        if (!embed || el.dataset.loaded) return;
+        el.dataset.loaded = '1';
+        var sep = embed.indexOf('?') > -1 ? '&' : '?';
+        var f = document.createElement('iframe');
+        f.src = embed + sep + 'autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1';
+        f.title = 'Vídeo';
+        f.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        f.setAttribute('allowfullscreen', '');
+        f.className = 'absolute inset-0 w-full h-full border-0';
+        el.innerHTML = '';
+        el.appendChild(f);
+      }
+      el.addEventListener('click', play);
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+    });
+  })();
+</script>

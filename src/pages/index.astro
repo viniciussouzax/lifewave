@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LocalHome from '../components/local/LocalHome.astro';
+import ApresentacaoLanding from '../components/local/ApresentacaoLanding.astro';
 import { readData } from '../lib/readData';
 
 const siteConfig = readData('siteConfig.json');
+const title = 'Apresentação online e gratuita — LifeWave';
+const description = 'Uma nova conversa sobre saúde, longevidade e o potencial do corpo humano: peptídeos, regeneração celular e fotobiomodulação. Participe da apresentação online e gratuita.';
 ---
 
-<BaseLayout title={siteConfig.name} description={siteConfig.description}>
-  <LocalHome />
+<BaseLayout title={title} description={description} hideTopBars={true} flushFooter={true}>
+  <ApresentacaoLanding />
 </BaseLayout>

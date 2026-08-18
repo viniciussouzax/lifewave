@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostVideo from '../components/ui/PostVideo.astro';
 import PostCard from '../components/ui/PostCard.astro';
+import CountdownBoxes from '../components/ui/CountdownBoxes.astro';
 import { getCollection } from 'astro:content';
 import { readData } from '../lib/readData';
 import { normalizeCategories, getCategorySlug } from '../lib/categorySlug';
@@ -51,7 +52,8 @@ const inlineCta = articleCta?.inline || {};
 const banner = articleCta?.banner || {};
 const bannerVideo = banner?.video ? parseVideoUrl(banner.video) : null;
 const hasBannerVideo = !!(bannerVideo && bannerVideo.provider !== 'unknown');
-const ctaUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '#';
+// CTAs de inscrição do artigo levam a pessoa para o formulário da home.
+const ctaUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '/#hero-form';
 const inlineEveryN = Math.max(1, Number(inlineCta?.everyNHeadings ?? 3));
 
 const cover = data.heroImage || data.cover || data.coverImage || '';
@@ -217,10 +219,10 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
               <div class="text-lg text-ink-muted leading-snug min-w-0 md:flex-1">
                 <span class="cta-live-dot mr-1.5"></span>Nossa próxima apresentação sobre a LifeWave começa em <span class="whitespace-nowrap text-ink"><span aria-hidden="true" class="mr-1">⏱️</span><strong class="font-semibold tabular-nums" data-countdown>00:00:00</strong></span>. Participe e tire suas dúvidas em tempo real.
               </div>
-              <a href={ctaUrl(inlineCta?.buttonUrl)} class="!no-underline !text-white shrink-0 self-start md:self-auto inline-flex items-center gap-1.5 bg-primary text-base font-semibold px-5 py-2.5 rounded-full hover:brightness-95 transition-[filter]">
+              <button type="button" class="wj-embed-button !text-white shrink-0 self-start md:self-auto inline-flex items-center gap-1.5 bg-primary text-base font-semibold px-5 py-2.5 rounded-full hover:brightness-95 transition-[filter] cursor-pointer" data-webinarHash="13qvo4by">
                 {inlineCta?.buttonLabel || 'Participar'}
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -231,11 +233,10 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
             <span class="inline-flex items-center gap-2 mono uppercase text-primary text-xs tracking-widest mb-4">
               <span class="cta-live-dot"></span>{webinar?.eyebrow || 'Apresentação ao vivo'}
             </span>
-            <p class="text-ink-muted text-sm md:text-base mb-1">A próxima apresentação começa em</p>
-            <p class="mono text-4xl md:text-5xl font-semibold text-[#194f90] tabular-nums tracking-tight mb-6 flex items-center justify-center gap-2">
-              <span aria-hidden="true">⏱️</span>
-              <span data-countdown>00:00:00</span>
-            </p>
+            <h2 class="font-display text-2xl md:text-3xl text-ink leading-tight mb-4">A próxima apresentação começa em</h2>
+            <div class="mb-6">
+              <CountdownBoxes size="lg" />
+            </div>
             {/* Vídeo de convite — só no mobile (no desktop ele vive no banner lateral fixo) */}
             {hasBannerVideo && (
               <div
@@ -255,10 +256,10 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
             )}
             <p class="text-ink-muted max-w-xl mx-auto mb-2 leading-relaxed">Participe da nossa apresentação sobre a LifeWave e tire suas dúvidas em tempo real.</p>
             <p class="text-ink-faint text-sm max-w-xl mx-auto mb-6 leading-relaxed">Entenda como a tecnologia dos produtos LifeWave pode ajudar você a viver melhor, conheça os descontos para Clientes Preferenciais e descubra a oportunidade de se tornar um Brand Partner.</p>
-            <a href={ctaUrl(webinar?.buttonUrl)} class="btn btn-primary inline-flex items-center gap-2 px-6 py-3 text-base">
+            <button type="button" class="btn btn-primary inline-flex items-center gap-2 px-6 py-3 text-base wj-embed-button" data-webinarHash="13qvo4by">
               {webinar?.buttonLabel || 'Quero participar'}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+            </button>
           </section>
         )}
 
@@ -284,11 +285,10 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
                 <span class="inline-flex items-center gap-1.5 mono uppercase text-primary text-[11px] tracking-widest mb-3">
                   <span class="cta-live-dot"></span>{banner?.eyebrow || 'Ao vivo'}
                 </span>
-                <p class="text-ink-muted text-xs mb-0.5">A próxima apresentação começa em</p>
-                <p class="mono text-2xl font-semibold text-[#194f90] tabular-nums mb-3 flex items-center justify-center gap-1.5">
-                  <span aria-hidden="true">⏱️</span>
-                  <span data-countdown>00:00:00</span>
-                </p>
+                <h3 class="font-display text-lg text-ink leading-tight mb-3">A próxima apresentação começa em</h3>
+                <div class="mb-4">
+                  <CountdownBoxes size="sm" />
+                </div>
                 {hasBannerVideo && (
                   <div
                     class="banner-video group relative w-full aspect-video rounded-md overflow-hidden mb-4 cursor-pointer"
@@ -307,9 +307,9 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
                 )}
                 <p class="text-sm text-ink-muted mb-1.5 leading-relaxed">Participe da nossa apresentação sobre a LifeWave e tire suas dúvidas em tempo real.</p>
                 <p class="text-xs text-ink-faint mb-4 leading-relaxed">Entenda como a tecnologia dos produtos LifeWave pode ajudar você a viver melhor, conheça os descontos para Clientes Preferenciais e descubra a oportunidade de se tornar um Brand Partner.</p>
-                <a href={ctaUrl(banner?.buttonUrl)} class="btn btn-primary w-full justify-center">
+                <button type="button" class="btn btn-primary w-full justify-center wj-embed-button" data-webinarHash="13qvo4by">
                   {banner?.buttonLabel || 'Garantir minha vaga'}
-                </a>
+                </button>
               </div>
             )}
           </div>
@@ -530,5 +530,8 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
     .prose-msia .faq-answer > :first-child { margin-top: 0; }
     .prose-msia .faq-answer > :last-child { margin-bottom: 0; }
   </style>
+
+  <!-- WebinarJam: botão de inscrição em modal (liga todos os .wj-embed-button da página) -->
+  <script is:inline src="https://event.webinarjam.com/register/13qvo4by/embed-button?formTemplate=8&formColor=1&buttonText=Register"></script>
 
 </BaseLayout>

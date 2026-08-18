@@ -1,0 +1,100 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { readFileFromRepo } from '../../plugins/_server';
+
+let subs: any[] = [];
+try {
+    const raw = await readFileFromRepo('src/data/subscribers.json');
+    const parsed = raw ? JSON.parse(raw) : [];
+    subs = Array.isArray(parsed) ? parsed.slice().reverse() : []; // mais recentes primeiro
+} catch {
+    subs = [];
+}
+
+function fmtDate(d: string): string {
+    try {
+        return new Date(d).toLocaleString('pt-BR', {
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+        });
+    } catch {
+        return d || '';
+    }
+}
+---
+<AdminLayout title="Inscritos" activeSection="inscritos">
+    <div class="mb-8 flex items-start justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-ink">Inscritos</h1>
+            <p class="text-ink-muted mt-1">Pessoas que preencheram o formulário de inscrição da apresentação.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-ink-muted">{subs.length} {subs.length === 1 ? 'inscrito' : 'inscritos'}</span>
+            {subs.length > 0 && (
+                <button id="export-csv" type="button" class="text-sm font-semibold bg-primary text-surface rounded px-4 py-2 hover:brightness-90 transition">
+                    Exportar CSV
+                </button>
+            )}
+        </div>
+    </div>
+
+    {subs.length === 0 ? (
+        <div class="rounded-lg border border-border bg-surface p-8 text-center text-ink-muted">
+            Nenhum inscrito ainda. Quando alguém preencher o formulário da home, aparece aqui.
+        </div>
+    ) : (
+        <div class="overflow-x-auto rounded-lg border border-border">
+            <table id="subs-table" class="w-full text-sm text-left">
+                <thead class="bg-surface text-ink-muted uppercase text-[11px] tracking-wide">
+                    <tr>
+                        <th class="px-4 py-3 font-semibold">Nome</th>
+                        <th class="px-4 py-3 font-semibold">E-mail</th>
+                        <th class="px-4 py-3 font-semibold">WhatsApp</th>
+                        <th class="px-4 py-3 font-semibold">Interesse</th>
+                        <th class="px-4 py-3 font-semibold">Origem</th>
+                        <th class="px-4 py-3 font-semibold">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {subs.map((s) => (
+                        <tr class="border-t border-border hover:bg-surface/60">
+                            <td class="px-4 py-3 text-ink" data-col="nome">{s.name || '—'}</td>
+                            <td class="px-4 py-3" data-col="email">{s.email}</td>
+                            <td class="px-4 py-3" data-col="whatsapp">{s.whatsapp || '—'}</td>
+                            <td class="px-4 py-3" data-col="interesse">{s.interest || '—'}</td>
+                            <td class="px-4 py-3" data-col="origem">{s.source || '—'}</td>
+                            <td class="px-4 py-3 whitespace-nowrap" data-col="data">{fmtDate(s.subscribedAt)}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    )}
+</AdminLayout>
+
+<script is:inline>
+    (function () {
+        var btn = document.getElementById('export-csv');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var rows = [['Nome', 'E-mail', 'WhatsApp', 'Interesse', 'Origem', 'Data']];
+            document.querySelectorAll('#subs-table tbody tr').forEach(function (tr) {
+                var cells = [];
+                tr.querySelectorAll('td').forEach(function (td) { cells.push(td.textContent.trim()); });
+                rows.push(cells);
+            });
+            var csv = rows.map(function (r) {
+                return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+            }).join('\n');
+            var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'inscritos.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    })();
+</script>

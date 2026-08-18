@@ -4,6 +4,9 @@ import { normalizeCategories, collectOrphanCategories } from '../../lib/category
 import { getCollection } from 'astro:content';
 import { BRAND_ICONS } from '../../lib/brandIcons';
 
+interface Props { flush?: boolean }
+const { flush = false } = Astro.props;
+
 const siteConfig = readData('siteConfig.json');
 const menuItems: any[] = readData('menu.json', { items: [] }).items || [];
 
@@ -30,7 +33,6 @@ const socials: Array<[string, string, string]> = [
 // Links legais/institucionais do rodapé (páginas reais do site)
 const legal = [
   ['Quem somos', '/quem-somos'],
-  ['Contato', '/contato'],
   ['Privacidade', '/privacidade'],
   ['Termos', '/termos'],
 ];
@@ -43,7 +45,7 @@ const igItems = (Array.isArray(siteConfig.instagramFeed) ? siteConfig.instagramF
 const igProfile = siteConfig.social?.instagram || '';
 ---
 
-<footer class="mt-24">
+<footer class={flush ? '' : 'mt-24'}>
   <!-- Área principal (fundo com o padrão de bolhas) -->
   <div class="footer-bubbles">
     <div class="container-x py-14 md:py-16">

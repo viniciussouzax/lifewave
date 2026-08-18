@@ -91,6 +91,10 @@ export default function AdminNav({ activeSection = '', extraItems = [], logo, si
                         item={{ label: 'Início', href: '/admin', icon: Home, section: 'dashboard' }}
                         active={activeSection === 'dashboard'}
                     />
+                    <NavLink
+                        item={{ label: 'Inscritos', href: '/admin/inscritos', icon: Users, section: 'inscritos' }}
+                        active={activeSection === 'inscritos'}
+                    />
                 </div>
 
                 {/* Conteúdo */}

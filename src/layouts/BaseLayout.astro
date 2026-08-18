@@ -84,6 +84,8 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   bodyClass?: string;
+  hideTopBars?: boolean;
+  flushFooter?: boolean;
 }
 
 const defaultTitle = siteConfig.seo?.title || siteConfig.name;
@@ -93,14 +95,16 @@ const {
   image = '',
   type = 'website',
   bodyClass = '',
+  hideTopBars = false,
+  flushFooter = false,
 } = Astro.props;
 
 // Barra de aviso/CTA no topo (acima da nav), só nas páginas de artigo. Editável em articleCta.json.
 const articleCta = readData('articleCta.json', {}) as any;
 const announcement = articleCta?.announcement || {};
 // A barra clara acima da nav vira o aviso da "próxima apresentação" (com timer).
-const showAnnouncement = announcement?.enabled !== false;
-const annUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '#';
+const showAnnouncement = announcement?.enabled !== false && !hideTopBars;
+const annUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '/#hero-form';
 const hexOr = (v: any, fb: string) => (typeof v === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(v.trim())) ? v.trim() : fb;
 const annBg = hexOr(announcement?.bg, '#ECF5FA');
 const annColor = hexOr(announcement?.textColor, '#373F41');
@@ -108,7 +112,8 @@ const annColor = hexOr(announcement?.textColor, '#373F41');
 // Barra de aviso ESCURA no topo (acima da faixa clara), só em artigos.
 const topNotice = articleCta?.topNotice || {};
 const showTopNotice = topNotice?.enabled !== false
-  && !!((topNotice?.text || '').trim() || (topNotice?.buttonLabel || '').trim());
+  && !!((topNotice?.text || '').trim() || (topNotice?.buttonLabel || '').trim())
+  && !hideTopBars;
 const topBg = hexOr(topNotice?.bg, '#194F90');
 const topColor = hexOr(topNotice?.textColor, '#ffffff');
 
@@ -211,7 +216,7 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
     <slot />
   </main>
 
-  <Footer />
+  <Footer flush={flushFooter} />
 
   <BodyEndPlugins />
 
@@ -221,10 +226,13 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
   <script is:inline>
     (function(){
       var els = document.querySelectorAll('[data-countdown]');
-      if(!els.length) return;
+      if(!els.length && !document.querySelector('[data-cd]')) return;
       var TIMES = [[11, 0], [15, 0], [20, 0]];
       function pad(n){ return (n < 10 ? '0' : '') + n; }
       function nextStart(now){
+        // A programação de webinars começa 20/08/2026 às 11h. Antes disso, conta para a 1ª sessão.
+        var firstSession = new Date(2026, 7, 20, 11, 0, 0, 0);
+        if(now.getTime() < firstSession.getTime()) return firstSession;
         for(var i = 0; i < TIMES.length; i++){
           var d = new Date(now);
           d.setHours(TIMES[i][0], TIMES[i][1], 0, 0);
@@ -239,11 +247,26 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
         var now = new Date();
         var target = nextStart(now);
         var remaining = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000));
-        var h = Math.floor(remaining / 3600);
+        var d = Math.floor(remaining / 86400);
+        var h = Math.floor((remaining % 86400) / 3600);
         var m = Math.floor((remaining % 3600) / 60);
         var s = remaining % 60;
-        var txt = pad(h) + ':' + pad(m) + ':' + pad(s);
+        var txt = (d > 0 ? d + 'd ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
         for(var i = 0; i < els.length; i++){ els[i].textContent = txt; }
+        // Caixas segmentadas (dias/horas/min/seg) nos cards
+        setSeg('d', pad(d)); setSeg('h', pad(h)); setSeg('m', pad(m)); setSeg('s', pad(s));
+      }
+      function setSeg(k, v){
+        var list = document.querySelectorAll('[data-cd="' + k + '"]');
+        for(var i = 0; i < list.length; i++){ list[i].textContent = v; }
+      }
+      // Data da próxima sessão (eyebrow da landing) — preenchido uma vez.
+      var ns = document.querySelector('[data-next-session]');
+      if(ns){
+        var nt = nextStart(new Date());
+        try {
+          ns.textContent = nt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) + ' às ' + nt.getHours() + 'h (GMT-3)';
+        } catch(e){}
       }
       tick();
       setInterval(tick, 1000);

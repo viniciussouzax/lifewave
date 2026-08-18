@@ -63,6 +63,8 @@ export const POST: APIRoute = async ({ request }) => {
 
         const email = (body.email || '').trim().toLowerCase();
         const name = (body.name || '').trim();
+        const whatsapp = (body.whatsapp || '').trim();
+        const interest = (body.interest || '').trim();
         const source = (body.source || 'widget') as string;
 
         if (!email) return json({ error: 'Email é obrigatório.' }, 400);
@@ -87,6 +89,8 @@ export const POST: APIRoute = async ({ request }) => {
         const newSub = {
             email,
             name,
+            whatsapp,
+            interest,
             subscribedAt: new Date().toISOString(),
             source,
             tags: [],

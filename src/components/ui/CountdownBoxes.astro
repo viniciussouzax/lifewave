@@ -1,0 +1,30 @@
+---
+/**
+ * CountdownBoxes.astro — contador em caixas segmentadas (horas/min/seg).
+ * As caixas são preenchidas em runtime pelo script do contador em BaseLayout
+ * (via [data-cd="h|m|s"]). Cores da marca; sem "dias" (horários são no mesmo dia).
+ */
+interface Props {
+  size?: 'lg' | 'sm';
+}
+const { size = 'lg' } = Astro.props;
+
+const cfg = size === 'lg'
+  ? { box: 'w-[4.25rem] py-3', num: 'text-2xl md:text-3xl', label: 'text-[0.62rem]', gap: 'gap-2 md:gap-3' }
+  : { box: 'w-[3.1rem] py-2', num: 'text-lg', label: 'text-[0.55rem]', gap: 'gap-1.5' };
+
+const units = [
+  { key: 'd', label: 'dias' },
+  { key: 'h', label: 'horas' },
+  { key: 'm', label: 'min' },
+  { key: 's', label: 'seg' },
+];
+---
+<div class={`flex items-stretch justify-center ${cfg.gap}`} role="timer" aria-label="Tempo até a próxima apresentação">
+  {units.map((u) => (
+    <div class={`flex flex-col items-center bg-primary text-white rounded-lg ${cfg.box}`}>
+      <span class={`font-bold tabular-nums leading-none ${cfg.num}`} data-cd={u.key}>00</span>
+      <span class={`uppercase tracking-wide mt-1.5 text-white/70 ${cfg.label}`}>{u.label}</span>
+    </div>
+  ))}
+</div>
