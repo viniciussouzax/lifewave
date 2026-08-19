@@ -8,10 +8,8 @@ const menuItems: any[] = readData('menu.json', { items: [] }).items || [];
 
 // CTA de contato do site local (só aparece se houver WhatsApp configurado).
 const biz = readData('localBusiness.json', {}) as any;
-const waNumber = (biz.whatsapp || '').replace(/\D/g, '');
-const waUrl = waNumber
-  ? `https://wa.me/${waNumber}?text=${encodeURIComponent(biz.whatsappMessage || 'Olá! Vim pelo site e gostaria de um orçamento.')}`
-  : '';
+// Botão WhatsApp da nav → grupo da comunidade LifeWave.
+const waUrl = 'https://chat.whatsapp.com/CnhqkF4S9fg2H2hqe3G81B';
 
 const posts = await getCollection('blog');
 const categoriesData = readData('categories.json', []);
