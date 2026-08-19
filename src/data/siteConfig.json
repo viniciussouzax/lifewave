@@ -4,7 +4,7 @@
   "url": "https://lifewave.team",
   "author": "Equipe do Blog",
   "language": "pt-BR",
-  "logo": "/logo.svg",
+  "logo": "/logo.png",
   "theme": {
     "primary": "#194F90",
     "dark": "#0D2137",
@@ -32,7 +32,7 @@
     "privacy_last_updated": ""
   },
   "menuHoverEnabled": true,
-  "logoHeight": 44,
+  "logoHeight": 58,
   "footer": {
     "copyright": "Lifewave Team Brand Partner",
     "description": "Somos um portal independente formado por Brand Partners, representantes autorizados da LifeWave, dedicado a promover seus produtos e sua oportunidade de negócio com responsabilidade e transparência."

@@ -76,16 +76,14 @@ const igProfile = siteConfig.social?.instagram || '';
         </div>
 
         <!-- Tópicos -->
-        {allCategories.length > 0 && (
-          <div class="md:col-span-2">
-            <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">tópicos</p>
-            <ul class="space-y-2.5 text-sm">
-              {allCategories.map((cat) => (
-                <li><a href={`/categoria/${cat.slug}`} class="text-[#194f90] hover:text-[#5EB3E4] transition-colors">{cat.name}</a></li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div class="md:col-span-2">
+          <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">tópicos</p>
+          <ul class="space-y-2.5 text-sm">
+            {[['Comece aqui', '/categoria/comece-aqui'], ['Bem-estar', '/categoria/bem-estar'], ['Tecnologia', '/categoria/tecnologia']].map(([label, href]) => (
+              <li><a href={href} class="text-[#194f90] hover:text-[#5EB3E4] transition-colors">{label}</a></li>
+            ))}
+          </ul>
+        </div>
 
         <!-- Participe da conversa -->
         {socials.length > 0 && (
