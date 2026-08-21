@@ -127,6 +127,10 @@ src/
 
 ## Docs irmãos
 
+- `PERSONALIZACOES.md` — **catálogo de TODAS as customizações deste projeto Lifewave**
+  (design system, home/landing WebinarJam, artigo, blog, footer, nav, produtos,
+  admin, contador, integrações) com arquivos e guia de como reaplicar. Ler antes
+  de mexer no visual/funil.
 - `PRODUCT.md` — quem usa, brand, anti-references, princípios (compartilha DNA
   com `meu-site-com-ia-2.0`, escopado pro contexto blog).
 - `DESIGN.md` — tokens reais do scaffold (OKLCH), tipografia, componentes,
