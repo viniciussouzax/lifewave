@@ -143,11 +143,14 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
 
 ## 11. Config / infra (dados do usuário — `src/data/`)
 - `siteConfig.json`: `theme.primary=#194F90`, `theme.accent=#5EB3E4`,
-  `theme.font=montserrat`, `logo=/logo.png`, `logoHeight`, `url=https://lifewave.team`,
+  `theme.font=montserrat`, `logo=/logo.png`, `logoHeight`, `url=https://brandpartner.team`,
   `footer.description/copyright`.
 - `menu.json`: Apresentação · Produtos · Artigos.
-- **Domínio** `lifewave.team` (+ www) no projeto Vercel `lifewave` (time
-  `empreendedorus`).
+- **Domínio principal** `brandpartner.team` (+ www → apex) no projeto Vercel
+  `lifewave` (time `empreendedorus`). `lifewave.team` também segue apontado ao
+  mesmo projeto (pode virar redirect → brandpartner.team). DNS de ambos na
+  Cloudflare (registros A `216.198.79.1` + `64.29.17.1`, CNAME www →
+  `cname.vercel-dns.com`, todos DNS-only).
 
 ---
 
