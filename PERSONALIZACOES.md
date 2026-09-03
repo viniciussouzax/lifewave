@@ -56,7 +56,7 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
   data da próxima sessão (preenchida por JS) + `h1` (Montserrat) + subtítulo +
   5 bullets com check branco em círculo. Coluna direita (`grid-cols-[1fr_440px]`,
   `items-start`) = card `#ECF5FA` com título (h3), vídeo YouTube (facade lite) e o
-  **formulário do WebinarJam** (embed-form, hash `13qvo4by`).
+  **formulário do WebinarJam** (embed-form, hash `ykzwy0b7`).
 - `BaseLayout` recebe `hideTopBars` e `flushFooter` (só a home usa) → sem barras de
   topo e footer colado (margin 0).
 - **WebinarJam embed-form** centralizado (`.wj-embed-wrapper { margin: auto }`),
@@ -76,7 +76,7 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
 - **3 perguntas fixas de FAQ** (fototerapia LifeWave) sempre no fim de toda matéria.
 - **Aviso legal** padrão após a FAQ.
 - **CTAs de apresentação** (ligadas ao WebinarJam, botão-modal `wj-embed-button`,
-  hash `13qvo4by`, `formTemplate=8`):
+  hash `ykzwy0b7`, `formTemplate=8`):
   - CTA webinar pós-FAQ, banner lateral fixo (sticky, desktop), e **CTA inline**
     distribuída a cada N `<h2>` (via script, como banner de ad controlado).
   - Cada CTA com **contador regressivo** em caixas (dias/horas/min/seg).
@@ -131,7 +131,7 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
   sessões diárias **11h / 15h / 20h**, começando **20/08/2026 11h**; preenche
   `[data-countdown]` (HH:MM:SS, com "Nd" se >1 dia), `[data-cd="d|h|m|s"]` (caixas) e
   `[data-next-session]` (data por extenso). Horário local do visitante.
-- **WebinarJam** (hash `13qvo4by`): embed-**form** na home; embed-**button** (modal,
+- **WebinarJam** (hash `ykzwy0b7`): embed-**form** na home; embed-**button** (modal,
   `formTemplate=8`) nos artigos. Scripts carregam do domínio deles → só renderizam
   no domínio publicado.
 - **Formulário próprio** (quando usado): POST `/api/subscribe` salva
