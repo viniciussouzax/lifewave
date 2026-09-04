@@ -4,6 +4,7 @@ import PostVideo from '../components/ui/PostVideo.astro';
 import PostCard from '../components/ui/PostCard.astro';
 import { getCollection } from 'astro:content';
 import { readData } from '../lib/readData';
+import { PRODUTO_SLUGS } from '../lib/produtos';
 import { normalizeCategories, getCategorySlug } from '../lib/categorySlug';
 import { parseVideoUrl } from '../lib/videoEmbed';
 import { renderShortcodes, hasShortcodes } from '../lib/shortcodes';
@@ -27,6 +28,8 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await post.render();
 const data = post.data;
+/** Breadcrumb aparece só nos artigos de produto (e na /produtos). */
+const ehProduto = PRODUTO_SLUGS.has(post.slug ?? post.id);
 
 const siteConfig = readData('siteConfig.json');
 const authorsData = readData('authors.json', []) as any[];
@@ -112,7 +115,8 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
   />
 
   <article class="container-x py-10 md:py-14">
-    <!-- BREADCRUMB -->
+    <!-- BREADCRUMB: só nos artigos de produto (a pedido) -->
+    {ehProduto && (
     <nav class="mono uppercase text-ink-faint text-xs mb-8" aria-label="Breadcrumb">
       <a href="/" class="hover:text-ink transition-colors">início</a>
       <span class="mx-2 opacity-50">/</span>
@@ -126,6 +130,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
       )}
       <span class="text-ink-muted">leitura atual</span>
     </nav>
+    )}
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
       <!-- COLUNA PRINCIPAL -->
