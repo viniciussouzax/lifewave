@@ -115,9 +115,35 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
 - A barra clara mostra só um texto (removidos countdown/botão).
 
 ## 8. Página de produtos — `src/pages/produtos.astro` → `src/components/local/ProdutosPage.astro`
-- Catálogo dos **25 produtos LifeWave** em 7 categorias (dados de
-  `knowledge/products`). Cards com nome/descrição/preço (USD referência) + CTA
-  "Falar com um Brand Partner" (WhatsApp de `localBusiness.json`).
+- Catálogo dos **25 produtos LifeWave** em 7 categorias. Cards com **foto oficial**,
+  nome/descrição/preço (USD referência) + CTA "Falar com um Brand Partner"
+  (WhatsApp de `localBusiness.json`).
+- Cada card é um `<a>` que **linka para o artigo do produto** (campo `slug`), com a
+  foto em `public/assets/produtos/<img>` (campo `img`). O array `categorias` é
+  hardcoded no componente — para adicionar produto, incluir `nome/desc/preco/img/slug`.
+
+## 8b. Os 25 artigos de produto — `src/content/blog/<slug>.md`
+- Um artigo por produto, com o **conteúdo oficial traduzido** da loja LifeWave
+  (`lifewave.com/wellnesspatchesoficial/store/product/<SKU>`), a pedido do Brand
+  Partner (uso de material aprovado pela marca).
+- Estrutura: intro → `## Benefícios` → seções extras → `## Como usar` →
+  `## Cuidados e advertências` → `## Perguntas frequentes (FAQ)`. O template do
+  artigo injeta sozinho o accordion, as 3 perguntas fixas, as CTAs e o aviso legal.
+- **Só entram as FAQs específicas do produto** — as 3 genéricas de fototerapia já
+  vêm do template (`[slug].astro`), então repeti-las duplicaria.
+- **Gotcha:** nunca começar parágrafo do fim da matéria com `**Negrito:**` — o script
+  do template converte `<p><strong>` final em item de FAQ (foi o que fez "Cuidados:"
+  virar pergunta). Por isso "Cuidados" é uma seção `##` com texto simples.
+- **Compliance:** nunca descrever onde aplicar o adesivo — sempre "conforme a
+  orientação oficial da LifeWave". Frequência de uso (5-7x/semana etc.) pode.
+  Regras dos EUA (restrição por estado, política de reembolso, financiamento) foram
+  omitidas por não valerem no Brasil.
+
+### Base de conhecimento — `knowledge/products/loja-oficial.json`
+Coleta dos 25 produtos da loja oficial (descrição, benefícios, instruções, cautions,
+preço, SKU, **217 FAQs** e URL da foto original). Serve de fonte para reprocessar os
+artigos ou atualizar a `/produtos` sem raspar o site de novo. As páginas oficiais são
+**SSR** — dá pra buscar com `curl` simples, sem browser.
 
 ## 9. Admin
 - **Cores neutras** (preto/branco/cinza, sem enfeites de cor).
