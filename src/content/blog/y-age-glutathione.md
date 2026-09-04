@@ -8,7 +8,7 @@ author: "equipe"
 draft: false
 ---
 
-Eleve o seu bem-estar com os adesivos Y-Age® Glutathione — seu caminho para um bem-estar melhor e para reduzir o estresse. Porque um estado harmonioso de saúde é a sua maior defesa.
+Eleve o seu bem-estar com os adesivos Y-Age® Glutathione, seu caminho para um bem-estar melhor e para reduzir o estresse. Porque um estado harmonioso de saúde é a sua maior defesa.
 
 ## Benefícios
 
@@ -17,6 +17,14 @@ Eleve o seu bem-estar com os adesivos Y-Age® Glutathione — seu caminho para u
 - Um estado geral de saúde é a sua maior defesa
 - Sem medicamentos ou estimulantes
 - Forma exclusiva e patenteada de fototerapia
+
+## Cellular Performance System
+
+Ative o poder das suas células-tronco† com o Cellular Performance System: dois produtos inovadores em um sistema diário que apoia a atividade das células-tronco†, a nutrição celular e a resiliência. O sistema combina a tecnologia patenteada de fototerapia da LifeWave com o que há de mais avançado em suporte nutricional, unindo o adesivo LifeWave X39® ao Cellergize™ Morning.
+
+† Impulsionado por CyanthOx, presente no Cellergize™ Morning.
+
+*Esta afirmação não foi avaliada pela Food and Drug Administration. Este produto não se destina a diagnosticar, tratar, curar ou prevenir qualquer doença.
 
 ## Como usar
 

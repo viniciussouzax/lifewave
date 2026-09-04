@@ -8,7 +8,7 @@ author: "equipe"
 draft: false
 ---
 
-Abrace a vitalidade do movimento com o Y-Age Carnosine — ajudando você a acender a sua paixão pelo exercício e pelo bem-estar físico como parte integrante da sua jornada de bem-estar. Não se trata apenas de manter o ritmo; trata-se de abrir caminho.
+Abrace a vitalidade do movimento com o Y-Age Carnosine, ajudando você a acender a sua paixão pelo exercício e pelo bem-estar físico como parte integrante da sua jornada de bem-estar. Não se trata apenas de manter o ritmo; trata-se de abrir caminho.
 
 ## Benefícios
 
@@ -19,7 +19,15 @@ Abrace a vitalidade do movimento com o Y-Age Carnosine — ajudando você a acen
 
 ## Acupressão sem agulhas
 
-A acupressão funciona de forma semelhante à acupuntura, baseada no conceito de que todos temos um campo de energia humana que flui por “meridianos” no corpo. A crença da medicina tradicional chinesa é a de que é necessário evitar bloqueios da energia Qi nesses meridianos — e a proposta dos adesivos é estimular esses pontos sem o uso de agulhas.
+A acupressão funciona de forma semelhante à acupuntura, baseada no conceito de que todos temos um campo de energia humana que flui por “meridianos” no corpo. A crença da medicina tradicional chinesa é a de que é necessário evitar bloqueios da energia Qi nesses meridianos, e a proposta dos adesivos é estimular esses pontos sem o uso de agulhas.
+
+## Cellular Performance System
+
+Ative o poder das suas células-tronco† com o Cellular Performance System: dois produtos inovadores em um sistema diário que apoia a atividade das células-tronco†, a nutrição celular e a resiliência. O sistema combina a tecnologia patenteada de fototerapia da LifeWave com o que há de mais avançado em suporte nutricional, unindo o adesivo LifeWave X39® ao Cellergize™ Morning.
+
+† Impulsionado por CyanthOx, presente no Cellergize™ Morning.
+
+*Esta afirmação não foi avaliada pela Food and Drug Administration. Este produto não se destina a diagnosticar, tratar, curar ou prevenir qualquer doença.
 
 ## Como usar
 

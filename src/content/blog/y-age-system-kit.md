@@ -1,6 +1,6 @@
 ---
 title: "Y-Age System Kit: Aeon, Carnosine e Glutathione juntos"
-description: "O Y-Age System Kit reúne os três adesivos da linha Y-Age — Aeon, Carnosine e Glutathione — em uma combinação sinérgica com protocolo de rodízio."
+description: "O Y-Age System Kit reúne os três adesivos da linha Y-Age, Aeon, Carnosine e Glutathione, em uma combinação sinérgica com protocolo de rodízio."
 pubDate: "2026-09-03"
 heroImage: "/assets/produtos/lifewave-y-age-system-kit.jpg"
 category: "Bem-estar"
@@ -21,6 +21,14 @@ Honre o seu bem-estar com a simplicidade e a eficácia do Y-Age Aeon®, Y-Age® 
 - Um estado geral de saúde é a sua maior defesa
 - Sem medicamentos ou estimulantes
 - Forma exclusiva e patenteada de fototerapia
+
+## Cellular Performance System
+
+Ative o poder das suas células-tronco† com o Cellular Performance System: dois produtos inovadores em um sistema diário que apoia a atividade das células-tronco†, a nutrição celular e a resiliência. O sistema combina a tecnologia patenteada de fototerapia da LifeWave com o que há de mais avançado em suporte nutricional, unindo o adesivo LifeWave X39® ao Cellergize™ Morning.
+
+† Impulsionado por CyanthOx, presente no Cellergize™ Morning.
+
+*Esta afirmação não foi avaliada pela Food and Drug Administration. Este produto não se destina a diagnosticar, tratar, curar ou prevenir qualquer doença.
 
 ## Como usar
 

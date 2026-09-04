@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostVideo from '../components/ui/PostVideo.astro';
 import PostCard from '../components/ui/PostCard.astro';
-import CountdownBoxes from '../components/ui/CountdownBoxes.astro';
 import { getCollection } from 'astro:content';
 import { readData } from '../lib/readData';
 import { normalizeCategories, getCategorySlug } from '../lib/categorySlug';
@@ -217,7 +216,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
           <div id="inline-cta-source" data-every={inlineEveryN} style="display:none">
             <div class="inline-cta my-6 rounded-lg bg-[#ECF5FA] px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-5">
               <div class="text-lg text-ink-muted leading-snug min-w-0 md:flex-1">
-                <span class="cta-live-dot mr-1.5"></span>Nossa próxima apresentação sobre a LifeWave começa em <span class="whitespace-nowrap text-ink"><span aria-hidden="true" class="mr-1">⏱️</span><strong class="font-semibold tabular-nums" data-countdown>00:00:00</strong></span>. Participe e tire suas dúvidas em tempo real.
+                <span class="cta-live-dot mr-1.5"></span>Participe da nossa <strong class="font-semibold text-ink">apresentação online e gratuita</strong> sobre a LifeWave e tire suas dúvidas ao vivo, em tempo real.
               </div>
               <button type="button" class="wj-embed-button !text-white shrink-0 self-start md:self-auto inline-flex items-center gap-1.5 bg-primary text-base font-semibold px-5 py-2.5 rounded-full hover:brightness-95 transition-[filter] cursor-pointer" data-webinarHash="ykzwy0b7">
                 {inlineCta?.buttonLabel || 'Participar'}
@@ -233,10 +232,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
             <span class="inline-flex items-center gap-2 mono uppercase text-primary text-xs tracking-widest mb-4">
               <span class="cta-live-dot"></span>{webinar?.eyebrow || 'Apresentação ao vivo'}
             </span>
-            <h2 class="font-display text-2xl md:text-3xl text-ink leading-tight mb-4">A próxima apresentação começa em</h2>
-            <div class="mb-6">
-              <CountdownBoxes size="lg" />
-            </div>
+            <h2 class="font-display text-2xl md:text-3xl text-ink leading-tight mb-4">Apresentação online e gratuita sobre a LifeWave</h2>
             {/* Vídeo de convite — só no mobile (no desktop ele vive no banner lateral fixo) */}
             {hasBannerVideo && (
               <div
@@ -254,7 +250,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
                 </span>
               </div>
             )}
-            <p class="text-ink-muted max-w-xl mx-auto mb-2 leading-relaxed">Participe da nossa apresentação sobre a LifeWave e tire suas dúvidas em tempo real.</p>
+            <p class="text-ink-muted max-w-xl mx-auto mb-2 leading-relaxed">Participe ao vivo, com um Brand Partner, e tire todas as suas dúvidas em tempo real.</p>
             <p class="text-ink-faint text-sm max-w-xl mx-auto mb-6 leading-relaxed">Entenda como a tecnologia dos produtos LifeWave pode ajudar você a viver melhor, conheça os descontos para Clientes Preferenciais e descubra a oportunidade de se tornar um Brand Partner.</p>
             <button type="button" class="btn btn-primary inline-flex items-center gap-2 px-6 py-3 text-base wj-embed-button" data-webinarHash="ykzwy0b7">
               {webinar?.buttonLabel || 'Quero participar'}
@@ -285,10 +281,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
                 <span class="inline-flex items-center gap-1.5 mono uppercase text-primary text-[11px] tracking-widest mb-3">
                   <span class="cta-live-dot"></span>{banner?.eyebrow || 'Ao vivo'}
                 </span>
-                <h3 class="font-display text-lg text-ink leading-tight mb-3">A próxima apresentação começa em</h3>
-                <div class="mb-4">
-                  <CountdownBoxes size="sm" />
-                </div>
+                <h3 class="font-display text-lg text-ink leading-tight mb-4">Apresentação online e gratuita sobre a LifeWave</h3>
                 {hasBannerVideo && (
                   <div
                     class="banner-video group relative w-full aspect-video rounded-md overflow-hidden mb-4 cursor-pointer"
@@ -305,7 +298,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
                     </span>
                   </div>
                 )}
-                <p class="text-sm text-ink-muted mb-1.5 leading-relaxed">Participe da nossa apresentação sobre a LifeWave e tire suas dúvidas em tempo real.</p>
+                <p class="text-sm text-ink-muted mb-1.5 leading-relaxed">Participe ao vivo, com um Brand Partner, e tire todas as suas dúvidas em tempo real.</p>
                 <p class="text-xs text-ink-faint mb-4 leading-relaxed">Entenda como a tecnologia dos produtos LifeWave pode ajudar você a viver melhor, conheça os descontos para Clientes Preferenciais e descubra a oportunidade de se tornar um Brand Partner.</p>
                 <button type="button" class="btn btn-primary w-full justify-center wj-embed-button" data-webinarHash="ykzwy0b7">
                   {banner?.buttonLabel || 'Garantir minha vaga'}

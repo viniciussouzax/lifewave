@@ -1,8 +1,9 @@
 ---
 /**
- * ProdutosPage.astro — catálogo completo dos produtos LifeWave.
- * Fonte: knowledge/products/catalogo-loja-oficial.md (25 produtos, 7 categorias).
- * No Brasil a compra é com orientação de um Brand Partner → CTA para WhatsApp.
+ * ProdutosPage.astro, catálogo completo dos produtos LifeWave (25 itens).
+ * Layout espelha a loja oficial: filtros na lateral + grade de 3 colunas.
+ * Cada produto: foto oficial (public/assets/produtos), descrição e link pro artigo.
+ * No Brasil a compra é com orientação de um Brand Partner, daí a CTA pro WhatsApp.
  */
 import { readData } from '../../lib/readData';
 
@@ -12,82 +13,56 @@ const waLink = waNumber
   ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Olá! Vim pelo site e gostaria de conhecer os produtos LifeWave.')}`
   : '/';
 
-/** img = foto oficial (public/assets/produtos), slug = artigo dedicado do produto. */
-const categorias = [
-  {
-    nome: 'Bem-estar & Vitalidade',
-    produtos: [
-      { nome: 'LifeWave X39®', desc: 'Adesivo de fototerapia que eleva o peptídeo GHK-Cu — apoia energia, desempenho no exercício e o bem-estar geral.', preco: 'US$ 149,95', img: 'lifewave-x39-patches.jpg', slug: 'lifewave-x39' },
-      { nome: 'LifeWave X49™', desc: 'Adesivo voltado a desempenho, força, resistência, saúde cardiovascular no exercício e recuperação.', preco: 'US$ 149,95', img: 'lifewave-x49-patches.jpg', slug: 'lifewave-x49' },
-      { nome: 'X39® & X49® Performance Bundle', desc: 'Combo dos dois adesivos: energia e saúde geral (X39) + desempenho e recuperação (X49).', preco: 'US$ 279,95', img: 'x39-e-x49-performance-bundle.jpg', slug: 'x39-x49-performance-bundle' },
-    ],
-  },
-  {
-    nome: 'Bem-estar geral',
-    produtos: [
-      { nome: 'Cellular Performance System', desc: 'Adesivo X39 + pó Cellergize Morning — apoia atividade celular, nutrição e resiliência.', preco: 'US$ 229,90', img: 'cellular-performance-system.png', slug: 'cellular-performance-system' },
-      { nome: 'Cellergize™ Duo', desc: 'Cellergize Morning + Evening: energia e defesa antioxidante de dia, preparação para o sono à noite.', preco: 'US$ 149,95', img: 'cellergize-duo.jpg', slug: 'cellergize-duo' },
-      { nome: 'Cellergize™ Morning', desc: 'Bebida matinal (limão e gengibre) que apoia células-tronco, glutationa e defesa antioxidante.', preco: 'US$ 79,95', img: 'cellergize-morning.jpg', slug: 'cellergize-morning' },
-      { nome: 'Cellergize™ Evening', desc: 'Bebida noturna (mel e lavanda) para relaxamento, preparação ao sono e saúde digestiva.', preco: 'US$ 79,95', img: 'cellergize-evening.png', slug: 'cellergize-evening' },
-      { nome: 'Y-Age System Kit', desc: 'Os três adesivos Y-Age — Aeon, Carnosine e Glutathione — com protocolo de rodízio.', preco: 'US$ 209,85', img: 'lifewave-y-age-system-kit.jpg', slug: 'y-age-system-kit' },
-      { nome: 'Y-Age Aeon®', desc: 'Adesivo que promove relaxamento e ajuda na gestão do estresse.', preco: 'US$ 79,95', img: 'lifewave-y-age-aeon-patches.jpg', slug: 'y-age-aeon' },
-      { nome: 'Y-Age Glutathione®', desc: 'Adesivo que apoia a aparência da pele, o relaxamento e a saúde geral.', preco: 'US$ 79,95', img: 'lifewave-y-age-glutathione-patches.jpg', slug: 'y-age-glutathione' },
-      { nome: 'Y-Age Carnosine®', desc: 'Adesivo que incentiva a atividade física e o bem-estar geral.', preco: 'US$ 79,95', img: 'lifewave-y-age-carnosine-patches.jpg', slug: 'y-age-carnosine' },
-      { nome: 'SP6 Complete®', desc: 'Adesivo que apoia uma abordagem consciente para manter o apetite saudável.', preco: 'US$ 79,95', img: 'lifewave-sp6-complete-patches.jpg', slug: 'sp6-complete' },
-      { nome: 'AcuLife® (equino)', desc: 'Adesivo de acupressão exclusivo para cavalos — efeito calmante e flexibilidade. Apenas equinos.', preco: 'US$ 79,95', img: 'lifewave-aculife-patches.png', slug: 'aculife-equinos' },
-    ],
-  },
-  {
-    nome: 'Movimento',
-    produtos: [
-      { nome: 'IceWave®', desc: 'Fototerapia de ação rápida, sem drogas nem estimulantes, para apoiar o movimento.', preco: 'US$ 79,95', img: 'lifewave-icewave-patches.jpg', slug: 'icewave' },
-    ],
-  },
-  {
-    nome: 'Energia',
-    produtos: [
-      { nome: 'Energy Enhancer®', desc: 'Par de adesivos que promove o fluxo de energia junto da rotina de atividade física.', preco: 'US$ 79,95', img: 'lifewave-energy-enhancer-patches.jpg', slug: 'energy-enhancer' },
-    ],
-  },
-  {
-    nome: 'Sono',
-    produtos: [
-      { nome: 'Silent Nights®', desc: 'Adesivo noturno que favorece o relaxamento para melhorar a qualidade e a duração do sono.', preco: 'US$ 79,95', img: 'lifewave-silent-nights-patches.jpg', slug: 'silent-nights' },
-    ],
-  },
-  {
-    nome: 'Cuidados com a pele',
-    produtos: [
-      { nome: 'Alavida®', desc: 'Adesivo noturno que equilibra a energia restauradora do corpo para uma pele com aparência radiante.', preco: 'US$ 79,95', img: 'lifewave-alavida-patches.png', slug: 'alavida-adesivos' },
-      { nome: 'Alavida® Nightly Restore Facial Crème', desc: 'Tratamento facial noturno: reduz a aparência de linhas finas, uniformiza o tom e hidrata.', preco: 'US$ 99,95', img: 'lifewave-alavida-nightly-restore-facial-creme.png', slug: 'alavida-nightly-restore-creme-facial' },
-      { nome: 'Alavida® Facial Nectar', desc: 'Hidratante facial diurno, complementar ao creme noturno.', preco: 'US$ 79,95', img: 'lifewave-alavida-facial-nectar.png', slug: 'alavida-facial-nectar' },
-      { nome: 'Alavida® Revive Eye Cream', desc: 'Creme para a área dos olhos com peptídeos de cobre — firmeza e luminosidade.', preco: 'US$ 89,95', img: 'alavida-revive-eye-cream.jpg', slug: 'alavida-revive-creme-para-olhos' },
-      { nome: 'Alavida® Regenerating Trio', desc: 'Adesivos Alavida + creme noturno + néctar diurno, num só kit.', preco: 'US$ 199,95', img: 'lifewave-alavida-regenerating-trio.png', slug: 'alavida-regenerating-trio' },
-    ],
-  },
-  {
-    nome: 'Tecnologia da água',
-    produtos: [
-      { nome: 'LifeWave X₂O™ Light-Infused™ Water', desc: 'Sistema de filtragem com infusão de luz e enriquecimento com hidrogênio, para hidratação em nível celular.', preco: 'US$ 5.995,00', img: 'lifewave-x2o-light-infused-water.jpg', slug: 'lifewave-x2o-agua' },
-      { nome: 'X₂O™ Filter Replacement Bundle', desc: 'Kit com filtro primário e secundário de reposição (troca a cada ~6 meses).', preco: 'US$ 170,00', img: 'lifewave-x2o-filter-replacement-bundle.jpg', slug: 'x2o-kit-filtros-reposicao' },
-      { nome: 'X₂O™ Primary Filter', desc: 'Filtro de reposição do primeiro estágio, reduz impurezas da água.', preco: 'US$ 95,00', img: 'lifewave-x2o-primary-filter-replacement.jpg', slug: 'x2o-filtro-primario' },
-      { nome: 'X₂O™ Secondary Filter', desc: 'Filtro final: melhora sabor e carrega a água com hidrogênio molecular.', preco: 'US$ 85,00', img: 'lifewave-x2o-secondary-filter-replacement.jpg', slug: 'x2o-filtro-secundario' },
-    ],
-  },
+/**
+ * linha = filtro "Linhas de Produto"; necessidade = filtro "Necessidade".
+ * precoNum alimenta o filtro de faixa de preço (valor de referência em USD).
+ */
+type Produto = {
+  nome: string; desc: string; preco: string; precoNum: number;
+  img: string; slug: string; linha: string; necessidade: string;
+};
+
+const produtos: Produto[] = [
+  { nome: 'LifeWave X39®', desc: 'Adesivo de fototerapia que eleva o peptídeo GHK-Cu, apoia energia, desempenho no exercício e o bem-estar geral.', preco: 'US$ 149,95', precoNum: 149.95, img: 'lifewave-x39-patches.jpg', slug: 'lifewave-x39', linha: 'X39', necessidade: 'Vitalidade e atividade' },
+  { nome: 'LifeWave X49™', desc: 'Adesivo voltado a desempenho, força, resistência, saúde cardiovascular no exercício e recuperação.', preco: 'US$ 149,95', precoNum: 149.95, img: 'lifewave-x49-patches.jpg', slug: 'lifewave-x49', linha: 'X49', necessidade: 'Vitalidade e atividade' },
+  { nome: 'X39® & X49® Performance Bundle', desc: 'Combo dos dois adesivos: energia e saúde geral (X39) + desempenho e recuperação (X49).', preco: 'US$ 279,95', precoNum: 279.95, img: 'x39-e-x49-performance-bundle.jpg', slug: 'x39-x49-performance-bundle', linha: 'X39', necessidade: 'Vitalidade e atividade' },
+  { nome: 'Cellular Performance System', desc: 'Adesivo X39 + pó Cellergize Morning, apoia atividade celular, nutrição e resiliência.', preco: 'US$ 229,90', precoNum: 229.90, img: 'cellular-performance-system.png', slug: 'cellular-performance-system', linha: 'Cellergize', necessidade: 'Bem-estar geral' },
+  { nome: 'Cellergize™ Duo', desc: 'Cellergize Morning + Evening: energia e defesa antioxidante de dia, preparação para o sono à noite.', preco: 'US$ 149,95', precoNum: 149.95, img: 'cellergize-duo.jpg', slug: 'cellergize-duo', linha: 'Cellergize', necessidade: 'Nutrição' },
+  { nome: 'Cellergize™ Morning', desc: 'Bebida matinal (limão e gengibre) que apoia células-tronco, glutationa e defesa antioxidante.', preco: 'US$ 79,95', precoNum: 79.95, img: 'cellergize-morning.jpg', slug: 'cellergize-morning', linha: 'Cellergize', necessidade: 'Nutrição' },
+  { nome: 'Cellergize™ Evening', desc: 'Bebida noturna (mel e lavanda) para relaxamento, preparação ao sono e saúde digestiva.', preco: 'US$ 79,95', precoNum: 79.95, img: 'cellergize-evening.png', slug: 'cellergize-evening', linha: 'Cellergize', necessidade: 'Sono' },
+  { nome: 'Y-Age System Kit', desc: 'Os três adesivos Y-Age: Aeon, Carnosine e Glutathione, com protocolo de rodízio.', preco: 'US$ 209,85', precoNum: 209.85, img: 'lifewave-y-age-system-kit.jpg', slug: 'y-age-system-kit', linha: 'Y-Age', necessidade: 'Bem-estar geral' },
+  { nome: 'Y-Age Aeon®', desc: 'Adesivo que promove relaxamento e ajuda na gestão do estresse.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-aeon-patches.jpg', slug: 'y-age-aeon', linha: 'Y-Age', necessidade: 'Bem-estar geral' },
+  { nome: 'Y-Age Glutathione®', desc: 'Adesivo que apoia a aparência da pele, o relaxamento e a saúde geral.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-glutathione-patches.jpg', slug: 'y-age-glutathione', linha: 'Y-Age', necessidade: 'Bem-estar geral' },
+  { nome: 'Y-Age Carnosine®', desc: 'Adesivo que incentiva a atividade física e o bem-estar geral.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-carnosine-patches.jpg', slug: 'y-age-carnosine', linha: 'Y-Age', necessidade: 'Vitalidade e atividade' },
+  { nome: 'SP6 Complete®', desc: 'Adesivo que apoia uma abordagem consciente para manter o apetite saudável.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-sp6-complete-patches.jpg', slug: 'sp6-complete', linha: 'SP6 Complete', necessidade: 'Bem-estar geral' },
+  { nome: 'AcuLife® (equino)', desc: 'Adesivo de acupressão exclusivo para cavalos: efeito calmante e flexibilidade. Apenas equinos.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-aculife-patches.png', slug: 'aculife-equinos', linha: 'AcuLife', necessidade: 'Bem-estar geral' },
+  { nome: 'IceWave®', desc: 'Fototerapia de ação rápida, sem drogas nem estimulantes, para apoiar o movimento.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-icewave-patches.jpg', slug: 'icewave', linha: 'IceWave', necessidade: 'Movimento' },
+  { nome: 'Energy Enhancer®', desc: 'Par de adesivos que promove o fluxo de energia junto da rotina de atividade física.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-energy-enhancer-patches.jpg', slug: 'energy-enhancer', linha: 'Energy Enhancer', necessidade: 'Vitalidade e atividade' },
+  { nome: 'Silent Nights®', desc: 'Adesivo noturno que favorece o relaxamento para melhorar a qualidade e a duração do sono.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-silent-nights-patches.jpg', slug: 'silent-nights', linha: 'Silent Nights', necessidade: 'Sono' },
+  { nome: 'Alavida®', desc: 'Adesivo noturno que equilibra a energia restauradora do corpo para uma pele com aparência radiante.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-alavida-patches.png', slug: 'alavida-adesivos', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
+  { nome: 'Alavida® Nightly Restore Facial Crème', desc: 'Tratamento facial noturno: reduz a aparência de linhas finas, uniformiza o tom e hidrata.', preco: 'US$ 99,95', precoNum: 99.95, img: 'lifewave-alavida-nightly-restore-facial-creme.png', slug: 'alavida-nightly-restore-creme-facial', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
+  { nome: 'Alavida® Facial Nectar', desc: 'Hidratante facial diurno, complementar ao creme noturno.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-alavida-facial-nectar.png', slug: 'alavida-facial-nectar', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
+  { nome: 'Alavida® Revive Eye Cream', desc: 'Creme para a área dos olhos com peptídeos de cobre: firmeza e luminosidade.', preco: 'US$ 89,95', precoNum: 89.95, img: 'alavida-revive-eye-cream.jpg', slug: 'alavida-revive-creme-para-olhos', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
+  { nome: 'Alavida® Regenerating Trio', desc: 'Adesivos Alavida + creme noturno + néctar diurno, num só kit.', preco: 'US$ 199,95', precoNum: 199.95, img: 'lifewave-alavida-regenerating-trio.png', slug: 'alavida-regenerating-trio', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
+  { nome: 'LifeWave X₂O™ Light-Infused™ Water', desc: 'Sistema de filtragem com infusão de luz e enriquecimento com hidrogênio, para hidratação em nível celular.', preco: 'US$ 5.995,00', precoNum: 5995, img: 'lifewave-x2o-light-infused-water.jpg', slug: 'lifewave-x2o-agua', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
+  { nome: 'X₂O™ Filter Replacement Bundle', desc: 'Kit com filtro primário e secundário de reposição (troca a cada 6 meses).', preco: 'US$ 170,00', precoNum: 170, img: 'lifewave-x2o-filter-replacement-bundle.jpg', slug: 'x2o-kit-filtros-reposicao', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
+  { nome: 'X₂O™ Primary Filter', desc: 'Filtro de reposição do primeiro estágio, reduz impurezas da água.', preco: 'US$ 95,00', precoNum: 95, img: 'lifewave-x2o-primary-filter-replacement.jpg', slug: 'x2o-filtro-primario', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
+  { nome: 'X₂O™ Secondary Filter', desc: 'Filtro final: melhora sabor e carrega a água com hidrogênio molecular.', preco: 'US$ 85,00', precoNum: 85, img: 'lifewave-x2o-secondary-filter-replacement.jpg', slug: 'x2o-filtro-secundario', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
 ];
 
-const totalProdutos = categorias.reduce((n, c) => n + c.produtos.length, 0);
+const linhas = [...new Set(produtos.map((p) => p.linha))];
+const necessidades = [...new Set(produtos.map((p) => p.necessidade))];
+const precoMin = Math.floor(Math.min(...produtos.map((p) => p.precoNum)));
+const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
 ---
 
 <!-- ══════════════ HEADER ══════════════ -->
 <section class="bg-[#ECF5FA]">
   <div class="container-x py-12 md:py-16 max-w-3xl mx-auto text-center">
     <span class="mono uppercase text-primary text-[0.68rem] tracking-widest mb-3 inline-block">Catálogo LifeWave</span>
-    <h1 class="text-ink mb-4">
-      Produtos LifeWave
-    </h1>
+    <h1 class="text-ink mb-4">Produtos LifeWave</h1>
     <p class="text-ink-muted text-base leading-relaxed mb-6">
-      Conheça a linha completa de {totalProdutos} produtos LifeWave — adesivos de fototerapia, suplementos celulares, cuidados com a pele e a tecnologia da água.
+      Conheça a linha completa de {produtos.length} produtos LifeWave: adesivos de fototerapia, suplementos celulares, cuidados com a pele e a tecnologia da água.
     </p>
     <a href={waLink} target={waNumber ? '_blank' : undefined} rel={waNumber ? 'noopener' : undefined}
        class="btn btn-primary inline-flex items-center gap-2 px-6 py-3 text-sm">
@@ -100,38 +75,90 @@ const totalProdutos = categorias.reduce((n, c) => n + c.produtos.length, 0);
   </div>
 </section>
 
-<!-- ══════════════ CATÁLOGO ══════════════ -->
-<div class="container-x py-12 md:py-16">
-  <div class="max-w-5xl mx-auto space-y-12 md:space-y-14">
-    {categorias.map((cat) => (
-      <section>
-        <h2 class="text-ink mb-6 pb-2 border-b border-[#5EB3E4]/30">
-          {cat.nome}
-          <span class="text-ink-faint font-normal text-sm ml-2">({cat.produtos.length})</span>
-        </h2>
-        <div class="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {cat.produtos.map((p) => (
-            <a href={`/${p.slug}`} class="bg-[#ECF5FA] rounded-2xl overflow-hidden flex flex-col no-underline group">
-              <!-- Imagem sangra na largura total do card (sem padding lateral) -->
-              <div class="bg-white aspect-[4/3] overflow-hidden">
-                <img
-                  src={`/assets/produtos/${p.img}`}
-                  alt={p.nome}
-                  loading="lazy"
-                  width="480" height="360"
-                  class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                />
-              </div>
-              <div class="p-5 flex flex-col flex-1">
-                <h3 class="text-ink mb-2 group-hover:text-[#5EB3E4] transition-colors">{p.nome}</h3>
-                <p class="text-sm text-ink-muted leading-relaxed mb-4 flex-1">{p.desc}</p>
-                <span class="font-semibold text-primary text-sm">{p.preco}</span>
-              </div>
-            </a>
-          ))}
+<!-- ══════════════ CATÁLOGO COM FILTROS ══════════════ -->
+<div class="container-x py-10 md:py-14">
+  <div class="grid lg:grid-cols-[230px_1fr] gap-8 lg:gap-12 items-start">
+
+    <!-- Filtros -->
+    <aside class="lg:sticky lg:top-6">
+      <button type="button" data-filtros-toggle
+              class="lg:hidden w-full flex items-center justify-between border border-[#5EB3E4]/40 rounded-xl px-4 py-3 mb-4 text-sm font-semibold text-ink">
+        Filtrar produtos
+        <span data-filtros-icone aria-hidden="true">+</span>
+      </button>
+
+      <div data-filtros-painel class="hidden lg:block">
+        <div class="mb-7">
+          <p class="font-display text-ink text-lg mb-3 pb-2 border-b border-[#5EB3E4]/30">Linhas de produto</p>
+          <ul class="space-y-2">
+            {linhas.map((l) => (
+              <li>
+                <label class="flex items-center gap-2.5 text-sm text-ink-muted cursor-pointer">
+                  <input type="checkbox" data-filtro="linha" value={l} class="w-4 h-4 accent-[#194F90] cursor-pointer" />
+                  {l}
+                </label>
+              </li>
+            ))}
+          </ul>
         </div>
-      </section>
-    ))}
+
+        <div class="mb-7">
+          <p class="font-display text-ink text-lg mb-3 pb-2 border-b border-[#5EB3E4]/30">Necessidade</p>
+          <ul class="space-y-2">
+            {necessidades.map((n) => (
+              <li>
+                <label class="flex items-center gap-2.5 text-sm text-ink-muted cursor-pointer">
+                  <input type="checkbox" data-filtro="necessidade" value={n} class="w-4 h-4 accent-[#194F90] cursor-pointer" />
+                  {n}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="mb-7">
+          <p class="font-display text-ink text-lg mb-3 pb-2 border-b border-[#5EB3E4]/30">Preço</p>
+          <p class="text-sm text-ink-muted mb-3">
+            Até <span data-preco-label class="font-semibold text-primary">US$ {precoMax.toLocaleString('pt-BR')}</span>
+          </p>
+          <input type="range" data-preco-range min={precoMin} max={precoMax} value={precoMax} step="1"
+                 class="w-full accent-[#194F90] cursor-pointer" aria-label="Preço máximo" />
+        </div>
+
+        <button type="button" data-limpar
+                class="text-sm font-semibold text-[#5EB3E4] hover:text-primary transition-colors uppercase tracking-wide">
+          Limpar tudo
+        </button>
+      </div>
+    </aside>
+
+    <!-- Grade -->
+    <div>
+      <p class="text-sm text-ink-faint mb-6"><span data-contador>{produtos.length}</span> produtos</p>
+
+      <div class="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {produtos.map((p) => (
+          <a href={`/${p.slug}`}
+             class="flex flex-col no-underline group"
+             data-produto
+             data-linha={p.linha}
+             data-necessidade={p.necessidade}
+             data-preco={p.precoNum}>
+            <div class="bg-white rounded-xl aspect-[4/3] overflow-hidden">
+              <img src={`/assets/produtos/${p.img}`} alt={p.nome} loading="lazy" width="480" height="360"
+                   class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
+            </div>
+            <h3 class="text-center text-ink mt-4 mb-2 group-hover:text-[#5EB3E4] transition-colors">{p.nome}</h3>
+            <p class="text-center text-sm text-ink-muted leading-relaxed mb-3 flex-1">{p.desc}</p>
+            <span class="text-center font-semibold text-primary text-sm">{p.preco}</span>
+          </a>
+        ))}
+      </div>
+
+      <p data-vazio class="hidden text-center text-ink-muted py-16">
+        Nenhum produto encontrado com esses filtros.
+      </p>
+    </div>
   </div>
 </div>
 
@@ -140,7 +167,7 @@ const totalProdutos = categorias.reduce((n, c) => n + c.produtos.length, 0);
   <div class="container-x py-12 md:py-14 text-center text-white max-w-2xl mx-auto">
     <h2 class="!text-white mb-3">Como comprar</h2>
     <p class="text-white/85 text-sm md:text-base leading-relaxed mb-6">
-      No Brasil, os produtos LifeWave são adquiridos com orientação de um Brand Partner, que acompanha todo o processo — do pedido à entrega.
+      No Brasil, os produtos LifeWave são adquiridos com orientação de um Brand Partner, que acompanha todo o processo, do pedido à entrega.
     </p>
     <a href={waLink} target={waNumber ? '_blank' : undefined} rel={waNumber ? 'noopener' : undefined}
        class="btn inline-flex items-center gap-2 px-6 py-3 text-sm bg-white !text-[#194F90] hover:brightness-95">
@@ -150,9 +177,79 @@ const totalProdutos = categorias.reduce((n, c) => n + c.produtos.length, 0);
   </div>
 </section>
 
-<!-- ══════════════ AVISO ══════════════ -->
-<section class="container-x py-8 max-w-3xl mx-auto">
-  <p class="text-xs text-ink-faint leading-relaxed text-center">
-    Os produtos LifeWave destinam-se ao bem-estar geral e não se destinam a diagnosticar, tratar, curar ou prevenir doenças. Itens ingeríveis não foram avaliados pela FDA. Consulte um profissional de saúde antes do uso. Preços em USD, sujeitos a alteração pela LifeWave.
-  </p>
-</section>
+<!-- ATENÇÃO: is:inline vai cru pro browser, JS puro (nada de TypeScript aqui). -->
+<script is:inline>
+  (function () {
+    var cards = Array.prototype.slice.call(document.querySelectorAll('[data-produto]'));
+    if (!cards.length) return;
+    var checks = Array.prototype.slice.call(document.querySelectorAll('[data-filtro]'));
+    var range = document.querySelector('[data-preco-range]');
+    var label = document.querySelector('[data-preco-label]');
+    var contador = document.querySelector('[data-contador]');
+    var vazio = document.querySelector('[data-vazio]');
+
+    function marcados(tipo) {
+      var out = [];
+      for (var i = 0; i < checks.length; i++) {
+        if (checks[i].getAttribute('data-filtro') === tipo && checks[i].checked) out.push(checks[i].value);
+      }
+      return out;
+    }
+
+    function aplicar() {
+      var linhas = marcados('linha');
+      var necs = marcados('necessidade');
+      // no topo do slider nao filtra por preco (evita cortar o item mais caro
+      // por arredondamento do step)
+      var teto = Infinity;
+      if (range && parseFloat(range.value) < parseFloat(range.max)) teto = parseFloat(range.value);
+      var visiveis = 0;
+
+      for (var i = 0; i < cards.length; i++) {
+        var c = cards[i];
+        var okLinha = !linhas.length || linhas.indexOf(c.getAttribute('data-linha')) !== -1;
+        var okNec = !necs.length || necs.indexOf(c.getAttribute('data-necessidade')) !== -1;
+        var okPreco = parseFloat(c.getAttribute('data-preco')) <= teto;
+        var mostra = okLinha && okNec && okPreco;
+        c.style.display = mostra ? '' : 'none';
+        if (mostra) visiveis++;
+      }
+
+      if (contador) contador.textContent = String(visiveis);
+      if (vazio) vazio.classList.toggle('hidden', visiveis > 0);
+    }
+
+    for (var i = 0; i < checks.length; i++) checks[i].addEventListener('change', aplicar);
+
+    if (range) {
+      range.addEventListener('input', function () {
+        if (label) label.textContent = 'US$ ' + Number(range.value).toLocaleString('pt-BR');
+        aplicar();
+      });
+    }
+
+    var limpar = document.querySelector('[data-limpar]');
+    if (limpar) {
+      limpar.addEventListener('click', function () {
+        for (var j = 0; j < checks.length; j++) checks[j].checked = false;
+        if (range) {
+          range.value = range.max;
+          if (label) label.textContent = 'US$ ' + Number(range.max).toLocaleString('pt-BR');
+        }
+        aplicar();
+      });
+    }
+
+    // Abre/fecha o painel de filtros no mobile
+    var toggle = document.querySelector('[data-filtros-toggle]');
+    var painel = document.querySelector('[data-filtros-painel]');
+    var icone = document.querySelector('[data-filtros-icone]');
+    if (toggle && painel) {
+      toggle.addEventListener('click', function () {
+        var aberto = !painel.classList.contains('hidden');
+        painel.classList.toggle('hidden', aberto);
+        if (icone) icone.textContent = aberto ? '+' : '–';
+      });
+    }
+  })();
+</script>

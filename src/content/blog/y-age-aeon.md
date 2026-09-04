@@ -8,7 +8,7 @@ author: "equipe"
 draft: false
 ---
 
-Encontre o seu centro com o Y-Age Aeon — destravando o relaxamento, aliviando o desconforto e dissolvendo suavemente a tensão. Abrace um alívio do estresse que ressoa em um nível mais profundo.
+Encontre o seu centro com o Y-Age Aeon, destravando o relaxamento, aliviando o desconforto e dissolvendo suavemente a tensão. Abrace um alívio do estresse que ressoa em um nível mais profundo.
 
 ## Benefícios
 
@@ -16,6 +16,14 @@ Encontre o seu centro com o Y-Age Aeon — destravando o relaxamento, aliviando 
 - Ajuda a gerenciar melhor ou reduzir o estresse
 - Sem medicamentos ou estimulantes
 - Forma exclusiva e patenteada de fototerapia
+
+## Cellular Performance System
+
+Ative o poder das suas células-tronco† com o Cellular Performance System: dois produtos inovadores em um sistema diário que apoia a atividade das células-tronco†, a nutrição celular e a resiliência. O sistema combina a tecnologia patenteada de fototerapia da LifeWave com o que há de mais avançado em suporte nutricional, unindo o adesivo LifeWave X39® ao Cellergize™ Morning.
+
+† Impulsionado por CyanthOx, presente no Cellergize™ Morning.
+
+*Esta afirmação não foi avaliada pela Food and Drug Administration. Este produto não se destina a diagnosticar, tratar, curar ou prevenir qualquer doença.
 
 ## Como usar
 

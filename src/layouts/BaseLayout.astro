@@ -217,57 +217,5 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
 
   <BodyEndPlugins />
 
-  <!-- Contador regressivo até o próximo webinar do dia (11:00, 15:00, 20:00).
-       Após o último horário, conta para o primeiro do dia seguinte. Horário local.
-       Alimenta todos os [data-countdown] da página (barra de aviso + cards do artigo). -->
-  <script is:inline>
-    (function(){
-      var els = document.querySelectorAll('[data-countdown]');
-      if(!els.length && !document.querySelector('[data-cd]')) return;
-      var TIMES = [[11, 0], [15, 0], [20, 0]];
-      function pad(n){ return (n < 10 ? '0' : '') + n; }
-      function nextStart(now){
-        // A programação de webinars começa 20/08/2026 às 11h. Antes disso, conta para a 1ª sessão.
-        var firstSession = new Date(2026, 7, 20, 11, 0, 0, 0);
-        if(now.getTime() < firstSession.getTime()) return firstSession;
-        for(var i = 0; i < TIMES.length; i++){
-          var d = new Date(now);
-          d.setHours(TIMES[i][0], TIMES[i][1], 0, 0);
-          if(d.getTime() > now.getTime()) return d;
-        }
-        var t = new Date(now);
-        t.setDate(t.getDate() + 1);
-        t.setHours(TIMES[0][0], TIMES[0][1], 0, 0);
-        return t;
-      }
-      function tick(){
-        var now = new Date();
-        var target = nextStart(now);
-        var remaining = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000));
-        var d = Math.floor(remaining / 86400);
-        var h = Math.floor((remaining % 86400) / 3600);
-        var m = Math.floor((remaining % 3600) / 60);
-        var s = remaining % 60;
-        var txt = (d > 0 ? d + 'd ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
-        for(var i = 0; i < els.length; i++){ els[i].textContent = txt; }
-        // Caixas segmentadas (dias/horas/min/seg) nos cards
-        setSeg('d', pad(d)); setSeg('h', pad(h)); setSeg('m', pad(m)); setSeg('s', pad(s));
-      }
-      function setSeg(k, v){
-        var list = document.querySelectorAll('[data-cd="' + k + '"]');
-        for(var i = 0; i < list.length; i++){ list[i].textContent = v; }
-      }
-      // Data da próxima sessão (eyebrow da landing) — preenchido uma vez.
-      var ns = document.querySelector('[data-next-session]');
-      if(ns){
-        var nt = nextStart(new Date());
-        try {
-          ns.textContent = nt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) + ' às ' + nt.getHours() + 'h (GMT-3)';
-        } catch(e){}
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
-  </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 ---
 title: "X39 e X49 Performance Bundle: os dois adesivos em um só kit"
-description: "O Performance Bundle reúne os adesivos LifeWave X39 e X49 com desconto — energia e bem-estar geral somados a desempenho, força e recuperação."
+description: "O Performance Bundle reúne os adesivos LifeWave X39 e X49 com desconto, energia e bem-estar geral somados a desempenho, força e recuperação."
 pubDate: "2026-09-03"
 heroImage: "/assets/produtos/x39-e-x49-performance-bundle.jpg"
 category: "Bem-estar"
@@ -10,7 +10,7 @@ draft: false
 
 Aproveite os benefícios sinérgicos do X39 e do X49 comprando os dois juntos neste kit com desconto.
 
-Descubra os notáveis benefícios do X39 — aproveite o poder dos pontos de acupuntura e acupressão sem a necessidade de agulhas. Eleve o fluxo da energia inata do seu corpo, favorecendo o bem-estar geral e um estilo de vida ativo.
+Descubra os notáveis benefícios do X39, aproveite o poder dos pontos de acupuntura e acupressão sem a necessidade de agulhas. Eleve o fluxo da energia inata do seu corpo, favorecendo o bem-estar geral e um estilo de vida ativo.
 
 E embarque na jornada transformadora do X49, dedicado a elevar o desempenho, acelerar a recuperação e favorecer o relaxamento.
 

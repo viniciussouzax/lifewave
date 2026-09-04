@@ -17,6 +17,14 @@ Defina suas intenções para uma alimentação consciente com o SP6 Complete®. 
 - Sem medicamentos ou estimulantes
 - Forma exclusiva e patenteada de fototerapia
 
+## Cellular Performance System
+
+Ative o poder das suas células-tronco† com o Cellular Performance System: dois produtos inovadores em um sistema diário que apoia a atividade das células-tronco†, a nutrição celular e a resiliência. O sistema combina a tecnologia patenteada de fototerapia da LifeWave com o que há de mais avançado em suporte nutricional, unindo o adesivo LifeWave X39® ao Cellergize™ Morning.
+
+† Impulsionado por CyanthOx, presente no Cellergize™ Morning.
+
+*Esta afirmação não foi avaliada pela Food and Drug Administration. Este produto não se destina a diagnosticar, tratar, curar ou prevenir qualquer doença.
+
 ## Como usar
 
 Aplique um adesivo SP6 Complete em um dos locais recomendados pela orientação oficial da LifeWave. Para resultados ideais, faça rodízio entre as posições indicadas.

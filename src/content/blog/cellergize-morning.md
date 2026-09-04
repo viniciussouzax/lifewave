@@ -16,7 +16,7 @@ Com uma mistura dinâmica de ingredientes, é o seu impulso para se sentir renov
 
 ## Benefícios
 
-- Apoia a atividade saudável das células-tronco† — usa ingredientes conhecidos por apoiar a saúde e a vitalidade das células humanas (Potássio, CyanthOx, NAC, Vitamina C, Selênio, Cobre, Zinco)*
+- Apoia a atividade saudável das células-tronco†, usa ingredientes conhecidos por apoiar a saúde e a vitalidade das células humanas (Potássio, CyanthOx, NAC, Vitamina C, Selênio, Cobre, Zinco)*
 - Defesa antioxidante (CyanthOx, NAC, Cobre, Selênio, Vitamina C)*
 - Produção de glutationa (NAC, Glicina, Selênio, Vitamina C, Magnésio)*
 - Mecanismos de proteção celular*
@@ -35,7 +35,7 @@ Para uma dose, misture 2 medidas (13 g) do pó em 480 ml de água limpa e filtra
 Extrato de fruta de espinheiro-marítimo (Hippophae rhamnoides), glicina, creatina, cobre, vitamina C, magnésio, L-lisina, L-citrulina, potássio, beta-alanina, NAC, zinco e fibra. Para a lista completa, consulte a embalagem.
 
 **O que diferencia o Cellergize Morning de outros suplementos?**
-Ele foi desenhado especificamente para complementar a linha de adesivos não transdérmicos da LifeWave, criando uma abordagem holística de bem-estar. Enquanto os adesivos atuam externamente, estimulando os sistemas naturais do corpo com luz, a combinação de ingredientes do Cellergize Morning — incluindo o extrato de espinheiro-marítimo — atua por dentro.
+Ele foi desenhado especificamente para complementar a linha de adesivos não transdérmicos da LifeWave, criando uma abordagem holística de bem-estar. Enquanto os adesivos atuam externamente, estimulando os sistemas naturais do corpo com luz, a combinação de ingredientes do Cellergize Morning, incluindo o extrato de espinheiro-marítimo, atua por dentro.
 
 **Quais produtos LifeWave o Cellergize Morning complementa?**
 LifeWave X39, LifeWave X49, Energy Enhancer, Sistema Y-Age (Y-Age Aeon, Y-Age Carnosine e Y-Age Glutathione), SP6 Complete e IceWave.

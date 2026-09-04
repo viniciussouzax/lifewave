@@ -18,9 +18,17 @@ Ative o campo de energia natural do seu corpo para o equilíbrio perfeito entre 
 - Sem medicamentos ou estimulantes
 - Forma exclusiva e patenteada de fototerapia
 
+## Cellular Performance System
+
+Ative o poder das suas células-tronco† com o Cellular Performance System: dois produtos inovadores em um sistema diário que apoia a atividade das células-tronco†, a nutrição celular e a resiliência. O sistema combina a tecnologia patenteada de fototerapia da LifeWave com o que há de mais avançado em suporte nutricional, unindo o adesivo LifeWave X39® ao Cellergize™ Morning.
+
+† Impulsionado por CyanthOx, presente no Cellergize™ Morning.
+
+*Esta afirmação não foi avaliada pela Food and Drug Administration. Este produto não se destina a diagnosticar, tratar, curar ou prevenir qualquer doença.
+
 ## Como usar
 
-O Energy Enhancer é usado em par — um adesivo branco e um bege — e cada cor tem um lado correto do corpo. A posição de cada adesivo e o local de aplicação seguem sempre a orientação oficial da LifeWave.
+O Energy Enhancer é usado em par, um adesivo branco e um bege, e cada cor tem um lado correto do corpo. A posição de cada adesivo e o local de aplicação seguem sempre a orientação oficial da LifeWave.
 
 Aplique sobre a pele limpa e seca, pela manhã. Os adesivos podem ser usados por até 12 horas antes de serem descartados. Mantenha-se bem hidratado durante o uso.
 

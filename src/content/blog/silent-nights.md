@@ -1,6 +1,6 @@
 ---
 title: "Silent Nights: relaxamento para um sono restaurador"
-description: "O adesivo Silent Nights da LifeWave favorece o relaxamento profundo, apoiando a qualidade e a duração do sono — sem medicamentos nem estimulantes."
+description: "O adesivo Silent Nights da LifeWave favorece o relaxamento profundo, apoiando a qualidade e a duração do sono, sem medicamentos nem estimulantes."
 pubDate: "2026-09-03"
 heroImage: "/assets/produtos/lifewave-silent-nights-patches.jpg"
 category: "Bem-estar"

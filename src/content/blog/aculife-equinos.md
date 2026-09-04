@@ -22,7 +22,7 @@ Este produto é de uso exclusivo em equinos.
 
 O AcuLife é aplicado no cavalo com o auxílio das esferas plásticas que acompanham o produto, seguindo o protocolo e os locais definidos pela orientação oficial da LifeWave para equinos.
 
-Produto destinado exclusivamente a cavalos — não é indicado para uso humano.
+Produto destinado exclusivamente a cavalos, não é indicado para uso humano.
 
 ## Cuidados e advertências
 
