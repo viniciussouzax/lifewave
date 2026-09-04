@@ -59,12 +59,18 @@ const contar = (campo: 'linhas' | 'necessidades') => {
 };
 const linhas = contar('linhas');
 const necessidades = contar('necessidades');
+
+/** Cabeçalho da página (título + CTA). Oculto a pedido; true reexibe. */
+const mostrarCabecalho = false;
 const precoMin = Math.floor(Math.min(...produtos.map((p) => p.precoNum)));
 const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
 ---
 
-<!-- ══════════════ HEADER ══════════════ -->
-<section class="bg-[#ECF5FA]">
+<!-- ══════════════ HEADER ══════════════
+     Oculto a pedido. Para reexibir, troque para true (nada foi apagado). -->
+{!mostrarCabecalho && <h1 class="sr-only">Produtos LifeWave</h1>}
+
+<section class="bg-[#ECF5FA]" style={mostrarCabecalho ? undefined : 'display:none'}>
   <div class="container-x py-12 md:py-16 max-w-3xl mx-auto text-center">
     <span class="mono uppercase text-primary text-[0.68rem] tracking-widest mb-3 inline-block">Catálogo LifeWave</span>
     <h1 class="text-ink mb-4">Produtos LifeWave</h1>
@@ -137,7 +143,7 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
         </div>
 
         <button type="button" data-limpar
-                class="text-sm font-semibold text-[#5EB3E4] hover:text-primary transition-colors uppercase tracking-wide">
+                class="text-sm font-semibold text-primary hover:underline transition-colors uppercase tracking-wide">
           Limpar tudo
         </button>
       </div>
@@ -145,6 +151,8 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
 
     <!-- Grade -->
     <div>
+      <!-- Título só para leitores de tela: evita pular de h1 direto pros h3 dos cards -->
+      <h2 class="sr-only">Catálogo de produtos</h2>
       <p class="text-sm text-ink-faint mb-6"><span data-contador>{produtos.length}</span> produtos</p>
 
       <div class="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -159,7 +167,7 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
               <img src={`/assets/produtos/${p.img}`} alt={p.nome} loading="lazy" width="480" height="360"
                    class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
             </div>
-            <h3 class="text-center text-ink mt-4 mb-2 group-hover:text-[#5EB3E4] transition-colors">{p.nome}</h3>
+            <h3 class="text-center text-ink mt-4 mb-2 group-hover:underline transition-colors">{p.nome}</h3>
             <p class="text-center text-sm text-ink-muted leading-relaxed mb-3 flex-1">{p.desc}</p>
             <span class="text-center font-semibold text-primary text-sm">{p.preco}</span>
           </a>

@@ -70,7 +70,7 @@ const igProfile = siteConfig.social?.instagram || '';
           <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">navegação</p>
           <ul class="space-y-2.5 text-sm">
             {menuItems.map((item: any) => (
-              <li><a href={item.href} class="text-[#194f90] hover:text-[#5EB3E4] transition-colors">{item.label}</a></li>
+              <li><a href={item.href} class="text-[#194f90] hover:underline transition-colors">{item.label}</a></li>
             ))}
           </ul>
         </div>
@@ -80,7 +80,7 @@ const igProfile = siteConfig.social?.instagram || '';
           <p class="mono uppercase text-[#373f41]/70 text-xs mb-4">tópicos</p>
           <ul class="space-y-2.5 text-sm">
             {[['Comece aqui', '/categoria/comece-aqui'], ['Bem-estar', '/categoria/bem-estar'], ['Tecnologia', '/categoria/tecnologia']].map(([label, href]) => (
-              <li><a href={href} class="text-[#194f90] hover:text-[#5EB3E4] transition-colors">{label}</a></li>
+              <li><a href={href} class="text-[#194f90] hover:underline transition-colors">{label}</a></li>
             ))}
           </ul>
         </div>
