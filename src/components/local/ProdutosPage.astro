@@ -157,21 +157,6 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
   </div>
 </div>
 
-<!-- ══════════════ CTA COMO COMPRAR ══════════════ -->
-<section class="bg-[#194F90]">
-  <div class="container-x py-12 md:py-14 text-center text-white max-w-2xl mx-auto">
-    <h2 class="!text-white mb-3">Como comprar</h2>
-    <p class="text-white/85 text-sm md:text-base leading-relaxed mb-6">
-      No Brasil, os produtos LifeWave são adquiridos com orientação de um Brand Partner, que acompanha todo o processo, do pedido à entrega.
-    </p>
-    <a href={waLink} target={waNumber ? '_blank' : undefined} rel={waNumber ? 'noopener' : undefined}
-       class="btn inline-flex items-center gap-2 px-6 py-3 text-sm bg-white !text-[#194F90] hover:brightness-95">
-      Falar com um Brand Partner
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </a>
-  </div>
-</section>
-
 <!-- ATENÇÃO: is:inline vai cru pro browser, JS puro (nada de TypeScript aqui). -->
 <script is:inline>
   (function () {
