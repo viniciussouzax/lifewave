@@ -3,7 +3,9 @@
 > Catálogo de tudo que foi customizado a partir do template base, com **arquivos**,
 > **decisões de design** e **como reaplicar**. Serve como spec para outra IA/dev
 > reproduzir a mesma personalização num template limpo.
-> Fonte da verdade sempre é o código; este doc é o mapa. Última atualização: 2026-08-17.
+> Fonte da verdade sempre é o código; este doc é o mapa. Última atualização: 2026-09-03.
+>
+> **Convenção de escrita:** não usar travessão (—) no conteúdo público do site.
 
 ---
 
@@ -79,7 +81,7 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
   hash `ykzwy0b7`, `formTemplate=8`):
   - CTA webinar pós-FAQ, banner lateral fixo (sticky, desktop), e **CTA inline**
     distribuída a cada N `<h2>` (via script, como banner de ad controlado).
-  - Cada CTA com **contador regressivo** em caixas (dias/horas/min/seg).
+  - Chamada fixa, sem contador (o countdown foi removido).
 - Banner lateral tem vídeo (facade) e, no mobile, o vídeo migra para a CTA pós-FAQ.
 - **Removido** o bloco de compartilhar nas redes sociais.
 
@@ -115,12 +117,18 @@ Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.
 - A barra clara mostra só um texto (removidos countdown/botão).
 
 ## 8. Página de produtos — `src/pages/produtos.astro` → `src/components/local/ProdutosPage.astro`
-- Catálogo dos **25 produtos LifeWave** em 7 categorias. Cards com **foto oficial**,
-  nome/descrição/preço (USD referência) + CTA "Falar com um Brand Partner"
-  (WhatsApp de `localBusiness.json`).
-- Cada card é um `<a>` que **linka para o artigo do produto** (campo `slug`), com a
-  foto em `public/assets/produtos/<img>` (campo `img`). O array `categorias` é
-  hardcoded no componente — para adicionar produto, incluir `nome/desc/preco/img/slug`.
+- Layout espelha a loja oficial: **filtros na lateral + grade de 3 colunas**.
+  Lista plana `produtos` (hardcoded no componente); cada item traz
+  `nome/desc/preco/precoNum/img/slug/linha/necessidade`.
+- **Filtros** (client-side, `is:inline` em JS puro): Linhas de produto, Necessidade e
+  faixa de Preço, mais "Limpar tudo" e contador de itens. No mobile o painel colapsa.
+  *Gotcha:* o slider usa `step="1"` e, no topo da faixa, não filtra. Com step maior o
+  item mais caro (X₂O, US$ 5.995) ficava fora por arredondamento do step.
+- **Card** no padrão oficial: foto sangrando na largura total sobre fundo próprio,
+  nome/descrição/preço centralizados, **sem caixa colorida em volta do texto**.
+  O card inteiro linka para o artigo do produto.
+- Fotos em `public/assets/produtos/<img>`; CTA "Falar com um Brand Partner" usa o
+  WhatsApp de `localBusiness.json`.
 
 ## 8b. Os 25 artigos de produto — `src/content/blog/<slug>.md`
 - Um artigo por produto, com o **conteúdo oficial traduzido** da loja LifeWave
@@ -153,10 +161,10 @@ artigos ou atualizar a `/produtos` sem raspar o site de novo. As páginas oficia
   tabela dos leads de `subscribers.json` (lê do repo → live em prod) + export CSV.
 
 ## 10. Integrações / lógica
-- **Contador regressivo** (`BaseLayout` script + `src/components/ui/CountdownBoxes.astro`):
-  sessões diárias **11h / 15h / 20h**, começando **20/08/2026 11h**; preenche
-  `[data-countdown]` (HH:MM:SS, com "Nd" se >1 dia), `[data-cd="d|h|m|s"]` (caixas) e
-  `[data-next-session]` (data por extenso). Horário local do visitante.
+- **Contador regressivo: REMOVIDO** (2026-09-03). O script do `BaseLayout` e o uso de
+  `CountdownBoxes.astro` foram retirados; as CTAs passaram a ter chamada fixa
+  ("Apresentação online e gratuita sobre a LifeWave"), sem horário nem timer.
+  `CountdownBoxes.astro` segue no repo, mas **sem uso**.
 - **WebinarJam** (hash `ykzwy0b7`): embed-**form** na home; embed-**button** (modal,
   `formTemplate=8`) nos artigos. Scripts carregam do domínio deles → só renderizam
   no domínio publicado.
