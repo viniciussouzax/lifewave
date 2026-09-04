@@ -12,65 +12,66 @@ const waLink = waNumber
   ? `https://wa.me/${waNumber}?text=${encodeURIComponent('Olá! Vim pelo site e gostaria de conhecer os produtos LifeWave.')}`
   : '/';
 
+/** img = foto oficial (public/assets/produtos), slug = artigo dedicado do produto. */
 const categorias = [
   {
     nome: 'Bem-estar & Vitalidade',
     produtos: [
-      { nome: 'LifeWave X39®', desc: 'Adesivo de fototerapia que eleva o peptídeo GHK-Cu — apoia energia, desempenho no exercício e o bem-estar geral.', preco: 'US$ 149,95' },
-      { nome: 'LifeWave X49™', desc: 'Adesivo voltado a desempenho, força, resistência, saúde cardiovascular no exercício e recuperação.', preco: 'US$ 149,95' },
-      { nome: 'X39® & X49® Performance Bundle', desc: 'Combo dos dois adesivos: energia e saúde geral (X39) + desempenho e recuperação (X49).', preco: 'US$ 279,95' },
+      { nome: 'LifeWave X39®', desc: 'Adesivo de fototerapia que eleva o peptídeo GHK-Cu — apoia energia, desempenho no exercício e o bem-estar geral.', preco: 'US$ 149,95', img: 'lifewave-x39-patches.jpg', slug: 'lifewave-x39' },
+      { nome: 'LifeWave X49™', desc: 'Adesivo voltado a desempenho, força, resistência, saúde cardiovascular no exercício e recuperação.', preco: 'US$ 149,95', img: 'lifewave-x49-patches.jpg', slug: 'lifewave-x49' },
+      { nome: 'X39® & X49® Performance Bundle', desc: 'Combo dos dois adesivos: energia e saúde geral (X39) + desempenho e recuperação (X49).', preco: 'US$ 279,95', img: 'x39-e-x49-performance-bundle.jpg', slug: 'x39-x49-performance-bundle' },
     ],
   },
   {
     nome: 'Bem-estar geral',
     produtos: [
-      { nome: 'Cellular Performance System', desc: 'Adesivo X39 + pó Cellergize Morning — apoia atividade celular, nutrição e resiliência.', preco: 'US$ 229,90' },
-      { nome: 'Cellergize™ Duo', desc: 'Cellergize Morning + Evening: energia e defesa antioxidante de dia, preparação para o sono à noite.', preco: 'US$ 149,95' },
-      { nome: 'Cellergize™ Morning', desc: 'Bebida matinal (limão e gengibre) que apoia células-tronco, glutationa e defesa antioxidante.', preco: 'US$ 79,95' },
-      { nome: 'Cellergize™ Evening', desc: 'Bebida noturna (mel e lavanda) para relaxamento, preparação ao sono e saúde digestiva.', preco: 'US$ 79,95' },
-      { nome: 'Y-Age System Kit', desc: 'Os três adesivos Y-Age — Aeon, Carnosine e Glutathione — com protocolo de rodízio.', preco: 'US$ 209,85' },
-      { nome: 'Y-Age Aeon®', desc: 'Adesivo que promove relaxamento e ajuda na gestão do estresse.', preco: 'US$ 79,95' },
-      { nome: 'Y-Age Glutathione®', desc: 'Adesivo que apoia a aparência da pele, o relaxamento e a saúde geral.', preco: 'US$ 79,95' },
-      { nome: 'Y-Age Carnosine®', desc: 'Adesivo que incentiva a atividade física e o bem-estar geral.', preco: 'US$ 79,95' },
-      { nome: 'SP6 Complete®', desc: 'Adesivo que apoia uma abordagem consciente para manter o apetite saudável.', preco: 'US$ 79,95' },
-      { nome: 'AcuLife® (equino)', desc: 'Adesivo de acupressão exclusivo para cavalos — efeito calmante e flexibilidade. Apenas equinos.', preco: 'US$ 79,95' },
+      { nome: 'Cellular Performance System', desc: 'Adesivo X39 + pó Cellergize Morning — apoia atividade celular, nutrição e resiliência.', preco: 'US$ 229,90', img: 'cellular-performance-system.png', slug: 'cellular-performance-system' },
+      { nome: 'Cellergize™ Duo', desc: 'Cellergize Morning + Evening: energia e defesa antioxidante de dia, preparação para o sono à noite.', preco: 'US$ 149,95', img: 'cellergize-duo.jpg', slug: 'cellergize-duo' },
+      { nome: 'Cellergize™ Morning', desc: 'Bebida matinal (limão e gengibre) que apoia células-tronco, glutationa e defesa antioxidante.', preco: 'US$ 79,95', img: 'cellergize-morning.jpg', slug: 'cellergize-morning' },
+      { nome: 'Cellergize™ Evening', desc: 'Bebida noturna (mel e lavanda) para relaxamento, preparação ao sono e saúde digestiva.', preco: 'US$ 79,95', img: 'cellergize-evening.png', slug: 'cellergize-evening' },
+      { nome: 'Y-Age System Kit', desc: 'Os três adesivos Y-Age — Aeon, Carnosine e Glutathione — com protocolo de rodízio.', preco: 'US$ 209,85', img: 'lifewave-y-age-system-kit.jpg', slug: 'y-age-system-kit' },
+      { nome: 'Y-Age Aeon®', desc: 'Adesivo que promove relaxamento e ajuda na gestão do estresse.', preco: 'US$ 79,95', img: 'lifewave-y-age-aeon-patches.jpg', slug: 'y-age-aeon' },
+      { nome: 'Y-Age Glutathione®', desc: 'Adesivo que apoia a aparência da pele, o relaxamento e a saúde geral.', preco: 'US$ 79,95', img: 'lifewave-y-age-glutathione-patches.jpg', slug: 'y-age-glutathione' },
+      { nome: 'Y-Age Carnosine®', desc: 'Adesivo que incentiva a atividade física e o bem-estar geral.', preco: 'US$ 79,95', img: 'lifewave-y-age-carnosine-patches.jpg', slug: 'y-age-carnosine' },
+      { nome: 'SP6 Complete®', desc: 'Adesivo que apoia uma abordagem consciente para manter o apetite saudável.', preco: 'US$ 79,95', img: 'lifewave-sp6-complete-patches.jpg', slug: 'sp6-complete' },
+      { nome: 'AcuLife® (equino)', desc: 'Adesivo de acupressão exclusivo para cavalos — efeito calmante e flexibilidade. Apenas equinos.', preco: 'US$ 79,95', img: 'lifewave-aculife-patches.png', slug: 'aculife-equinos' },
     ],
   },
   {
     nome: 'Movimento',
     produtos: [
-      { nome: 'IceWave®', desc: 'Fototerapia de ação rápida, sem drogas nem estimulantes, para apoiar o movimento.', preco: 'US$ 79,95' },
+      { nome: 'IceWave®', desc: 'Fototerapia de ação rápida, sem drogas nem estimulantes, para apoiar o movimento.', preco: 'US$ 79,95', img: 'lifewave-icewave-patches.jpg', slug: 'icewave' },
     ],
   },
   {
     nome: 'Energia',
     produtos: [
-      { nome: 'Energy Enhancer®', desc: 'Par de adesivos que promove o fluxo de energia junto da rotina de atividade física.', preco: 'US$ 79,95' },
+      { nome: 'Energy Enhancer®', desc: 'Par de adesivos que promove o fluxo de energia junto da rotina de atividade física.', preco: 'US$ 79,95', img: 'lifewave-energy-enhancer-patches.jpg', slug: 'energy-enhancer' },
     ],
   },
   {
     nome: 'Sono',
     produtos: [
-      { nome: 'Silent Nights®', desc: 'Adesivo noturno que favorece o relaxamento para melhorar a qualidade e a duração do sono.', preco: 'US$ 79,95' },
+      { nome: 'Silent Nights®', desc: 'Adesivo noturno que favorece o relaxamento para melhorar a qualidade e a duração do sono.', preco: 'US$ 79,95', img: 'lifewave-silent-nights-patches.jpg', slug: 'silent-nights' },
     ],
   },
   {
     nome: 'Cuidados com a pele',
     produtos: [
-      { nome: 'Alavida®', desc: 'Adesivo noturno que equilibra a energia restauradora do corpo para uma pele com aparência radiante.', preco: 'US$ 79,95' },
-      { nome: 'Alavida® Nightly Restore Facial Crème', desc: 'Tratamento facial noturno: reduz a aparência de linhas finas, uniformiza o tom e hidrata.', preco: 'US$ 99,95' },
-      { nome: 'Alavida® Facial Nectar', desc: 'Hidratante facial diurno, complementar ao creme noturno.', preco: 'US$ 79,95' },
-      { nome: 'Alavida® Revive Eye Cream', desc: 'Creme para a área dos olhos com peptídeos de cobre — firmeza e luminosidade.', preco: 'US$ 89,95' },
-      { nome: 'Alavida® Regenerating Trio', desc: 'Adesivos Alavida + creme noturno + néctar diurno, num só kit.', preco: 'US$ 199,95' },
+      { nome: 'Alavida®', desc: 'Adesivo noturno que equilibra a energia restauradora do corpo para uma pele com aparência radiante.', preco: 'US$ 79,95', img: 'lifewave-alavida-patches.png', slug: 'alavida-adesivos' },
+      { nome: 'Alavida® Nightly Restore Facial Crème', desc: 'Tratamento facial noturno: reduz a aparência de linhas finas, uniformiza o tom e hidrata.', preco: 'US$ 99,95', img: 'lifewave-alavida-nightly-restore-facial-creme.png', slug: 'alavida-nightly-restore-creme-facial' },
+      { nome: 'Alavida® Facial Nectar', desc: 'Hidratante facial diurno, complementar ao creme noturno.', preco: 'US$ 79,95', img: 'lifewave-alavida-facial-nectar.png', slug: 'alavida-facial-nectar' },
+      { nome: 'Alavida® Revive Eye Cream', desc: 'Creme para a área dos olhos com peptídeos de cobre — firmeza e luminosidade.', preco: 'US$ 89,95', img: 'alavida-revive-eye-cream.jpg', slug: 'alavida-revive-creme-para-olhos' },
+      { nome: 'Alavida® Regenerating Trio', desc: 'Adesivos Alavida + creme noturno + néctar diurno, num só kit.', preco: 'US$ 199,95', img: 'lifewave-alavida-regenerating-trio.png', slug: 'alavida-regenerating-trio' },
     ],
   },
   {
     nome: 'Tecnologia da água',
     produtos: [
-      { nome: 'LifeWave X₂O™ Light-Infused™ Water', desc: 'Sistema de filtragem com infusão de luz e enriquecimento com hidrogênio, para hidratação em nível celular.', preco: 'US$ 5.995,00' },
-      { nome: 'X₂O™ Filter Replacement Bundle', desc: 'Kit com filtro primário e secundário de reposição (troca a cada ~6 meses).', preco: 'US$ 170,00' },
-      { nome: 'X₂O™ Primary Filter', desc: 'Filtro de reposição do primeiro estágio, reduz impurezas da água.', preco: 'US$ 95,00' },
-      { nome: 'X₂O™ Secondary Filter', desc: 'Filtro final: melhora sabor e carrega a água com hidrogênio molecular.', preco: 'US$ 85,00' },
+      { nome: 'LifeWave X₂O™ Light-Infused™ Water', desc: 'Sistema de filtragem com infusão de luz e enriquecimento com hidrogênio, para hidratação em nível celular.', preco: 'US$ 5.995,00', img: 'lifewave-x2o-light-infused-water.jpg', slug: 'lifewave-x2o-agua' },
+      { nome: 'X₂O™ Filter Replacement Bundle', desc: 'Kit com filtro primário e secundário de reposição (troca a cada ~6 meses).', preco: 'US$ 170,00', img: 'lifewave-x2o-filter-replacement-bundle.jpg', slug: 'x2o-kit-filtros-reposicao' },
+      { nome: 'X₂O™ Primary Filter', desc: 'Filtro de reposição do primeiro estágio, reduz impurezas da água.', preco: 'US$ 95,00', img: 'lifewave-x2o-primary-filter-replacement.jpg', slug: 'x2o-filtro-primario' },
+      { nome: 'X₂O™ Secondary Filter', desc: 'Filtro final: melhora sabor e carrega a água com hidrogênio molecular.', preco: 'US$ 85,00', img: 'lifewave-x2o-secondary-filter-replacement.jpg', slug: 'x2o-filtro-secundario' },
     ],
   },
 ];
@@ -110,11 +111,20 @@ const totalProdutos = categorias.reduce((n, c) => n + c.produtos.length, 0);
         </h2>
         <div class="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {cat.produtos.map((p) => (
-            <div class="bg-[#ECF5FA] rounded-2xl p-5 flex flex-col">
-              <h3 class="text-ink mb-2">{p.nome}</h3>
+            <a href={`/${p.slug}`} class="bg-[#ECF5FA] rounded-2xl p-5 flex flex-col no-underline group">
+              <div class="bg-white rounded-xl mb-4 aspect-[4/3] flex items-center justify-center overflow-hidden">
+                <img
+                  src={`/assets/produtos/${p.img}`}
+                  alt={p.nome}
+                  loading="lazy"
+                  width="480" height="360"
+                  class="w-full h-full object-contain p-3 group-hover:scale-[1.03] transition-transform duration-300"
+                />
+              </div>
+              <h3 class="text-ink mb-2 group-hover:text-[#5EB3E4] transition-colors">{p.nome}</h3>
               <p class="text-sm text-ink-muted leading-relaxed mb-4 flex-1">{p.desc}</p>
               <span class="font-semibold text-primary text-sm">{p.preco}</span>
-            </div>
+            </a>
           ))}
         </div>
       </section>
