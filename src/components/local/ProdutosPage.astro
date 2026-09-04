@@ -19,39 +19,46 @@ const waLink = waNumber
  */
 type Produto = {
   nome: string; desc: string; preco: string; precoNum: number;
-  img: string; slug: string; linha: string; necessidade: string;
+  img: string; slug: string; linhas: string[]; necessidades: string[];
 };
 
 const produtos: Produto[] = [
-  { nome: 'LifeWave X39®', desc: 'Adesivo de fototerapia que eleva o peptídeo GHK-Cu, apoia energia, desempenho no exercício e o bem-estar geral.', preco: 'US$ 149,95', precoNum: 149.95, img: 'lifewave-x39-patches.jpg', slug: 'lifewave-x39', linha: 'X39', necessidade: 'Vitalidade e atividade' },
-  { nome: 'LifeWave X49™', desc: 'Adesivo voltado a desempenho, força, resistência, saúde cardiovascular no exercício e recuperação.', preco: 'US$ 149,95', precoNum: 149.95, img: 'lifewave-x49-patches.jpg', slug: 'lifewave-x49', linha: 'X49', necessidade: 'Vitalidade e atividade' },
-  { nome: 'X39® & X49® Performance Bundle', desc: 'Combo dos dois adesivos: energia e saúde geral (X39) + desempenho e recuperação (X49).', preco: 'US$ 279,95', precoNum: 279.95, img: 'x39-e-x49-performance-bundle.jpg', slug: 'x39-x49-performance-bundle', linha: 'X39', necessidade: 'Vitalidade e atividade' },
-  { nome: 'Cellular Performance System', desc: 'Adesivo X39 + pó Cellergize Morning, apoia atividade celular, nutrição e resiliência.', preco: 'US$ 229,90', precoNum: 229.90, img: 'cellular-performance-system.png', slug: 'cellular-performance-system', linha: 'Cellergize', necessidade: 'Bem-estar geral' },
-  { nome: 'Cellergize™ Duo', desc: 'Cellergize Morning + Evening: energia e defesa antioxidante de dia, preparação para o sono à noite.', preco: 'US$ 149,95', precoNum: 149.95, img: 'cellergize-duo.jpg', slug: 'cellergize-duo', linha: 'Cellergize', necessidade: 'Nutrição' },
-  { nome: 'Cellergize™ Morning', desc: 'Bebida matinal (limão e gengibre) que apoia células-tronco, glutationa e defesa antioxidante.', preco: 'US$ 79,95', precoNum: 79.95, img: 'cellergize-morning.jpg', slug: 'cellergize-morning', linha: 'Cellergize', necessidade: 'Nutrição' },
-  { nome: 'Cellergize™ Evening', desc: 'Bebida noturna (mel e lavanda) para relaxamento, preparação ao sono e saúde digestiva.', preco: 'US$ 79,95', precoNum: 79.95, img: 'cellergize-evening.png', slug: 'cellergize-evening', linha: 'Cellergize', necessidade: 'Sono' },
-  { nome: 'Y-Age System Kit', desc: 'Os três adesivos Y-Age: Aeon, Carnosine e Glutathione, com protocolo de rodízio.', preco: 'US$ 209,85', precoNum: 209.85, img: 'lifewave-y-age-system-kit.jpg', slug: 'y-age-system-kit', linha: 'Y-Age', necessidade: 'Bem-estar geral' },
-  { nome: 'Y-Age Aeon®', desc: 'Adesivo que promove relaxamento e ajuda na gestão do estresse.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-aeon-patches.jpg', slug: 'y-age-aeon', linha: 'Y-Age', necessidade: 'Bem-estar geral' },
-  { nome: 'Y-Age Glutathione®', desc: 'Adesivo que apoia a aparência da pele, o relaxamento e a saúde geral.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-glutathione-patches.jpg', slug: 'y-age-glutathione', linha: 'Y-Age', necessidade: 'Bem-estar geral' },
-  { nome: 'Y-Age Carnosine®', desc: 'Adesivo que incentiva a atividade física e o bem-estar geral.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-carnosine-patches.jpg', slug: 'y-age-carnosine', linha: 'Y-Age', necessidade: 'Vitalidade e atividade' },
-  { nome: 'SP6 Complete®', desc: 'Adesivo que apoia uma abordagem consciente para manter o apetite saudável.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-sp6-complete-patches.jpg', slug: 'sp6-complete', linha: 'SP6 Complete', necessidade: 'Bem-estar geral' },
-  { nome: 'AcuLife® (equino)', desc: 'Adesivo de acupressão exclusivo para cavalos: efeito calmante e flexibilidade. Apenas equinos.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-aculife-patches.png', slug: 'aculife-equinos', linha: 'AcuLife', necessidade: 'Bem-estar geral' },
-  { nome: 'IceWave®', desc: 'Fototerapia de ação rápida, sem drogas nem estimulantes, para apoiar o movimento.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-icewave-patches.jpg', slug: 'icewave', linha: 'IceWave', necessidade: 'Movimento' },
-  { nome: 'Energy Enhancer®', desc: 'Par de adesivos que promove o fluxo de energia junto da rotina de atividade física.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-energy-enhancer-patches.jpg', slug: 'energy-enhancer', linha: 'Energy Enhancer', necessidade: 'Vitalidade e atividade' },
-  { nome: 'Silent Nights®', desc: 'Adesivo noturno que favorece o relaxamento para melhorar a qualidade e a duração do sono.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-silent-nights-patches.jpg', slug: 'silent-nights', linha: 'Silent Nights', necessidade: 'Sono' },
-  { nome: 'Alavida®', desc: 'Adesivo noturno que equilibra a energia restauradora do corpo para uma pele com aparência radiante.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-alavida-patches.png', slug: 'alavida-adesivos', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
-  { nome: 'Alavida® Nightly Restore Facial Crème', desc: 'Tratamento facial noturno: reduz a aparência de linhas finas, uniformiza o tom e hidrata.', preco: 'US$ 99,95', precoNum: 99.95, img: 'lifewave-alavida-nightly-restore-facial-creme.png', slug: 'alavida-nightly-restore-creme-facial', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
-  { nome: 'Alavida® Facial Nectar', desc: 'Hidratante facial diurno, complementar ao creme noturno.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-alavida-facial-nectar.png', slug: 'alavida-facial-nectar', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
-  { nome: 'Alavida® Revive Eye Cream', desc: 'Creme para a área dos olhos com peptídeos de cobre: firmeza e luminosidade.', preco: 'US$ 89,95', precoNum: 89.95, img: 'alavida-revive-eye-cream.jpg', slug: 'alavida-revive-creme-para-olhos', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
-  { nome: 'Alavida® Regenerating Trio', desc: 'Adesivos Alavida + creme noturno + néctar diurno, num só kit.', preco: 'US$ 199,95', precoNum: 199.95, img: 'lifewave-alavida-regenerating-trio.png', slug: 'alavida-regenerating-trio', linha: 'Alavida', necessidade: 'Cuidados com a pele' },
-  { nome: 'LifeWave X₂O™ Light-Infused™ Water', desc: 'Sistema de filtragem com infusão de luz e enriquecimento com hidrogênio, para hidratação em nível celular.', preco: 'US$ 5.995,00', precoNum: 5995, img: 'lifewave-x2o-light-infused-water.jpg', slug: 'lifewave-x2o-agua', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
-  { nome: 'X₂O™ Filter Replacement Bundle', desc: 'Kit com filtro primário e secundário de reposição (troca a cada 6 meses).', preco: 'US$ 170,00', precoNum: 170, img: 'lifewave-x2o-filter-replacement-bundle.jpg', slug: 'x2o-kit-filtros-reposicao', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
-  { nome: 'X₂O™ Primary Filter', desc: 'Filtro de reposição do primeiro estágio, reduz impurezas da água.', preco: 'US$ 95,00', precoNum: 95, img: 'lifewave-x2o-primary-filter-replacement.jpg', slug: 'x2o-filtro-primario', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
-  { nome: 'X₂O™ Secondary Filter', desc: 'Filtro final: melhora sabor e carrega a água com hidrogênio molecular.', preco: 'US$ 85,00', precoNum: 85, img: 'lifewave-x2o-secondary-filter-replacement.jpg', slug: 'x2o-filtro-secundario', linha: 'LifeWave X₂O', necessidade: 'Tecnologia da água' },
+  { nome: 'LifeWave X39®', desc: 'Adesivo de fototerapia que eleva o peptídeo GHK-Cu, apoia energia, desempenho no exercício e o bem-estar geral.', preco: 'US$ 149,95', precoNum: 149.95, img: 'lifewave-x39-patches.jpg', slug: 'lifewave-x39', linhas: ['X39'], necessidades: ['Vitalidade e atividade', 'Bem-estar geral'] },
+  { nome: 'LifeWave X49™', desc: 'Adesivo voltado a desempenho, força, resistência, saúde cardiovascular no exercício e recuperação.', preco: 'US$ 149,95', precoNum: 149.95, img: 'lifewave-x49-patches.jpg', slug: 'lifewave-x49', linhas: ['X49'], necessidades: ['Vitalidade e atividade', 'Movimento'] },
+  { nome: 'X39® & X49® Performance Bundle', desc: 'Combo dos dois adesivos: energia e saúde geral (X39) + desempenho e recuperação (X49).', preco: 'US$ 279,95', precoNum: 279.95, img: 'x39-e-x49-performance-bundle.jpg', slug: 'x39-x49-performance-bundle', linhas: ['X39', 'X49'], necessidades: ['Vitalidade e atividade', 'Movimento', 'Bem-estar geral'] },
+  { nome: 'Cellular Performance System', desc: 'Adesivo X39 + pó Cellergize Morning, apoia atividade celular, nutrição e resiliência.', preco: 'US$ 229,90', precoNum: 229.90, img: 'cellular-performance-system.png', slug: 'cellular-performance-system', linhas: ['X39', 'Cellergize'], necessidades: ['Bem-estar geral', 'Nutrição', 'Vitalidade e atividade'] },
+  { nome: 'Cellergize™ Duo', desc: 'Cellergize Morning + Evening: energia e defesa antioxidante de dia, preparação para o sono à noite.', preco: 'US$ 149,95', precoNum: 149.95, img: 'cellergize-duo.jpg', slug: 'cellergize-duo', linhas: ['Cellergize'], necessidades: ['Nutrição', 'Sono', 'Bem-estar geral'] },
+  { nome: 'Cellergize™ Morning', desc: 'Bebida matinal (limão e gengibre) que apoia células-tronco, glutationa e defesa antioxidante.', preco: 'US$ 79,95', precoNum: 79.95, img: 'cellergize-morning.jpg', slug: 'cellergize-morning', linhas: ['Cellergize'], necessidades: ['Nutrição', 'Vitalidade e atividade'] },
+  { nome: 'Cellergize™ Evening', desc: 'Bebida noturna (mel e lavanda) para relaxamento, preparação ao sono e saúde digestiva.', preco: 'US$ 79,95', precoNum: 79.95, img: 'cellergize-evening.png', slug: 'cellergize-evening', linhas: ['Cellergize'], necessidades: ['Nutrição', 'Sono'] },
+  { nome: 'Y-Age System Kit', desc: 'Os três adesivos Y-Age: Aeon, Carnosine e Glutathione, com protocolo de rodízio.', preco: 'US$ 209,85', precoNum: 209.85, img: 'lifewave-y-age-system-kit.jpg', slug: 'y-age-system-kit', linhas: ['Y-Age'], necessidades: ['Bem-estar geral', 'Vitalidade e atividade', 'Cuidados com a pele'] },
+  { nome: 'Y-Age Aeon®', desc: 'Adesivo que promove relaxamento e ajuda na gestão do estresse.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-aeon-patches.jpg', slug: 'y-age-aeon', linhas: ['Y-Age'], necessidades: ['Bem-estar geral'] },
+  { nome: 'Y-Age Glutathione®', desc: 'Adesivo que apoia a aparência da pele, o relaxamento e a saúde geral.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-glutathione-patches.jpg', slug: 'y-age-glutathione', linhas: ['Y-Age'], necessidades: ['Bem-estar geral', 'Cuidados com a pele'] },
+  { nome: 'Y-Age Carnosine®', desc: 'Adesivo que incentiva a atividade física e o bem-estar geral.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-y-age-carnosine-patches.jpg', slug: 'y-age-carnosine', linhas: ['Y-Age'], necessidades: ['Vitalidade e atividade', 'Bem-estar geral'] },
+  { nome: 'SP6 Complete®', desc: 'Adesivo que apoia uma abordagem consciente para manter o apetite saudável.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-sp6-complete-patches.jpg', slug: 'sp6-complete', linhas: ['SP6 Complete'], necessidades: ['Bem-estar geral'] },
+  { nome: 'AcuLife® (equino)', desc: 'Adesivo de acupressão exclusivo para cavalos: efeito calmante e flexibilidade. Apenas equinos.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-aculife-patches.png', slug: 'aculife-equinos', linhas: ['AcuLife'], necessidades: ['Bem-estar geral'] },
+  { nome: 'IceWave®', desc: 'Fototerapia de ação rápida, sem drogas nem estimulantes, para apoiar o movimento.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-icewave-patches.jpg', slug: 'icewave', linhas: ['IceWave'], necessidades: ['Movimento'] },
+  { nome: 'Energy Enhancer®', desc: 'Par de adesivos que promove o fluxo de energia junto da rotina de atividade física.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-energy-enhancer-patches.jpg', slug: 'energy-enhancer', linhas: ['Energy Enhancer'], necessidades: ['Vitalidade e atividade'] },
+  { nome: 'Silent Nights®', desc: 'Adesivo noturno que favorece o relaxamento para melhorar a qualidade e a duração do sono.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-silent-nights-patches.jpg', slug: 'silent-nights', linhas: ['Silent Nights'], necessidades: ['Sono'] },
+  { nome: 'Alavida®', desc: 'Adesivo noturno que equilibra a energia restauradora do corpo para uma pele com aparência radiante.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-alavida-patches.png', slug: 'alavida-adesivos', linhas: ['Alavida'], necessidades: ['Cuidados com a pele'] },
+  { nome: 'Alavida® Nightly Restore Facial Crème', desc: 'Tratamento facial noturno: reduz a aparência de linhas finas, uniformiza o tom e hidrata.', preco: 'US$ 99,95', precoNum: 99.95, img: 'lifewave-alavida-nightly-restore-facial-creme.png', slug: 'alavida-nightly-restore-creme-facial', linhas: ['Alavida'], necessidades: ['Cuidados com a pele'] },
+  { nome: 'Alavida® Facial Nectar', desc: 'Hidratante facial diurno, complementar ao creme noturno.', preco: 'US$ 79,95', precoNum: 79.95, img: 'lifewave-alavida-facial-nectar.png', slug: 'alavida-facial-nectar', linhas: ['Alavida'], necessidades: ['Cuidados com a pele'] },
+  { nome: 'Alavida® Revive Eye Cream', desc: 'Creme para a área dos olhos com peptídeos de cobre: firmeza e luminosidade.', preco: 'US$ 89,95', precoNum: 89.95, img: 'alavida-revive-eye-cream.jpg', slug: 'alavida-revive-creme-para-olhos', linhas: ['Alavida'], necessidades: ['Cuidados com a pele'] },
+  { nome: 'Alavida® Regenerating Trio', desc: 'Adesivos Alavida + creme noturno + néctar diurno, num só kit.', preco: 'US$ 199,95', precoNum: 199.95, img: 'lifewave-alavida-regenerating-trio.png', slug: 'alavida-regenerating-trio', linhas: ['Alavida'], necessidades: ['Cuidados com a pele'] },
+  { nome: 'LifeWave X₂O™ Light-Infused™ Water', desc: 'Sistema de filtragem com infusão de luz e enriquecimento com hidrogênio, para hidratação em nível celular.', preco: 'US$ 5.995,00', precoNum: 5995, img: 'lifewave-x2o-light-infused-water.jpg', slug: 'lifewave-x2o-agua', linhas: ['LifeWave X₂O'], necessidades: ['Tecnologia da água'] },
+  { nome: 'X₂O™ Filter Replacement Bundle', desc: 'Kit com filtro primário e secundário de reposição (troca a cada 6 meses).', preco: 'US$ 170,00', precoNum: 170, img: 'lifewave-x2o-filter-replacement-bundle.jpg', slug: 'x2o-kit-filtros-reposicao', linhas: ['LifeWave X₂O'], necessidades: ['Tecnologia da água'] },
+  { nome: 'X₂O™ Primary Filter', desc: 'Filtro de reposição do primeiro estágio, reduz impurezas da água.', preco: 'US$ 95,00', precoNum: 95, img: 'lifewave-x2o-primary-filter-replacement.jpg', slug: 'x2o-filtro-primario', linhas: ['LifeWave X₂O'], necessidades: ['Tecnologia da água'] },
+  { nome: 'X₂O™ Secondary Filter', desc: 'Filtro final: melhora sabor e carrega a água com hidrogênio molecular.', preco: 'US$ 85,00', precoNum: 85, img: 'lifewave-x2o-secondary-filter-replacement.jpg', slug: 'x2o-filtro-secundario', linhas: ['LifeWave X₂O'], necessidades: ['Tecnologia da água'] },
 ];
 
-const linhas = [...new Set(produtos.map((p) => p.linha))];
-const necessidades = [...new Set(produtos.map((p) => p.necessidade))];
+/** Produto pode pertencer a mais de uma linha/necessidade (kits, p.ex.), então cada
+ *  filtro conta quantos itens o atendem e some quando não houver nenhum. */
+const contar = (campo: 'linhas' | 'necessidades') => {
+  const m = new Map<string, number>();
+  produtos.forEach((p) => p[campo].forEach((v) => m.set(v, (m.get(v) || 0) + 1)));
+  return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+};
+const linhas = contar('linhas');
+const necessidades = contar('necessidades');
 const precoMin = Math.floor(Math.min(...produtos.map((p) => p.precoNum)));
 const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
 ---
@@ -80,7 +87,9 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
   <div class="grid lg:grid-cols-[230px_1fr] gap-8 lg:gap-12 items-start">
 
     <!-- Filtros -->
-    <aside class="lg:sticky lg:top-6">
+    <!-- Sem sticky de propósito: a coluna é mais alta que a viewport, então fixá-la
+         escondia o filtro de preço e o "Limpar tudo" e abria um vão em branco. -->
+    <aside>
       <button type="button" data-filtros-toggle
               class="lg:hidden w-full flex items-center justify-between border border-[#5EB3E4]/40 rounded-xl px-4 py-3 mb-4 text-sm font-semibold text-ink">
         Filtrar produtos
@@ -91,11 +100,12 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
         <div class="mb-7">
           <p class="font-display text-ink text-lg mb-3 pb-2 border-b border-[#5EB3E4]/30">Linhas de produto</p>
           <ul class="space-y-2">
-            {linhas.map((l) => (
+            {linhas.map(([l, n]) => (
               <li>
                 <label class="flex items-center gap-2.5 text-sm text-ink-muted cursor-pointer">
                   <input type="checkbox" data-filtro="linha" value={l} class="w-4 h-4 accent-[#194F90] cursor-pointer" />
-                  {l}
+                  <span class="flex-1">{l}</span>
+                  <span class="text-ink-faint text-xs tabular-nums">{n}</span>
                 </label>
               </li>
             ))}
@@ -105,11 +115,12 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
         <div class="mb-7">
           <p class="font-display text-ink text-lg mb-3 pb-2 border-b border-[#5EB3E4]/30">Necessidade</p>
           <ul class="space-y-2">
-            {necessidades.map((n) => (
+            {necessidades.map(([nec, n]) => (
               <li>
                 <label class="flex items-center gap-2.5 text-sm text-ink-muted cursor-pointer">
-                  <input type="checkbox" data-filtro="necessidade" value={n} class="w-4 h-4 accent-[#194F90] cursor-pointer" />
-                  {n}
+                  <input type="checkbox" data-filtro="necessidade" value={nec} class="w-4 h-4 accent-[#194F90] cursor-pointer" />
+                  <span class="flex-1">{nec}</span>
+                  <span class="text-ink-faint text-xs tabular-nums">{n}</span>
                 </label>
               </li>
             ))}
@@ -141,8 +152,8 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
           <a href={`/${p.slug}`}
              class="flex flex-col no-underline group"
              data-produto
-             data-linha={p.linha}
-             data-necessidade={p.necessidade}
+             data-linhas={p.linhas.join('|')}
+             data-necessidades={p.necessidades.join('|')}
              data-preco={p.precoNum}>
             <div class="bg-white rounded-xl aspect-[4/3] overflow-hidden">
               <img src={`/assets/produtos/${p.img}`} alt={p.nome} loading="lazy" width="480" height="360"
@@ -205,10 +216,20 @@ const precoMax = Math.ceil(Math.max(...produtos.map((p) => p.precoNum)));
       if (range && parseFloat(range.value) < parseFloat(range.max)) teto = parseFloat(range.value);
       var visiveis = 0;
 
+      // um produto pode ter varias linhas/necessidades: basta uma casar
+      function casa(attr, selecionados) {
+        if (!selecionados.length) return true;
+        var vals = (attr || '').split('|');
+        for (var k = 0; k < selecionados.length; k++) {
+          if (vals.indexOf(selecionados[k]) !== -1) return true;
+        }
+        return false;
+      }
+
       for (var i = 0; i < cards.length; i++) {
         var c = cards[i];
-        var okLinha = !linhas.length || linhas.indexOf(c.getAttribute('data-linha')) !== -1;
-        var okNec = !necs.length || necs.indexOf(c.getAttribute('data-necessidade')) !== -1;
+        var okLinha = casa(c.getAttribute('data-linhas'), linhas);
+        var okNec = casa(c.getAttribute('data-necessidades'), necs);
         var okPreco = parseFloat(c.getAttribute('data-preco')) <= teto;
         var mostra = okLinha && okNec && okPreco;
         c.style.display = mostra ? '' : 'none';
