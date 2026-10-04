@@ -1,0 +1,22 @@
+---
+// Chat de atendimento (Chatwoot, self-hosted em chat.empreendedor.us).
+// Carrega em todas as páginas públicas via BaseLayout. O SDK é assíncrono e
+// cria a bolha de chat no canto inferior direito.
+const BASE_URL = 'https://chat.empreendedor.us';
+const WEBSITE_TOKEN = 'dsmH3rcfFg1NYQUn3BvC7CHa';
+---
+
+<script is:inline define:vars={{ BASE_URL, WEBSITE_TOKEN }}>
+  (function (d, t) {
+    var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+    g.src = BASE_URL + '/packs/js/sdk.js';
+    g.async = true;
+    s.parentNode.insertBefore(g, s);
+    g.onload = function () {
+      window.chatwootSDK.run({
+        websiteToken: WEBSITE_TOKEN,
+        baseUrl: BASE_URL,
+      });
+    };
+  })(document, 'script');
+</script>

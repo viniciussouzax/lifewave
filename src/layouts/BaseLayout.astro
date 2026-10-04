@@ -5,6 +5,7 @@ import HeadPlugins from '../plugins/_slots/HeadPlugins.astro';
 import BodyEndPlugins from '../plugins/_slots/BodyEndPlugins.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import ChatwootWidget from '../components/layout/ChatwootWidget.astro';
 
 const siteConfig = readData('siteConfig.json');
 const pluginsConfig = readData('pluginsConfig.json', {});
@@ -216,6 +217,8 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
   <Footer flush={flushFooter} />
 
   <BodyEndPlugins />
+
+  <ChatwootWidget />
 
 </body>
 </html>
