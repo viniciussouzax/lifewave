@@ -1,0 +1,23 @@
+{
+    "webinarId": "2",
+    "enviarOrigem": false,
+    "eyebrow": "Apresentação online e gratuita",
+    "titulo": "Tecnologias e oportunidades da LifeWave",
+    "subtitulo": "Entenda, de forma clara e acessível, como peptídeos, regeneração celular e fotobiomodulação estão redefinindo o cuidado com a saúde e a longevidade.",
+    "topicos": [
+        "Peptídeos, regeneração celular e longevidade",
+        "GHK-Cu e envelhecimento saudável",
+        "Fototerapia e fotobiomodulação",
+        "A tecnologia patenteada LifeWave X39®",
+        "Dúvidas ao vivo e próximos passos"
+    ],
+    "videoYoutube": "oKF-ZNFz92M",
+    "cardTitulo": "Reserve sua vaga",
+    "cardTexto": "Escolha o melhor horário e receba o link da sala e os lembretes.",
+    "botao": "Quero participar",
+    "sala": {
+        "titulo": "Sua vaga está garantida",
+        "texto": "Guarde esta página: quando chegar a hora, o botão para entrar na sala aparece aqui.",
+        "whatsappGrupo": ""
+    }
+}

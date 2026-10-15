@@ -1,0 +1,390 @@
+---
+/**
+ * WebinarLanding.astro — home: inscrição na apresentação com o visual do Brazilian Conference
+ * (fundo Prism Film, Jost em caixa alta, azul-marinho #0b2a5c, card branco translúcido).
+ *
+ * O formulário é próprio: os horários vêm da API do EverWebinar no fuso de quem vê
+ * (/api/webinar/horarios) e a inscrição vai por /api/webinar/inscricao. Depois do envio a
+ * pessoa segue para a sala de espera (/sala). O Lead é registrado pelo tracking-kit no envio.
+ * Textos e o webinar ficam em src/data/webinar.json. O id #hero-form é o alvo dos CTAs do site.
+ */
+import PrismBackground from './PrismBackground.astro';
+import { readData } from '../../lib/readData';
+
+const w = readData('webinar.json', {}) as any;
+const topicos: string[] = Array.isArray(w.topicos) ? w.topicos : [];
+
+const DDIS = [
+  ['+55', 'Brasil'], ['+1', 'EUA / Canadá'], ['+351', 'Portugal'], ['+34', 'Espanha'], ['+44', 'Reino Unido'],
+  ['+39', 'Itália'], ['+33', 'França'], ['+49', 'Alemanha'], ['+41', 'Suíça'], ['+353', 'Irlanda'],
+  ['+54', 'Argentina'], ['+56', 'Chile'], ['+57', 'Colômbia'], ['+52', 'México'], ['+595', 'Paraguai'],
+  ['+598', 'Uruguai'], ['+51', 'Peru'], ['+61', 'Austrália'], ['+81', 'Japão'], ['+971', 'Emirados Árabes'],
+];
+---
+
+<section class="bp-wl relative w-full overflow-hidden">
+  <PrismBackground />
+
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 pt-10 pb-16 sm:px-10 sm:pt-12 lg:px-12 lg:pt-14 lg:pb-24">
+    <div class="grid grid-cols-[minmax(0,1fr)] items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-8">
+
+      <!-- Texto (topo). No celular o card vem logo depois; no desktop ele ocupa a coluna da direita. -->
+      <div class="flex min-w-0 flex-col items-start gap-6 text-left lg:col-start-1 lg:row-start-1">
+        <div class="flex items-center gap-3">
+          <div class="bp-mono flex w-12 shrink-0 flex-col items-center overflow-hidden rounded-lg bg-white shadow-sm" aria-hidden="true">
+            <span data-proxima-mes class="w-full bg-[#0b2a5c] py-0.5 text-center text-[12px] font-semibold uppercase leading-tight tracking-wide text-white">ao</span>
+            <span data-proxima-dia class="py-1.5 text-[20px] font-bold leading-none text-[#0b2a5c]">vivo</span>
+          </div>
+          <p class="bp-mono flex flex-col text-[15px] leading-snug text-[#0b2a5c] sm:text-base">
+            <span>{w.eyebrow}</span>
+            <span data-proxima-texto class="text-[#0b2a5c]/75">Escolha o seu horário ao lado</span>
+          </p>
+        </div>
+
+        <h1 class="bp-display">{w.titulo}</h1>
+
+        <p class="text-[17px] leading-snug text-[#0b2a5c]/85 sm:text-[20px]">{w.subtitulo}</p>
+
+      </div>
+
+      <!-- Card de inscrição -->
+      <div id="hero-form" class="mx-auto flex w-full max-w-md scroll-mt-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 flex-col gap-5 rounded-2xl border border-white/60 bg-white/90 p-6 text-left shadow-[0_30px_60px_-30px_rgba(8,40,100,0.55)] backdrop-blur-md sm:p-8 lg:mr-0">
+        <div data-form-area class="flex flex-col gap-5">
+          <div class="flex flex-col gap-1">
+            <h2 class="bp-display bp-card-title">{w.cardTitulo}</h2>
+            <p class="text-sm text-[#0b2a5c]/70">{w.cardTexto}</p>
+          </div>
+
+          <form data-inscricao novalidate class="flex flex-col gap-4">
+            <fieldset class="flex flex-col gap-2">
+              <legend class="mb-1.5 text-sm font-medium text-[#0b2a5c]">Escolha o melhor horário</legend>
+              <div data-horarios class="flex flex-col gap-3" role="radiogroup" aria-label="Horários disponíveis">
+                <div class="bp-skeleton h-9 rounded-md"></div>
+                <div class="bp-skeleton h-9 w-2/3 rounded-md"></div>
+              </div>
+              <p data-erro="horario" class="hidden text-xs text-red-600"></p>
+              <p class="text-[11px] text-[#0b2a5c]/55">Horários no seu fuso (<span data-fuso-rotulo></span>).</p>
+            </fieldset>
+
+            <label class="flex flex-col gap-1.5">
+              <span class="text-sm font-medium text-[#0b2a5c]">Nome completo</span>
+              <input name="nome" autocomplete="name" placeholder="Seu nome e sobrenome" class="bp-input w-full" />
+              <span data-erro="nome" class="hidden text-xs text-red-600"></span>
+            </label>
+
+            <label class="flex flex-col gap-1.5">
+              <span class="text-sm font-medium text-[#0b2a5c]">E-mail</span>
+              <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com" class="bp-input w-full" />
+              <span data-erro="email" class="hidden text-xs text-red-600"></span>
+            </label>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="bp-telefone" class="text-sm font-medium text-[#0b2a5c]">WhatsApp</label>
+              <div class="flex gap-2">
+                <select name="ddi" aria-label="País do telefone" class="bp-input w-[6.5rem] shrink-0 px-2">
+                  {DDIS.map(([ddi, pais]) => <option value={ddi}>{ddi} {pais}</option>)}
+                </select>
+                <input id="bp-telefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Seu número com DDD" class="bp-input min-w-0 flex-1" />
+              </div>
+              <span data-erro="telefone" class="hidden text-xs text-red-600"></span>
+            </div>
+
+            <label class="flex items-start gap-2 text-xs leading-snug text-[#0b2a5c]/70">
+              <input name="consentimento" type="checkbox" checked class="mt-0.5 h-4 w-4 accent-[#0b2a5c]" />
+              <span>Quero receber os lembretes da apresentação por SMS/WhatsApp.</span>
+            </label>
+
+            <p data-erro="geral" class="hidden rounded-md bg-red-50 px-3 py-2 text-sm text-red-700"></p>
+
+            <button type="submit" class="bp-btn group">
+              <span class="bp-btn-text">{w.botao}</span>
+              <span class="bp-btn-arrow" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+              </span>
+            </button>
+            <p class="text-center text-xs text-[#0b2a5c]/55">Gratuito · Seus dados ficam só com a nossa equipe.</p>
+          </form>
+        </div>
+
+        <div data-indisponivel class="hidden flex-col gap-2 py-4" role="status">
+          <p class="bp-display bp-card-title">Inscrições em breve</p>
+          <p class="text-sm text-[#0b2a5c]/70">Não encontramos horários disponíveis agora. Volte em instantes ou fale com a gente pelo WhatsApp.</p>
+        </div>
+      </div>
+
+      <!-- Tópicos e vídeo (abaixo do card no celular) -->
+      <div class="flex min-w-0 flex-col items-start gap-6 lg:col-start-1 lg:row-start-2">
+        <ul class="space-y-2.5">
+          {topicos.map((t) => (
+            <li class="flex items-start gap-2.5">
+              <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0b2a5c]">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+              </span>
+              <span class="text-[15px] leading-snug text-[#0b2a5c] sm:text-base">{t}</span>
+            </li>
+          ))}
+        </ul>
+
+        {w.videoYoutube && (
+          <div
+            class="bp-video group relative aspect-video w-full max-w-xl cursor-pointer overflow-hidden rounded-xl shadow-[0_20px_40px_-24px_rgba(8,40,100,0.6)]"
+            data-embed={`https://www.youtube.com/embed/${w.videoYoutube}`}
+            role="button" tabindex="0" aria-label="Assistir vídeo"
+          >
+            <img src={`https://i.ytimg.com/vi/${w.videoYoutube}/hqdefault.jpg`} alt="Vídeo da apresentação" class="h-full w-full object-cover" loading="lazy" />
+            <span class="absolute inset-0 flex items-center justify-center bg-black/15 transition-colors group-hover:bg-black/25">
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[#0b2a5c] shadow-lg transition-transform group-hover:scale-105">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+            </span>
+          </div>
+        )}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .bp-wl { color: #0b2a5c; }
+  .bp-display { font-family: 'Jost', 'Geist', sans-serif; }
+  .bp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  /* As regras globais de h1/h2 do site vencem classes utilitárias: estilo explícito aqui. */
+  .bp-wl h1 {
+    max-width: 48rem; margin: 0; color: #0b2a5c; font-weight: 600; text-transform: uppercase;
+    font-size: clamp(1.55rem, 8.4vw, 2.35rem); line-height: 1.02; letter-spacing: 0.04em; text-wrap: balance;
+  }
+  @media (min-width: 640px) { .bp-wl h1 { font-size: 3.4rem; } }
+  @media (min-width: 1280px) { .bp-wl h1 { font-size: 4.1rem; } }
+  .bp-wl .bp-card-title { margin: 0; font-size: 1.9rem; font-weight: 300; line-height: 1.1; color: #0b2a5c; }
+  .bp-input {
+    height: 2.75rem; border-radius: 0.5rem; border: 1px solid #d5e2f3; background: #fff;
+    padding: 0 0.75rem; font-size: 0.95rem; color: #0b2a5c; box-shadow: 0 1px 2px rgba(11, 42, 92, 0.05);
+  }
+  .bp-input:focus { outline: none; border-color: #1a73eb; box-shadow: 0 0 0 3px rgba(26, 115, 235, 0.18); }
+  .bp-input[aria-invalid='true'] { border-color: #dc2626; }
+  .bp-btn {
+    position: relative; display: flex; height: 3rem; width: 100%; cursor: pointer; align-items: center; justify-content: center;
+    overflow: hidden; border-radius: 9999px; background: #0b2a5c; padding: 0.125rem 3.5rem 0.125rem 1.5rem;
+    font-size: 0.875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
+    transition: padding 0.5s, background 0.3s;
+  }
+  .bp-btn:hover { background: #12397a; padding-left: 3.5rem; padding-right: 1.5rem; }
+  .bp-btn:disabled { cursor: wait; opacity: 0.75; }
+  .bp-btn-arrow {
+    position: absolute; right: 0.25rem; display: flex; height: 2.5rem; width: 2.5rem; align-items: center; justify-content: center;
+    border-radius: 9999px; background: #fff; color: #0b2a5c; transition: right 0.5s;
+  }
+  .bp-btn:hover .bp-btn-arrow { right: calc(100% - 2.75rem); }
+  .bp-skeleton { background: linear-gradient(90deg, #e6eef9 25%, #f3f7fd 50%, #e6eef9 75%); background-size: 200% 100%; animation: bp-shine 1.2s infinite; }
+  @keyframes bp-shine { to { background-position: -200% 0; } }
+</style>
+
+<style is:global>
+  /* Botões de horário: criados em runtime, por isso globais. */
+  .bp-dia { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(11, 42, 92, 0.6); margin-bottom: 0.35rem; }
+  .bp-slots { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .bp-slot input { position: absolute; opacity: 0; pointer-events: none; }
+  .bp-slot span {
+    display: inline-flex; min-width: 4.5rem; justify-content: center; border-radius: 0.5rem; border: 1px solid #c9daf1;
+    background: #fff; padding: 0.45rem 0.8rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.9rem;
+    color: #0b2a5c; cursor: pointer; transition: all 0.15s;
+  }
+  .bp-slot span:hover { border-color: #1a73eb; }
+  .bp-slot input:checked + span { background: #0b2a5c; border-color: #0b2a5c; color: #fff; }
+  .bp-slot input:focus-visible + span { box-shadow: 0 0 0 3px rgba(26, 115, 235, 0.3); }
+</style>
+
+<script>
+  type Horario = { id: string; inicio: string | null; rotulo: string };
+
+
+  function fusoDoNavegador() {
+    const min = -new Date().getTimezoneOffset();
+    const abs = Math.abs(min), h = Math.floor(abs / 60), m = abs % 60;
+    return `GMT${min < 0 ? '-' : '+'}${h}${m ? `:${String(m).padStart(2, '0')}` : ''}`;
+  }
+
+  // DDI padrão pelo fuso do aparelho (o mais provável para quem vê).
+  function ddiProvavel() {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Indiana|Kentucky|Boise|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Puerto_Rico)|^Pacific\/Honolulu/.test(tz)) return '+1';
+    if (/^Europe\/Lisbon|^Atlantic\/(Madeira|Azores)/.test(tz)) return '+351';
+    if (/^Europe\/Madrid/.test(tz)) return '+34';
+    if (/^Europe\/London/.test(tz)) return '+44';
+    return '+55';
+  }
+
+  // Origem (UTMs e IDs de clique) da URL de chegada; a última que veio fica guardada para o envio.
+  const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+  function origemAtual(): Record<string, string> {
+    const q = new URLSearchParams(location.search);
+    const daUrl: Record<string, string> = {};
+    for (const k of UTM) { const v = q.get(k); if (v) daUrl[k] = v.slice(0, 100); }
+    try {
+      if (Object.keys(daUrl).length) localStorage.setItem('bp_origem', JSON.stringify(daUrl));
+      return Object.keys(daUrl).length ? daUrl : JSON.parse(localStorage.getItem('bp_origem') || '{}');
+    } catch { return daUrl; }
+  }
+
+  function rotuloDoDia(d: Date) {
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const dia = new Date(d); dia.setHours(0, 0, 0, 0);
+    const diff = Math.round((dia.getTime() - hoje.getTime()) / 86_400_000);
+    const data = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+    return diff === 0 ? `Hoje · ${data}` : diff === 1 ? `Amanhã · ${data}` : data;
+  }
+  const hora = (d: Date) => d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  function mostrarErro(form: HTMLFormElement, campo: string, msg: string) {
+    const el = form.closest('[data-form-area]')!.querySelector<HTMLElement>(`[data-erro="${campo}"]`);
+    if (el) { el.textContent = msg; el.classList.toggle('hidden', !msg); }
+    const input = form.querySelector<HTMLInputElement>(`[name="${campo}"]`);
+    if (input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  }
+
+  async function iniciar(root: HTMLElement, form: HTMLFormElement, lista: HTMLElement) {
+    const fuso = fusoDoNavegador();
+    root.querySelector('[data-fuso-rotulo]')!.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone?.replace(/_/g, ' ') || fuso;
+    (form.elements.namedItem('ddi') as HTMLSelectElement).value = ddiProvavel();
+    const origem = origemAtual();
+
+    let horarios: Horario[] = [];
+    try {
+      const r = await fetch(`/api/webinar/horarios?fuso=${encodeURIComponent(fuso)}`);
+      const j = await r.json();
+      horarios = j.ok ? j.horarios : [];
+    } catch { horarios = []; }
+
+    if (!horarios.length) {
+      root.querySelector('[data-form-area]')!.classList.add('hidden');
+      const ind = root.querySelector<HTMLElement>('[data-indisponivel]')!;
+      ind.classList.remove('hidden'); ind.classList.add('flex');
+      return;
+    }
+
+    // Sessões que começam logo (as "just in time" do EverWebinar, de X em X minutos, e as sem data,
+    // como "Right now") ficam num grupo destacado no topo; o resto vai agrupado por dia (fuso do aparelho).
+    const EM_BREVE_MIN = 60;
+    const minutosAte = (h: Horario) => (h.inicio ? Math.round((new Date(h.inicio).getTime() - Date.now()) / 60000) : null);
+    const emBreve = (h: Horario) => { const m = minutosAte(h); return m === null || m <= EM_BREVE_MIN; };
+    const grupos = new Map<string, Horario[]>();
+    const breves = horarios.filter(emBreve).slice(0, 4);
+    if (breves.length) grupos.set('Começa em breve', breves);
+    for (const h of horarios) {
+      if (breves.includes(h)) continue;
+      const chave = rotuloDoDia(new Date(h.inicio!));
+      grupos.set(chave, [...(grupos.get(chave) ?? []), h]);
+    }
+    lista.innerHTML = '';
+    for (const [dia, hs] of grupos) {
+      const bloco = document.createElement('div');
+      const titulo = document.createElement('p');
+      titulo.className = 'bp-dia';
+      titulo.textContent = dia;
+      const slots = document.createElement('div');
+      slots.className = 'bp-slots';
+      for (const h of hs) {
+        const label = document.createElement('label');
+        label.className = 'bp-slot';
+        const input = document.createElement('input');
+        input.type = 'radio'; input.name = 'horario'; input.value = h.id;
+        const span = document.createElement('span');
+        const m = minutosAte(h);
+        span.textContent = !h.inicio ? h.rotulo
+          : dia === 'Começa em breve' ? (m! <= 1 ? `agora · ${hora(new Date(h.inicio))}` : `em ${m} min · ${hora(new Date(h.inicio))}`)
+          : hora(new Date(h.inicio));
+        label.append(input, span);
+        slots.append(label);
+      }
+      bloco.append(titulo, slots);
+      lista.append(bloco);
+    }
+    // Pré-seleciona o mais próximo.
+    (lista.querySelector('input[name="horario"]') as HTMLInputElement).checked = true;
+
+    // Selo "próxima sessão" no topo.
+    const prox = horarios.find((h) => h.inicio);
+    if (prox?.inicio) {
+      const d = new Date(prox.inicio);
+      root.querySelector('[data-proxima-mes]')!.textContent = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+      root.querySelector('[data-proxima-dia]')!.textContent = String(d.getDate()).padStart(2, '0');
+      root.querySelector('[data-proxima-texto]')!.textContent = `Próxima sessão: ${rotuloDoDia(d).replace(/ · .*/, '')}, ${hora(d)}`;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const dados = {
+        horario: String(fd.get('horario') || ''),
+        nome: String(fd.get('nome') || '').trim().replace(/\s+/g, ' '),
+        email: String(fd.get('email') || '').trim(),
+        ddi: String(fd.get('ddi') || ''),
+        telefone: String(fd.get('telefone') || '').replace(/\D/g, ''),
+        consentimento: fd.get('consentimento') === 'on',
+        fuso,
+        origem,
+      };
+      const erros: Record<string, string> = {};
+      if (!dados.horario) erros.horario = 'Escolha um horário.';
+      if (dados.nome.split(' ').length < 2) erros.nome = 'Informe nome e sobrenome.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(dados.email)) erros.email = 'Informe um e-mail válido.';
+      if (dados.telefone.replace(/^0+/, '').length < 6) erros.telefone = 'Informe o seu WhatsApp com DDD.';
+      for (const c of ['horario', 'nome', 'email', 'telefone', 'geral']) mostrarErro(form, c, erros[c] || '');
+      const primeiro = Object.keys(erros)[0];
+      if (primeiro) { form.querySelector<HTMLElement>(`[name="${primeiro}"]`)?.focus(); return; }
+
+      const botao = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      const textoBotao = botao.querySelector('.bp-btn-text')!;
+      const original = textoBotao.textContent;
+      botao.disabled = true; textoBotao.textContent = 'Reservando…';
+      try {
+        const r = await fetch('/api/webinar/inscricao', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok || !j.ok) {
+          if (j.erros) for (const [c, m] of Object.entries(j.erros as Record<string, string>)) mostrarErro(form, c, m);
+          else mostrarErro(form, 'geral', j.error || 'Não foi possível concluir a sua inscrição agora. Tente de novo em instantes.');
+          return;
+        }
+        // Lead no pixel e na API de Conversões (tracking-kit). Dados pessoais só vão ao servidor, que faz o hash.
+        const t = (window as any).track;
+        if (typeof t === 'function') {
+          t('lead', { lead_source: 'webinar-home' }, { user: { name: dados.nome, email: dados.email, phone: `${dados.ddi}${dados.telefone.replace(/^0+/, '')}` } });
+        }
+        try {
+          localStorage.setItem('bp_sala', JSON.stringify({ nome: dados.nome.split(' ')[0], ...j.sala, em: Date.now() }));
+        } catch {}
+        setTimeout(() => { location.href = '/sala'; }, 350);
+      } catch {
+        mostrarErro(form, 'geral', 'Sem conexão. Confira a internet e tente de novo.');
+      } finally {
+        botao.disabled = false; textoBotao.textContent = original;
+      }
+    });
+  }
+
+  // Inicia depois de todas as declarações acima (const/arrow não existem antes da linha delas).
+  const root = document.querySelector<HTMLElement>('.bp-wl');
+  const form = root?.querySelector<HTMLFormElement>('form[data-inscricao]');
+  const lista = root?.querySelector<HTMLElement>('[data-horarios]');
+  if (root && form && lista) iniciar(root, form, lista);
+
+  // Vídeo: só carrega o player do YouTube no clique (página leve).
+  document.querySelectorAll<HTMLElement>('.bp-video').forEach((el) => {
+    const play = () => {
+      const embed = el.dataset.embed;
+      if (!embed || el.dataset.loaded) return;
+      el.dataset.loaded = '1';
+      const f = document.createElement('iframe');
+      f.src = `${embed}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+      f.title = 'Vídeo';
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      f.allowFullscreen = true;
+      f.className = 'absolute inset-0 h-full w-full border-0';
+      el.innerHTML = '';
+      el.append(f);
+    };
+    el.addEventListener('click', play);
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+  });
+</script>

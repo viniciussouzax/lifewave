@@ -529,7 +529,15 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
     .prose-msia .faq-answer > :last-child { margin-bottom: 0; }
   </style>
 
-  <!-- WebinarJam: botão de inscrição em modal (liga todos os .wj-embed-button da página) -->
-  <script is:inline src="https://event.webinarjam.com/register/13qvo4by/embed-button?formTemplate=8&formColor=1&buttonText=Register"></script>
+  <!-- Botões de inscrição (.wj-embed-button, inclusive os CTAs inline clonados): levam ao formulário
+       próprio da home, onde a inscrição é feita pela API do EverWebinar e rastreada. -->
+  <script is:inline>
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('.wj-embed-button') : null;
+      if (!b) return;
+      e.preventDefault();
+      location.href = '/#hero-form';
+    }, true);
+  </script>
 
 </BaseLayout>

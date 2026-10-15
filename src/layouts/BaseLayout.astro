@@ -176,6 +176,7 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
   <meta name="twitter:description" content={description} />
   {socialImage && <meta name="twitter:image" content={socialImage} />}
 
+  <slot name="head" />
   <HeadPlugins />
 </head>
 
