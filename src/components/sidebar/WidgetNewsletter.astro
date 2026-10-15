@@ -56,6 +56,8 @@
             const data = await res.json();
 
             if (data.success) {
+                // Lead no pixel e na API de Conversões (tracking-kit), se estiver ativo.
+                if (typeof window['track'] === 'function') window['track']('lead', { lead_source: 'newsletter-widget' }, { user: { email } });
                 msg.textContent = data.message || 'Inscrito com sucesso!';
                 msg.style.color = '#bbf7d0';
                 msg.classList.remove('hidden');
