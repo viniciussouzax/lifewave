@@ -2,20 +2,45 @@
 /**
  * MetaPixel.astro — Plugin Meta Pixel (Facebook Pixel)
  *
- * Injeta o snippet do Meta Pixel no <head> de todas as páginas públicas.
- * Lê o pixelId de src/data/pluginsConfig.json via readData().
+ * Injeta o rastreamento no <head> de todas as páginas públicas. Dois modos:
+ * - trackingScript preenchido: carrega o script do tracking-kit (pixel + API de Conversões
+ *   + dataLayer, com deduplicação). O pixel vem do kit, então o snippet abaixo não é usado.
+ * - só pixelId: snippet padrão do Meta Pixel (apenas navegador).
+ * Lê de src/data/pluginsConfig.json via readData().
  * Se cookieConsent.enabled for true, aguarda o evento 'cookies-accepted'
  * ou verifica localStorage antes de carregar o script.
- * Se pixelId estiver vazio, não renderiza nada.
+ * Se os dois estiverem vazios, não renderiza nada.
  */
 import { readData } from '../../lib/readData';
 
 const pluginsConfig = readData('pluginsConfig.json', {}) as any;
 const pixelId: string = pluginsConfig?.metaPixel?.pixelId?.trim() || '';
+const trackingScript: string = pluginsConfig?.metaPixel?.trackingScript?.trim() || '';
 const requireConsent: boolean = pluginsConfig?.cookieConsent?.enabled !== false;
 ---
 
-{pixelId && (
+{trackingScript && (
+  <script define:vars={{ trackingScript, requireConsent }}>
+  (function() {
+    function loadKit() {
+      if (window.__tracking_kit_loaded) return;
+      window.__tracking_kit_loaded = true;
+      var s = document.createElement('script');
+      s.src = trackingScript;
+      s.defer = true;
+      document.head.appendChild(s);
+    }
+
+    if (!requireConsent || localStorage.getItem('cookies-accepted') === 'true') {
+      loadKit();
+    } else {
+      window.addEventListener('cookies-accepted', loadKit, { once: true });
+    }
+  })();
+  </script>
+)}
+
+{!trackingScript && pixelId && (
   <script define:vars={{ pixelId, requireConsent }}>
   (function() {
     function loadPixel() {

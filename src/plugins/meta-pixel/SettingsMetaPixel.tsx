@@ -14,6 +14,7 @@ const CONFIG_PATH = 'src/data/pluginsConfig.json';
 
 export default function SettingsMetaPixel() {
     const [pixelId, setPixelId] = useState('');
+    const [trackingScript, setTrackingScript] = useState('');
     const [fileSha, setFileSha] = useState('');
     const [fullConfig, setFullConfig] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -29,6 +30,7 @@ export default function SettingsMetaPixel() {
                 const config = JSON.parse(data.content);
                 setFullConfig(config);
                 setPixelId(config?.metaPixel?.pixelId || '');
+                setTrackingScript(config?.metaPixel?.trackingScript || '');
                 setFileSha(data.sha);
             })
             .catch(err => setError(err.message))
@@ -43,7 +45,7 @@ export default function SettingsMetaPixel() {
         try {
             const updated = {
                 ...fullConfig,
-                metaPixel: { pixelId: pixelId.trim() },
+                metaPixel: { ...fullConfig?.metaPixel, pixelId: pixelId.trim(), trackingScript: trackingScript.trim() },
             };
             const res = await githubApi('write', CONFIG_PATH, {
                 content: JSON.stringify(updated, null, 4),
@@ -107,6 +109,29 @@ export default function SettingsMetaPixel() {
                 )}
             </div>
 
+            {/* Rastreamento avançado (tracking-kit) */}
+            <div className="bg-surface rounded-lg border border-border shadow-sm p-6">
+                <h3 className="font-bold text-ink mb-1">Rastreamento avançado (opcional)</h3>
+                <p className="text-sm text-ink-muted mb-4">
+                    Endereço do script do tracking-kit. Com ele, o site envia os eventos pelo navegador
+                    e também pela API de Conversões da Meta, sem contar em dobro. Quando preenchido,
+                    o pixel passa a vir desse script.
+                </p>
+                <label className={labelClass}>Script do tracking-kit</label>
+                <input
+                    type="url"
+                    value={trackingScript}
+                    onChange={e => setTrackingScript(e.target.value)}
+                    placeholder="Ex: https://edge.seusite.com/s.js?site=meusite"
+                    className={inputClass}
+                />
+                {trackingScript && !/^https:\/\/[^\s]+\/s\.js\?site=[a-z0-9_-]+$/.test(trackingScript.trim()) && (
+                    <p className="text-xs text-amber-600 mt-2 ml-1">
+                        Confira o endereço: ele termina com /s.js?site= seguido do nome do site.
+                    </p>
+                )}
+            </div>
+
             {/* Status */}
             <div className="bg-elev rounded-lg border border-border p-4">
                 <div className="flex items-center justify-between text-sm">
@@ -125,6 +150,12 @@ export default function SettingsMetaPixel() {
                         <span className="font-mono font-bold text-ink">{pixelId}</span>
                     </div>
                 )}
+                <div className="flex items-center justify-between text-sm mt-2">
+                    <span className="text-ink-muted">API de Conversões</span>
+                    <span className={trackingScript ? 'text-green-600 font-semibold' : 'text-ink-faint'}>
+                        {trackingScript ? 'Via tracking-kit' : 'Desligada'}
+                    </span>
+                </div>
             </div>
 
             {error && (

@@ -136,6 +136,8 @@ const showOnce = popupConfig?.showOnce !== false;
             const data = await res.json();
 
             if (data.success) {
+                // Lead no pixel e na API de Conversões (tracking-kit), se estiver ativo.
+                if (typeof window['track'] === 'function') window['track']('lead', { lead_source: 'newsletter-popup' }, { user: { email } });
                 msg.textContent = data.message || 'Inscrito com sucesso!';
                 msg.style.color = '#16a34a';
                 msg.style.display = 'block';
