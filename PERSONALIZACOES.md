@@ -51,8 +51,28 @@ Onde a marca é aplicada em runtime: `siteConfig.theme.primary` sobrescreve
 ---
 
 ## 2. Home / Landing da apresentação
-Arquivos: `src/pages/index.astro` → `src/components/local/ApresentacaoLanding.astro`
+Arquivos: `src/pages/index.astro` → `src/components/local/WebinarLanding.astro` (desde 15/10/2026)
 
+**Formulário próprio integrado à API do EverWebinar** (substituiu o embed do WebinarJam):
+- Visual do **Brazilian Conference**: fundo animado Prism Film (`PrismBackground.astro`, WebGL2 em
+  script puro), Jost em caixa alta, azul-marinho `#0b2a5c`, card branco translúcido. Fontes Jost +
+  JetBrains Mono carregadas pelo novo slot `head` do `BaseLayout` (só nas páginas que pedem).
+- Horários vêm da API no fuso do aparelho (`/api/webinar/horarios`), agrupados por dia; as sessões
+  que começam em até 60 min (as *just in time*, de X em X minutos) aparecem em "Começa em breve".
+- Inscrição por `/api/webinar/inscricao` (`src/lib/everwebinar.ts`): nome, e-mail, WhatsApp com DDI,
+  consentimento de SMS. Chave em `EVERWEBINAR_API_KEY` (Vercel, lida em runtime). Textos e o
+  `webinarId` em `src/data/webinar.json`; `enviarOrigem: true` manda as UTMs para campos
+  personalizados do webinar (criar no EverWebinar `utm_source`…`utm_content` antes de ligar).
+- Depois do envio: Lead no tracking-kit (com nome/e-mail/telefone só para o servidor) e ida para a
+  **sala de espera** `src/pages/sala.astro` (contagem, Google Agenda/.ics, botão "Entrar na sala"
+  10 min antes e entrada automática na hora; evento `webinar_entrou`). Os dados da inscrição ficam
+  no `localStorage` (`bp_sala`), nunca na URL.
+- No celular o card vem logo depois do título; tópicos e vídeo descem para baixo dele.
+- Dev local sem chave: `EVERWEBINAR_FAKE=1 bun run dev` usa o EverWebinar simulado (`everwebinarFake.ts`).
+- Os botões `.wj-embed-button` dos artigos levam para `/#hero-form` (o pop-up do WebinarJam saiu).
+- `ApresentacaoLanding.astro` (landing antiga com o embed) ficou no repositório só para reverter.
+
+Histórico da landing anterior (ApresentacaoLanding):
 - Home **deixou de ser** o `LocalHome` e virou uma **landing** (hero em 2 colunas).
 - **Hero:** fundo `#194F90` (azul), texto branco. Coluna esquerda = eyebrow com
   data da próxima sessão (preenchida por JS) + `h1` (Montserrat) + subtítulo +

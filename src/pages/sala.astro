@@ -1,0 +1,174 @@
+---
+/**
+ * sala.astro — sala de espera depois da inscrição (formulário da home).
+ *
+ * Os dados da inscrição (horário e link pessoal da sala do EverWebinar) ficam no aparelho
+ * (localStorage "bp_sala"), nunca na URL: assim nada disso vai para o pixel/analytics.
+ * Contagem regressiva, calendário (Google e .ics), grupo de WhatsApp opcional e o botão
+ * "Entrar na sala", que se destaca 10 min antes e leva a pessoa sozinha na hora do início.
+ * Rastreamento: webinar_entrou (tracking-kit) no clique ou na entrada automática.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PrismBackground from '../components/local/PrismBackground.astro';
+import { readData } from '../lib/readData';
+
+const w = readData('webinar.json', {}) as any;
+const sala = w.sala || {};
+---
+
+<BaseLayout title="Sala de espera" description="Sua vaga na apresentação está garantida." hideTopBars={true} flushFooter={true}>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" />
+  </Fragment>
+
+  <section class="bp-sala relative w-full overflow-hidden">
+    <PrismBackground light="radial-gradient(ellipse 60% 65% at 50% 45%, rgba(236,246,255,0.85) 0%, rgba(236,246,255,0.55) 50%, rgba(236,246,255,0) 80%)" />
+
+    <div class="relative z-10 mx-auto flex min-h-[70vh] w-full max-w-2xl flex-col items-center justify-center px-6 py-14 text-center sm:py-20">
+      <!-- Com inscrição neste aparelho -->
+      <div data-com-inscricao class="hidden w-full flex-col items-center gap-6">
+        <p class="bp-mono text-sm uppercase tracking-widest text-[#0b2a5c]/70" data-ola>Olá!</p>
+        <h1 class="bp-display">{sala.titulo}</h1>
+        <p class="bp-mono text-base text-[#0b2a5c] sm:text-lg" data-quando></p>
+
+        <div data-contagem class="flex items-start gap-2 sm:gap-3" role="timer" aria-label="Tempo até o início">
+          {['dias', 'horas', 'min', 'seg'].map((r, i) => (
+            <>
+              {i > 0 && <span class="bp-mono pt-1 text-2xl text-[#0b2a5c]/40" aria-hidden="true">:</span>}
+              <div class="flex w-16 flex-col items-center rounded-xl bg-white/85 py-2 shadow-sm sm:w-20">
+                <span class="bp-mono text-3xl font-semibold leading-none text-[#0b2a5c] sm:text-4xl" data-n={r}>00</span>
+                <span class="bp-mono mt-1 text-[10px] uppercase tracking-wide text-[#0b2a5c]/60">{r}</span>
+              </div>
+            </>
+          ))}
+        </div>
+
+        <p class="max-w-md text-sm text-[#0b2a5c]/75">{sala.texto}</p>
+
+        <a data-entrar href="#" class="bp-entrar" aria-disabled="true">Entrar na sala</a>
+
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <a data-google href="#" target="_blank" rel="noopener" class="bp-sec">Adicionar ao Google Agenda</a>
+          <button data-ics type="button" class="bp-sec">Apple / Outlook (.ics)</button>
+          {sala.whatsappGrupo && <a href={sala.whatsappGrupo} target="_blank" rel="noopener" class="bp-sec">Entrar no grupo do WhatsApp</a>}
+        </div>
+
+        <a data-replay href="#" class="hidden text-sm font-medium text-[#0b2a5c] underline underline-offset-4">Perdeu? Assista ao replay</a>
+      </div>
+
+      <!-- Sem inscrição neste aparelho -->
+      <div data-sem-inscricao class="hidden w-full flex-col items-center gap-4">
+        <h1 class="bp-display">Sala de espera</h1>
+        <p class="max-w-md text-[#0b2a5c]/80">Não encontramos a sua inscrição neste aparelho. O link da sala também está no e-mail de confirmação que você recebeu.</p>
+        <a href="/#hero-form" class="bp-entrar">Fazer minha inscrição</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .bp-sala { color: #0b2a5c; }
+  .bp-display { font-family: 'Jost', 'Geist', sans-serif; }
+  .bp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .bp-sala h1 {
+    margin: 0; color: #0b2a5c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    font-size: 2.1rem; line-height: 1.05; text-wrap: balance;
+  }
+  @media (min-width: 640px) { .bp-sala h1 { font-size: 3rem; } }
+  .bp-entrar {
+    display: inline-flex; height: 3.25rem; min-width: 16rem; align-items: center; justify-content: center; border-radius: 9999px;
+    background: #0b2a5c; padding: 0 2rem; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #fff; text-decoration: none; box-shadow: 0 18px 40px -20px rgba(8, 40, 100, 0.8); transition: transform 0.2s, background 0.2s;
+  }
+  .bp-entrar:hover { background: #12397a; transform: translateY(-1px); }
+  .bp-entrar[aria-disabled='true'] { background: rgba(11, 42, 92, 0.35); box-shadow: none; }
+  .bp-entrar.bp-pulse { animation: bp-pulse 1.6s ease-in-out infinite; }
+  @keyframes bp-pulse { 50% { box-shadow: 0 0 0 10px rgba(26, 115, 235, 0.18), 0 18px 40px -20px rgba(8, 40, 100, 0.8); } }
+  .bp-sec {
+    display: inline-flex; align-items: center; border-radius: 9999px; border: 1px solid rgba(11, 42, 92, 0.2); background: rgba(255, 255, 255, 0.85);
+    padding: 0.5rem 1rem; font-size: 0.85rem; color: #0b2a5c; text-decoration: none; cursor: pointer;
+  }
+  .bp-sec:hover { background: #fff; border-color: rgba(11, 42, 92, 0.4); }
+</style>
+
+<script define:vars={{ tituloEvento: w.titulo || 'Apresentação LifeWave' }}>
+  (function () {
+    var dados = null;
+    try { dados = JSON.parse(localStorage.getItem('bp_sala') || 'null'); } catch (e) {}
+    var com = document.querySelector('[data-com-inscricao]');
+    var sem = document.querySelector('[data-sem-inscricao]');
+    if (!dados || !dados.liveRoomUrl) { sem.classList.remove('hidden'); sem.classList.add('flex'); return; }
+    com.classList.remove('hidden'); com.classList.add('flex');
+
+    if (dados.nome) document.querySelector('[data-ola]').textContent = 'Olá, ' + dados.nome + '!';
+    var inicio = dados.inicio ? new Date(dados.inicio) : null;
+    var quando = document.querySelector('[data-quando]');
+    quando.textContent = inicio
+      ? inicio.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) + ' às ' + inicio.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      : (dados.rotulo || '');
+
+    var entrar = document.querySelector('[data-entrar]');
+    entrar.href = dados.liveRoomUrl;
+    var entrou = false;
+    function irParaSala(modo) {
+      if (entrou) return;
+      entrou = true;
+      if (typeof window.track === 'function') window.track('webinar_entrou', { modo: modo });
+      setTimeout(function () { location.href = dados.liveRoomUrl; }, 300);
+    }
+    entrar.addEventListener('click', function (e) { e.preventDefault(); irParaSala('clique'); });
+
+    // Calendário: Google (link) e .ics (Apple/Outlook). Duração estimada de 1h30.
+    var fim = inicio ? new Date(inicio.getTime() + 90 * 60000) : null;
+    var utc = function (d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+    var detalhes = 'Link da sala: ' + dados.liveRoomUrl;
+    var google = document.querySelector('[data-google]');
+    var ics = document.querySelector('[data-ics]');
+    if (inicio) {
+      google.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(tituloEvento)
+        + '&dates=' + utc(inicio) + '/' + utc(fim) + '&details=' + encodeURIComponent(detalhes) + '&location=' + encodeURIComponent(dados.liveRoomUrl);
+      ics.addEventListener('click', function () {
+        var conteudo = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//brandpartner.team//apresentacao//PT', 'BEGIN:VEVENT',
+          'UID:' + utc(inicio) + '@brandpartner.team', 'DTSTAMP:' + utc(new Date()), 'DTSTART:' + utc(inicio), 'DTEND:' + utc(fim),
+          'SUMMARY:' + tituloEvento, 'DESCRIPTION:' + detalhes, 'URL:' + dados.liveRoomUrl,
+          'BEGIN:VALARM', 'TRIGGER:-PT15M', 'ACTION:DISPLAY', 'DESCRIPTION:A apresentação começa em 15 minutos', 'END:VALARM',
+          'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([conteudo], { type: 'text/calendar' }));
+        a.download = 'apresentacao-lifewave.ics';
+        a.click();
+      });
+    } else {
+      google.classList.add('hidden'); ics.classList.add('hidden');
+    }
+
+    var replay = document.querySelector('[data-replay]');
+    if (dados.replayRoomUrl) replay.href = dados.replayRoomUrl;
+
+    var caixas = {};
+    document.querySelectorAll('[data-n]').forEach(function (el) { caixas[el.getAttribute('data-n')] = el; });
+    var dois = function (n) { return String(n).padStart(2, '0'); };
+
+    function tique() {
+      if (!inicio) { entrar.setAttribute('aria-disabled', 'false'); document.querySelector('[data-contagem]').classList.add('hidden'); return; }
+      var ms = inicio.getTime() - Date.now();
+      var s = Math.max(0, Math.floor(ms / 1000));
+      caixas.dias.textContent = dois(Math.floor(s / 86400));
+      caixas.horas.textContent = dois(Math.floor((s % 86400) / 3600));
+      caixas.min.textContent = dois(Math.floor((s % 3600) / 60));
+      caixas.seg.textContent = dois(s % 60);
+      // 10 min antes: botão ativo e pulsando. Na hora: entra sozinho (se a página estiver aberta).
+      var perto = ms <= 10 * 60000;
+      entrar.setAttribute('aria-disabled', perto ? 'false' : 'true');
+      entrar.classList.toggle('bp-pulse', perto && ms > -60 * 60000);
+      if (ms <= 0 && ms > -5 * 60000 && !document.hidden) irParaSala('automatico');
+      // Bem depois do início: oferece o replay.
+      if (ms < -3 * 3600000 && dados.replayRoomUrl) replay.classList.remove('hidden');
+    }
+    tique();
+    setInterval(tique, 1000);
+  })();
+</script>
