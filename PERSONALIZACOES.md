@@ -61,8 +61,9 @@ Arquivos: `src/pages/index.astro` → `src/components/local/WebinarLanding.astro
   que começam em até 60 min (as *just in time*, de X em X minutos) aparecem em "Começa em breve".
 - Inscrição por `/api/webinar/inscricao` (`src/lib/everwebinar.ts`): nome, e-mail, WhatsApp com DDI,
   consentimento de SMS. Chave em `EVERWEBINAR_API_KEY` (Vercel, lida em runtime). Textos e o
-  `webinarId` em `src/data/webinar.json`; `enviarOrigem: true` manda as UTMs para campos
-  personalizados do webinar (criar no EverWebinar `utm_source`…`utm_content` antes de ligar).
+  `webinarId` em `src/data/webinar.json`; `camposOrigem` lista as UTMs enviadas como campos
+  personalizados do webinar (hoje só `utm_source`, o código dos links do postmaster; o campo precisa
+  existir no EverWebinar com esse rótulo exato). As demais UTMs ficam no tracking-kit.
 - Depois do envio: Lead no tracking-kit (com nome/e-mail/telefone só para o servidor) e ida para a
   **sala de espera** `src/pages/sala.astro` (contagem, Google Agenda/.ics, botão "Entrar na sala"
   10 min antes e entrada automática na hora; evento `webinar_entrou`). Os dados da inscrição ficam
