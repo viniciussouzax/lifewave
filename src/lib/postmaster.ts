@@ -7,6 +7,10 @@
  * (codigo_publico → connection/account) e grava o lead. Os avisos seguintes do EverWebinar (assistiu,
  * comprou…) chegam ao mesmo lead pelo e-mail.
  *
+ * A campanha: a home é a porta de inscrição do webinar, então todo aviso daqui vai com
+ * `campanha: "webinar"` (o slug da campanha no postmaster). Sem ela cadastrada lá, o postmaster
+ * ainda grava o lead, só que fora das campanhas.
+ *
  * Env:
  *   POSTMASTER_WEBHOOK_URL     o endereço do webhook do projeto, como o postmaster mostra
  *                              (https://…/api/webhooks/webinar/<projeto>); aqui acrescenta /inscricao
@@ -21,6 +25,8 @@ export interface AvisoDeInscricao {
 }
 
 const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+/** O slug da campanha do webinar no postmaster (= o nome da página e do subdomínio). */
+const CAMPANHA = 'webinar';
 
 function lerEnv() {
     const url = (process.env.POSTMASTER_WEBHOOK_URL ?? import.meta.env.POSTMASTER_WEBHOOK_URL ?? '').trim().replace(/\/+$/, '');
@@ -42,6 +48,7 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
         date: a.sessao,
         everwebinar_user_id: a.everwebinarUserId,
         site: 'brandpartner.team',
+        campanha: CAMPANHA,
     };
     for (const k of UTM) {
         const v = String(a.origem?.[k] ?? '').trim().slice(0, 100);
