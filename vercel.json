@@ -11,6 +11,19 @@
     }
   ],
   "rewrites": [
-    { "source": "/search/:term", "destination": "/search?q=:term" }
+    {
+      "source": "/:caminho((?!_p/|webinar-app/|api/|_astro/|favicon|robots\\.txt|sitemap).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<campanha>(?!(?:www|edge|lifewave)\\.)[a-z0-9-]+)\\.brandpartner\\.team"
+        }
+      ],
+      "destination": "/:campanha/:caminho"
+    },
+    {
+      "source": "/search/:term",
+      "destination": "/search?q=:term"
+    }
   ]
 }
