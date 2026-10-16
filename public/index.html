@@ -23,5 +23,21 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- VideoAsk: vídeo flutuante no canto inferior direito (só na home). Abre na própria página porque o site é https. -->
+    <script>
+      window.VIDEOASK_EMBED_CONFIG = {
+        "kind": "widget",
+        "url": "https://www.videoask.com/fjh7vvld4",
+        "options": {
+          "widgetType": "VideoThumbnailWindowTall",
+          "text": "",
+          "backgroundColor": "#FFFFFF",
+          "position": "bottom-right",
+          "dismissible": false,
+          "videoPosition": "center top"
+        }
+      }
+    </script>
+    <script src="https://www.videoask.com/embed/embed.js"></script>
   </body>
 </html>
