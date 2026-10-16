@@ -105,7 +105,7 @@ const articleCta = readData('articleCta.json', {}) as any;
 const announcement = articleCta?.announcement || {};
 // A barra clara acima da nav vira o aviso da "próxima apresentação" (com timer).
 const showAnnouncement = announcement?.enabled !== false && !hideTopBars;
-const annUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '/#hero-form';
+const annUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '/#inscricao';
 const hexOr = (v: any, fb: string) => (typeof v === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(v.trim())) ? v.trim() : fb;
 const annBg = hexOr(announcement?.bg, '#ECF5FA');
 const annColor = hexOr(announcement?.textColor, '#373F41');

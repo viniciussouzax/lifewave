@@ -51,27 +51,27 @@ Onde a marca é aplicada em runtime: `siteConfig.theme.primary` sobrescreve
 ---
 
 ## 2. Home / Landing da apresentação
-Arquivos: `src/pages/index.astro` → `src/components/local/WebinarLanding.astro` (desde 15/10/2026)
+Arquivos: `public/index.html` (home) e `public/sala/index.html` (sala de espera) + `public/webinar-app/assets/`
+— **gerados**, não editar aqui. Desde 15/10/2026.
 
-**Formulário próprio integrado à API do EverWebinar** (substituiu o embed do WebinarJam):
-- Visual do **Brazilian Conference**: fundo animado Prism Film (`PrismBackground.astro`, WebGL2 em
-  script puro), Jost em caixa alta, azul-marinho `#0b2a5c`, card branco translúcido. Fontes Jost +
-  JetBrains Mono carregadas pelo novo slot `head` do `BaseLayout` (só nas páginas que pedem).
-- Horários vêm da API no fuso do aparelho (`/api/webinar/horarios`), agrupados por dia; as sessões
-  que começam em até 60 min (as *just in time*, de X em X minutos) aparecem em "Começa em breve".
-- Inscrição por `/api/webinar/inscricao` (`src/lib/everwebinar.ts`): nome, e-mail, WhatsApp com DDI,
-  consentimento de SMS. Chave em `EVERWEBINAR_API_KEY` (Vercel, lida em runtime). Textos e o
-  `webinarId` em `src/data/webinar.json`; `camposOrigem` lista as UTMs enviadas como campos
-  personalizados do webinar (hoje só `utm_source`, o código dos links do postmaster; o campo precisa
-  existir no EverWebinar com esse rótulo exato). As demais UTMs ficam no tracking-kit.
-- Depois do envio: Lead no tracking-kit (com nome/e-mail/telefone só para o servidor) e ida para a
-  **sala de espera** `src/pages/sala.astro` (contagem, Google Agenda/.ics, botão "Entrar na sala"
-  10 min antes e entrada automática na hora; evento `webinar_entrou`). Os dados da inscrição ficam
-  no `localStorage` (`bp_sala`), nunca na URL.
-- No celular o card vem logo depois do título; tópicos e vídeo descem para baixo dele.
-- Dev local sem chave: `EVERWEBINAR_FAKE=1 bun run dev` usa o EverWebinar simulado (`everwebinarFake.ts`).
-- Os botões `.wj-embed-button` dos artigos levam para `/#hero-form` (o pop-up do WebinarJam saiu).
-- `ApresentacaoLanding.astro` (landing antiga com o embed) ficou no repositório só para reverter.
+**A página é feita com os componentes originais do Brazilian Conference** (React + shadcn + Tailwind 4),
+no repositório `viniciussouzax/brazilian-conference` (pasta `C:\Users\azuos\Desktop\system\shadcn`):
+- Fonte: `src/webinar/` (hero, card do formulário, contagem, sala, textos em `data.ts`), reaproveitando
+  `brazilian-conference/` (fundo Prism, telefone com país/DDI, tema, rastreamento).
+- Formulário = o card da conference (nome, telefone com bandeira/DDI, e-mail, botão com seta) + o
+  **horário num dropdown** (Select do shadcn), com os horários do EverWebinar no fuso do aparelho.
+- Para mudar texto/visual: editar lá e rodar `npm run build:webinar` (gera o build e copia para este
+  repositório: `public/index.html`, `public/sala/index.html`, `public/webinar-app/assets`). Depois commit aqui.
+- Dev: `npm run dev:webinar` lá (porta 5174) + `EVERWEBINAR_FAKE=1 bun run dev` aqui (porta 4321, para as rotas da API).
+
+**O que continua neste repositório (Astro):**
+- Rotas da API: `/api/webinar/horarios` e `/api/webinar/inscricao` (`src/lib/everwebinar.ts`), chave em
+  `EVERWEBINAR_API_KEY` (Vercel). `src/data/webinar.json`: `webinarId` (2 = português) e `camposOrigem`
+  (UTMs enviadas como campos personalizados do webinar; hoje só `utm_source`, o código dos links do
+  postmaster; o campo precisa existir no EverWebinar com esse rótulo exato).
+- EverWebinar simulado para dev (`EVERWEBINAR_FAKE=1`, `everwebinarFake.ts`).
+- Os botões `.wj-embed-button` dos artigos levam para `/#inscricao`.
+- `ApresentacaoLanding.astro` (landing antiga com o embed) ficou só para reverter.
 
 Histórico da landing anterior (ApresentacaoLanding):
 - Home **deixou de ser** o `LocalHome` e virou uma **landing** (hero em 2 colunas).

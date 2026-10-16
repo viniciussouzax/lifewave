@@ -55,7 +55,7 @@ const banner = articleCta?.banner || {};
 const bannerVideo = banner?.video ? parseVideoUrl(banner.video) : null;
 const hasBannerVideo = !!(bannerVideo && bannerVideo.provider !== 'unknown');
 // CTAs de inscrição do artigo levam a pessoa para o formulário da home.
-const ctaUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '/#hero-form';
+const ctaUrl = (u: any) => (typeof u === 'string' && u.trim()) ? u.trim() : '/#inscricao';
 const inlineEveryN = Math.max(1, Number(inlineCta?.everyNHeadings ?? 3));
 
 const cover = data.heroImage || data.cover || data.coverImage || '';
@@ -536,7 +536,7 @@ const processedHtml = isHtmlBody && hasShortcodes(rawBody) ? renderShortcodes(ra
       var b = e.target && e.target.closest ? e.target.closest('.wj-embed-button') : null;
       if (!b) return;
       e.preventDefault();
-      location.href = '/#hero-form';
+      location.href = '/#inscricao';
     }, true);
   </script>
 
