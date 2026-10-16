@@ -3,7 +3,7 @@
  *
  * POST /api/webinar/inscricao
  * Body: { horario: "schedule|date", nome, email, ddi: "+55", telefone, consentimento, fuso: "GMT-3", origem?: { utm_* } }
- * → { ok: true, sala: { inicio, rotulo, liveRoomUrl, replayRoomUrl } }
+ * → { ok: true, sala: { userId, inicio, rotulo, liveRoomUrl, replayRoomUrl } }
  *
  * - Valida os campos (mensagens em pt-BR, por campo)
  * - Rate limit: 8 por IP a cada 10 min (in-memory, como o /api/subscribe)

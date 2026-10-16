@@ -179,7 +179,8 @@ export function parametrosDaInscricao(p: PedidoDeInscricao): Record<string, stri
     };
 }
 
-export interface Inscrito { liveRoomUrl: string; replayRoomUrl: string; inicio: string | null; rotulo: string }
+/** userId: id do inscrito no EverWebinar (o mesmo dos relatórios de presença). liveRoomUrl é individual. */
+export interface Inscrito { userId: string; liveRoomUrl: string; replayRoomUrl: string; inicio: string | null; rotulo: string }
 
 export async function inscrever(chave: string, p: PedidoDeInscricao, fake = false): Promise<Inscrito> {
     const j = await chamar('register', parametrosDaInscricao(p), chave, fake);
@@ -187,6 +188,7 @@ export async function inscrever(chave: string, p: PedidoDeInscricao, fake = fals
     const date = texto(u?.date, 60);
     const fuso = texto(u?.timezone, 60) || p.fuso;
     return {
+        userId: texto(u?.user_id == null ? '' : String(u.user_id), 40),
         liveRoomUrl: texto(u?.live_room_url, 1000),
         replayRoomUrl: texto(u?.replay_room_url, 1000),
         inicio: inicioEmUtc(date, fuso),
