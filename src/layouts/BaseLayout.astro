@@ -178,6 +178,18 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
 
   <slot name="head" />
   <HeadPlugins />
+  <!-- O código de quem divulgou (utm_* do link) fica guardado por 30 dias em `bp_origem`, no mesmo
+       formato da home e da Brazilian Conference ({ v, em }): quem chega por um artigo e só depois
+       vai se inscrever não perde a origem. -->
+  <script is:inline>
+    try {
+      var q = new URLSearchParams(location.search), v = {}, n = 0;
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function (k) {
+        var x = q.get(k); if (x) { v[k] = x.slice(0, 100); n++; }
+      });
+      if (n) localStorage.setItem('bp_origem', JSON.stringify({ v: v, em: Date.now() }));
+    } catch (e) {}
+  </script>
 </head>
 
 <body class={bodyClass}>

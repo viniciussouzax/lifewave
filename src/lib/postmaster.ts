@@ -15,7 +15,12 @@
  *   POSTMASTER_WEBHOOK_URL     o endereço do webhook do projeto, como o postmaster mostra
  *                              (https://…/api/webhooks/webinar/<projeto>); aqui acrescenta /inscricao
  *   POSTMASTER_WEBHOOK_SECRET  o segredo do webhook do projeto (pmw_…)
- * Sem os dois, não faz nada. Nunca atrapalha a inscrição: erro e demora (> 2,5 s) só vão para o log.
+ * Sem os dois, não faz nada. Nunca atrapalha a inscrição: erro e demora só vão para o log.
+ *
+ * Duas tentativas (2,5 s e depois 4 s), a segunda só em falha de rede, demora ou erro do lado do
+ * postmaster (5xx, 429): este aviso é o ÚNICO caminho do código de quem divulgou até lá (o aviso
+ * do EverWebinar não o leva), então uma oscilação não pode apagar a origem. Recusa (4xx) não se
+ * repete. A repetição não duplica: o postmaster grava o mesmo evento uma vez só (chave do evento).
  */
 
 export interface AvisoDeInscricao {
@@ -54,15 +59,20 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
         const v = String(a.origem?.[k] ?? '').trim().slice(0, 100);
         if (v) corpo[k] = v;
     }
-    try {
-        const res = await fetch(`${url}/inscricao`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${segredo}` },
-            body: JSON.stringify(corpo),
-            signal: AbortSignal.timeout(2500),
-        });
-        if (!res.ok) console.error(`[postmaster] inscrição recusada: ${res.status} ${(await res.text()).slice(0, 200)}`);
-    } catch (e) {
-        console.error('[postmaster] inscrição não avisada:', (e as Error).message);
+    for (const [i, limite] of [2500, 4000].entries()) {
+        try {
+            const res = await fetch(`${url}/inscricao`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${segredo}` },
+                body: JSON.stringify(corpo),
+                signal: AbortSignal.timeout(limite),
+            });
+            if (res.ok) return;
+            const motivo = `${res.status} ${(await res.text()).slice(0, 200)}`;
+            if (res.status < 500 && res.status !== 429) { console.error(`[postmaster] inscrição recusada: ${motivo}`); return; }
+            console.error(`[postmaster] tentativa ${i + 1} falhou: ${motivo}`);
+        } catch (e) {
+            console.error(`[postmaster] tentativa ${i + 1} não avisou:`, (e as Error).message);
+        }
     }
 }
