@@ -18,6 +18,7 @@ import type { APIRoute } from 'astro';
 import { readData } from '../../../lib/readData';
 import { inscrever, normalizarFuso, readEverwebinarEnv } from '../../../lib/everwebinar';
 import { avisarInscricaoNoPostmaster } from '../../../lib/postmaster';
+import { conferirTurnstile } from '../../../lib/turnstile';
 
 export const prerender = false;
 
@@ -70,6 +71,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     const { erros, dados } = conferir(b);
     if (Object.keys(erros).length) return json({ ok: false, erros }, 422);
+
+    // Navegador de verdade? (Turnstile; só confere com TURNSTILE_SECRET configurado.)
+    const humano = await conferirTurnstile(b?.turnstile, ip);
+    if (!humano.ok) {
+        console.warn(`[turnstile] inscrição recusada: ${humano.motivo}`);
+        return json({ ok: false, error: 'Não conseguimos confirmar o envio. Recarregue a página e tente de novo.' }, 403);
+    }
 
     const cfg = readData('webinar.json', {}) as any;
     const webinarId = String(cfg?.webinarId ?? '').trim();
