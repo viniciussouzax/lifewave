@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
@@ -43,9 +43,29 @@ const rotasDeCampanha = {
                 ...config.routes.filter((r) => !(r.has && r.has.some((h) => h.value === HOST_DE_CAMPANHA))),
             ];
             writeFileSync(arquivo, JSON.stringify(config, null, 2));
+            listarPaginasDeCampanha();
         },
     },
 };
+
+// A LISTA DAS PÁGINAS DE CAMPANHA (`/campanhas.json`), lida pelo postmaster no "Nova campanha" para
+// sugerir as páginas que ainda não têm campanha, já com nome e endereço. Uma página de campanha é
+// a que foi publicada por `publicar-pagina.mjs` (do repositório das páginas): tem a pasta
+// `public/<nome>/` com o index.html e os arquivos em `public/_p/<nome>/`.
+function listarPaginasDeCampanha() {
+    const destino = '.vercel/output/static';
+    if (!existsSync(destino) || !existsSync('public/_p')) return;
+    const host = new URL(siteUrl).hostname.replace(/^www\./, '');
+    const entidades = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
+    const paginas = readdirSync('public/_p')
+        .filter((nome) => /^[a-z0-9-]+$/.test(nome) && statSync(`public/_p/${nome}`).isDirectory() && existsSync(`public/${nome}/index.html`))
+        .map((nome) => {
+            const html = readFileSync(`public/${nome}/index.html`, 'utf-8');
+            const titulo = (html.match(/<title>([^<]*)<\/title>/i)?.[1] ?? nome).replace(/&(amp|lt|gt|quot|#39);/g, (e) => entidades[e]).trim();
+            return { slug: nome, titulo, url: `https://${host}/${nome}/`, subdominio: `https://${nome}.${host}/` };
+        });
+    writeFileSync(`${destino}/campanhas.json`, JSON.stringify({ paginas }, null, 2));
+}
 
 export default defineConfig({
     site: siteUrl,
