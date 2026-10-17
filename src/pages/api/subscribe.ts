@@ -47,6 +47,12 @@ export const POST: APIRoute = async ({ request }) => {
             headers: { 'Content-Type': 'application/json' },
         });
 
+    // Lista de e-mails desligada (plugin emailList): o endereço não existe. Antes ele respondia
+    // mesmo assim, e cada POST virava um commit com e-mail, nome e WhatsApp no repositório (que é
+    // público) e uma publicação nova na Vercel. Nenhum formulário do site o chama com o plugin
+    // desligado: o widget da barra lateral só aparece com ele ligado.
+    if (!readPluginsConfig()?.emailList?.enabled) return json({ error: 'Não encontrado.' }, 404);
+
     try {
         // Rate limit por IP
         const ip =
