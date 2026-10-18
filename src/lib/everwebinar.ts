@@ -154,6 +154,22 @@ export async function horariosDoWebinar(chave: string, webinarId: string, fuso: 
     return { titulo: texto(w?.title, 200), horarios };
 }
 
+/**
+ * O PLANO B da inscrição na sessão que acabou de começar (pedido do dono, 17/10/2026): a página
+ * deixa a sessão "Ao vivo" escolhida por 1 minuto, e quem se inscreve nesse minuto entra nela. Se o
+ * EverWebinar recusar (sessão já começada), a inscrição vai para a seguinte. Devolve o id da sessão
+ * seguinte, ou null quando a pedida ainda está no futuro (a recusa foi por outro motivo, não é caso
+ * de trocar) ou quando não há sessão seguinte.
+ */
+export async function sessaoSeguinte(chave: string, webinarId: string, fuso: string, horarioId: string, fake = false, agora = Date.now()): Promise<string | null> {
+    const { horarios } = await horariosDoWebinar(chave, webinarId, fuso, fake);
+    const pedida = horarios.find((h) => h.id === horarioId);
+    if (pedida && (!pedida.inicio || new Date(pedida.inicio).getTime() > agora)) return null;
+    const futuras = horarios.filter((h) => h.inicio && new Date(h.inicio).getTime() > agora);
+    futuras.sort((a, b) => new Date(a.inicio!).getTime() - new Date(b.inicio!).getTime());
+    return futuras[0]?.id ?? null;
+}
+
 export interface PedidoDeInscricao {
     webinarId: string; horarioId: string; nome: string; email: string;
     ddi?: string; telefone?: string; consentimentoSms?: boolean;
