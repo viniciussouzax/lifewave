@@ -3,6 +3,8 @@
  * Mesmo formato da documentação oficial e do simulador do postmaster: horários em 3 dias
  * (2 por dia, em UTC) convertidos para o `timezone` pedido; register devolve links falsos.
  * Um horário extra "daqui a 2 minutos" deixa testar a sala de espera virando para "entrar".
+ * EVERWEBINAR_FAKE_RECUSA_INICIADA=1 faz o register recusar sessão já começada (testa o plano B da
+ * inscrição no minuto "Ao vivo"); sem ela, aceita, como o EverWebinar de verdade pode aceitar.
  */
 export function fakeEverwebinar(url: string, init: RequestInit): Response {
     const corpo = new URLSearchParams(String(init.body ?? ''));
@@ -34,6 +36,10 @@ export function fakeEverwebinar(url: string, init: RequestInit): Response {
     if (url.endsWith('/register')) {
         if (corpo.get('phone') && !corpo.get('twilio_consent')) return Response.json({ status: 'error', message: 'twilio_consent is required' }, { status: 400 });
         if (!corpo.get('email') || !corpo.get('first_name') || !corpo.get('schedule')) return Response.json({ status: 'error', message: 'Missing required fields' }, { status: 400 });
+        const quando = Date.parse(`${(corpo.get('date') ?? '').replace(' ', 'T')}:00Z`) - desloc * 60_000;
+        if (process.env.EVERWEBINAR_FAKE_RECUSA_INICIADA === '1' && quando <= Date.now()) {
+            return Response.json({ status: 'error', message: 'This schedule has already started' }, { status: 400 });
+        }
         console.log('[everwebinar simulado] register:', [...corpo.keys()].filter((k) => k !== 'api_key').join(', '));
         return Response.json({ status: 'success', user: {
             user_id: 555, date: corpo.get('date'), timezone: corpo.get('timezone'),
