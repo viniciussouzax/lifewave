@@ -11,12 +11,14 @@
  *   webinar — cada uma precisa existir no EverWebinar com esse rótulo exato. Hoje só utm_source,
  *   que leva o código dos links do postmaster (r…) até o webhook dele; o resto fica no tracking-kit.
  * - O rastreamento (Lead) é feito no navegador pelo tracking-kit, com o mesmo event_id no servidor.
+ * - Sessão que acabou de começar (o minuto "Ao vivo" da página): se o EverWebinar recusar, inscreve
+ *   na sessão seguinte (sessaoSeguinte), sem erro para a pessoa.
  * - O postmaster é avisado de cada inscrição com as UTMs (o utm_source é o código do link casca),
  *   para saber o dono, o canal e o perfil que trouxe a pessoa (lib/postmaster.ts).
  */
 import type { APIRoute } from 'astro';
 import { readData } from '../../../lib/readData';
-import { inscrever, normalizarFuso, readEverwebinarEnv } from '../../../lib/everwebinar';
+import { inscrever, normalizarFuso, readEverwebinarEnv, sessaoSeguinte, type PedidoDeInscricao } from '../../../lib/everwebinar';
 import { avisarInscricaoNoPostmaster } from '../../../lib/postmaster';
 import { conferirTurnstile } from '../../../lib/turnstile';
 
@@ -94,11 +96,21 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     }
 
     try {
-        const r = await inscrever(key, {
+        const pedido: PedidoDeInscricao = {
             webinarId, horarioId: dados.horario, nome: dados.nome, email: dados.email,
             ddi: dados.ddi, telefone: dados.telefone, consentimentoSms: dados.consentimento,
             fuso: dados.fuso, ip, extras,
-        }, fake);
+        };
+        let r;
+        try {
+            r = await inscrever(key, pedido, fake);
+        } catch (e) {
+            // A sessão já começou e o EverWebinar recusou? Inscreve na seguinte; senão, o erro segue.
+            const seguinte = await sessaoSeguinte(key, webinarId, dados.fuso, dados.horario, fake).catch(() => null);
+            if (!seguinte) throw e;
+            console.warn(`[everwebinar] sessão ${dados.horario} recusada (${(e as Error).message}); inscrevendo na seguinte, ${seguinte}`);
+            r = await inscrever(key, { ...pedido, horarioId: seguinte }, fake);
+        }
         if (!r.liveRoomUrl) throw new Error('inscrição sem link da sala');
         // Já inscrito: avisa o postmaster (com o código de origem) sem deixar falha dele afetar a resposta.
         const origem: Record<string, string> = {};
