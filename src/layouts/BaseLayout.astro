@@ -1,4 +1,5 @@
 ---
+import { existsSync } from 'node:fs';
 import '../styles/global.css';
 import { readData } from '../lib/readData';
 import HeadPlugins from '../plugins/_slots/HeadPlugins.astro';
@@ -133,7 +134,13 @@ function toAbsoluteUrl(path: string, base: string): string {
     return path; // fallback: path relativo (não derruba o build)
   }
 }
-const socialImage = toAbsoluteUrl(image, siteUrl);
+// Sem imagem própria (página sem capa), o link compartilhado mostra a ARTE COM A HEADLINE DA PÁGINA
+// (public/og/paginas/<endereço>.jpg, 1200x630, de scripts/gerar-og.mjs no repositório das páginas:
+// /categoria/bem-estar/ → categoria-bem-estar.jpg); sem arte dela, a da home (siteConfig.ogImage).
+// Pedido do dono (18/10/2026): nenhum link sem imagem.
+const paginaAtual = Astro.url.pathname.split('/').filter(Boolean).join('-');
+const artePropria = paginaAtual && existsSync(`public/og/paginas/${paginaAtual}.jpg`) ? `/og/paginas/${paginaAtual}.jpg` : '';
+const socialImage = toAbsoluteUrl(image || artePropria || siteConfig.ogImage || '/og/apresentacao.jpg', siteUrl);
 import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astro';
 ---
 <!DOCTYPE html>
@@ -166,6 +173,8 @@ import CustomCodeBodyStart from '../plugins/custom-code/CustomCodeBodyStart.astr
   )}
 
   <meta property="og:type" content={type} />
+  <meta property="og:site_name" content={siteConfig.name} />
+  <meta property="og:locale" content={(siteConfig.language || 'pt-BR').replace('-', '_')} />
   <meta property="og:title" content={formattedTitle} />
   <meta property="og:description" content={description} />
   {socialImage && <meta property="og:image" content={socialImage} />}

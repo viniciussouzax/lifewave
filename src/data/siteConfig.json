@@ -5,6 +5,7 @@
   "author": "Equipe do Blog",
   "language": "pt-BR",
   "logo": "/logo.png",
+  "ogImage": "/og/apresentacao.jpg",
   "theme": {
     "primary": "#194F90",
     "dark": "#0D2137",
