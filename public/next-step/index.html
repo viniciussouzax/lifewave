@@ -91,7 +91,7 @@ document.documentElement.lang={pt:"pt-BR",en:"en",es:"es"}[LANG]||"pt-BR";
 /* Indicador: só letras, números, _ e - */
 var REF=(qs.get("ref")||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
 /* Links de saída de TESTE. shortcut: um destino de teste para todas as regiões; trocar pelos links rastreáveis reais (nunca a URL direta da loja) quando o master enviar a tabela. */
-var DEST_BASE="/proximo-passo/destino-teste/";
+var DEST_BASE="/next-step/destino-teste/";
 function buildLink(region,goal){
   var p=new URLSearchParams({regiao:region,objetivo:goal,ref:REF||"padrao"});
   return DEST_BASE+"?"+p.toString();
