@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<title>Próximo passo | LifeWave Independent Brand Partner</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14181f;--mut:#5b6472;--line:#d9dde4;--acc:#0b5cff;--accd:#0846c4;--err:#b3261e;--ok:#146c43}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+.test{background:#fff4d6;color:#5c4400;text-align:center;font-size:13px;padding:6px 12px}
+main{flex:1;width:100%;max-width:560px;margin:0 auto;padding:20px 16px 32px}
+.badge{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin:0 0 16px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:20px}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
+h1{font-size:1.5rem;line-height:1.25;margin:0 0 6px}
+h1:focus{outline:none}
+.sub{color:var(--mut);margin:0 0 18px}
+.opts{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.opt{width:100%;text-align:left;font:inherit;color:inherit;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;min-height:52px;cursor:pointer}
+.opt:hover{border-color:var(--acc)}
+.opt strong{display:block}
+.opt span{color:var(--mut);font-size:.9rem}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.back{background:none;border:0;color:var(--acc);font:inherit;padding:10px 0;margin-top:14px;cursor:pointer;min-height:44px}
+label{display:block;font-weight:600;margin:14px 0 4px}
+input[type=text],input[type=email],input[type=tel]{width:100%;font:inherit;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;min-height:48px}
+input[aria-invalid=true]{border-color:var(--err)}
+.err{color:var(--err);font-size:.88rem;margin:4px 0 0;min-height:1em}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin-top:16px}
+.chk input{width:22px;height:22px;margin-top:2px;flex:none}
+.cta{display:inline-block;text-align:center;font:inherit;font-weight:600;background:var(--acc);color:#fff;border:0;border-radius:10px;padding:14px 20px;min-height:48px;cursor:pointer;text-decoration:none;width:100%;margin-top:18px}
+.cta:hover{background:var(--accd)}
+ol.steps{padding-left:22px;margin:0}
+ol.steps li{margin:8px 0}
+.box{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:14px}
+.ok{color:var(--ok)}
+footer{font-size:12.5px;color:var(--mut);text-align:center;padding:16px;border-top:1px solid var(--line);background:#fff}
+footer b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="test" role="note">VERSÃO DE TESTE. Links de saída são provisórios e nenhum dado é enviado a serviço externo.</div>
+<main>
+  <p class="badge">LifeWave Independent Brand Partner</p>
+  <div class="bar" role="progressbar" aria-label="Progresso" aria-valuemin="0" aria-valuemax="100"><i id="prog"></i></div>
+  <div id="view" aria-live="polite"></div>
+  <noscript><p>Este formulário precisa de JavaScript para funcionar.</p></noscript>
+</main>
+<footer>
+  <b>LifeWave Independent Brand Partner.</b> Este conteúdo é de um Brand Partner independente e não é da LifeWave Ltd. Resultados variam de pessoa para pessoa.
+</footer>
+<script>
+/* Textos por idioma. shortcut: só pt preenchido; en e es entram aqui com as mesmas chaves quando houver tradução aprovada. */
+var I18N = {
+  pt: {
+    r_q:"Onde você mora?", r_s:"Assim levamos você ao caminho certo.",
+    regions:{na:"América do Norte",eu:"Europa",as:"Ásia",la:"América Latina",af:"África"},
+    g_q:"O que você quer?", g_s:"Escolha uma opção.",
+    goals:{bp:["Ser Brand Partner","Cadastro na empresa com passo a passo."],
+           sub:["Ser consumidor com assinatura","Cadastro como cliente com compra recorrente."],
+           once:["Comprar uma vez","Compra avulsa na loja, sem assinatura."]},
+    s_q:"Como você prefere começar?", s_s:"Duas formas de criar o cadastro de consumidor.",
+    subs:{"2.2":["Cadastro com 3 envelopes de X39","Você compra 3 envelopes de X39 e ativa a assinatura de X39 ou de outro produto."],
+          "2.3":["Cadastro com taxa de adesão","Você paga a taxa de cadastro, compra 1 envelope de X39 e ativa a assinatura de X39."]},
+    back:"Voltar", open:"Abrir link de cadastro (TESTE)",
+    res_t:"Seu próximo passo", res_s:"Siga o passo a passo e use o link abaixo.",
+    ref_l:"Indicado por", ref_none:"sem indicador (link padrão)",
+    steps:{
+      bp:["Abra o link abaixo.","Escolha a opção de cadastro como Brand Partner.","Preencha seus dados e confirme o e-mail.","Fale com quem indicou você para os primeiros passos."],
+      "2.2":["Abra o link abaixo.","Crie o cadastro de consumidor.","Adicione 3 envelopes de X39 ao pedido.","Ative a assinatura de X39 ou de outro produto e finalize."],
+      "2.3":["Abra o link abaixo.","Crie o cadastro de consumidor e pague a taxa de adesão.","Compre 1 envelope de X39.","Ative a assinatura de X39 e finalize."],
+      once:["Abra o link abaixo para a loja.","Escolha o envelope de X39.","Finalize a compra sem assinatura."]},
+    c_t:"Quase lá. Deixe seu contato", c_s:"Um Brand Partner vai falar com você para fazer o cadastro e a entrega.",
+    name:"Nome",email:"E-mail",phone:"Telefone com DDD",
+    consent:"Concordo em ser contatado por um Brand Partner independente da LifeWave por telefone, WhatsApp ou e-mail para tratar do meu cadastro. Posso pedir para parar a qualquer momento.",
+    send:"Enviar contato",
+    e_name:"Informe seu nome.",e_email:"Informe um e-mail válido.",e_phone:"Informe um telefone válido (8 a 15 dígitos).",e_consent:"Marque a caixa para continuar.",
+    e_save:"Não foi possível salvar neste navegador.",
+    done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega.",
+    done_save:"Em modo de teste, o contato ficou salvo só neste navegador."
+  }
+};
+var qs=new URLSearchParams(location.search);
+var LANG=I18N[qs.get("lang")]?qs.get("lang"):"pt";
+var T=I18N[LANG];
+document.documentElement.lang={pt:"pt-BR",en:"en",es:"es"}[LANG]||"pt-BR";
+/* Indicador: só letras, números, _ e - */
+var REF=(qs.get("ref")||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
+/* Links de saída de TESTE. shortcut: um destino de teste para todas as regiões; trocar pelos links rastreáveis reais (nunca a URL direta da loja) quando o master enviar a tabela. */
+var DEST_BASE="/proximo-passo/destino-teste/";
+function buildLink(region,goal){
+  var p=new URLSearchParams({regiao:region,objetivo:goal,ref:REF||"padrao"});
+  return DEST_BASE+"?"+p.toString();
+}
+var STORE="bp_leads_teste";
+var S={region:null,goal:null,sub:null};
+var view=document.getElementById("view"),prog=document.getElementById("prog");
+function el(tag,attrs,kids){var e=document.createElement(tag);for(var k in (attrs||{})){if(k==="text")e.textContent=attrs[k];else e.setAttribute(k,attrs[k]);}(kids||[]).forEach(function(c){e.appendChild(c)});return e;}
+function render(node,pct,back){
+  view.textContent="";view.appendChild(node);
+  prog.style.width=pct+"%";prog.parentNode.setAttribute("aria-valuenow",pct);
+  if(back){var b=el("button",{type:"button","class":"back",text:"← "+T.back});b.onclick=back;view.appendChild(b);}
+  var h=view.querySelector("h1");if(h){h.setAttribute("tabindex","-1");h.focus();}
+}
+function options(list,onPick){
+  var ul=el("ul",{"class":"opts"});
+  list.forEach(function(o){
+    var b=el("button",{type:"button","class":"opt","data-v":o.v},[el("strong",{text:o.t})].concat(o.d?[el("span",{text:o.d})]:[]));
+    b.onclick=function(){onPick(o.v)};ul.appendChild(el("li",{},[b]));
+  });return ul;
+}
+function stepRegion(){
+  S={region:null,goal:null,sub:null};
+  var n=el("div",{},[el("h1",{text:T.r_q}),el("p",{"class":"sub",text:T.r_s}),
+    options(Object.keys(T.regions).map(function(k){return{v:k,t:T.regions[k]}}),function(v){S.region=v;stepGoal();})]);
+  render(n,10);
+}
+function stepGoal(){
+  var n=el("div",{},[el("h1",{text:T.g_q}),el("p",{"class":"sub",text:T.g_s}),
+    options(Object.keys(T.goals).map(function(k){return{v:k,t:T.goals[k][0],d:T.goals[k][1]}}),function(v){
+      S.goal=v;S.sub=null;
+      if(v==="sub")stepSub();else next();
+    })]);
+  render(n,35,stepRegion);
+}
+function stepSub(){
+  var n=el("div",{},[el("h1",{text:T.s_q}),el("p",{"class":"sub",text:T.s_s}),
+    options(Object.keys(T.subs).map(function(k){return{v:k,t:T.subs[k][0],d:T.subs[k][1]}}),function(v){S.sub=v;next();})]);
+  render(n,60,stepGoal);
+}
+function backFromEnd(){ if(S.goal==="sub")stepSub(); else stepGoal(); }
+function next(){ if(S.region==="la")stepContact(); else stepResult(); }
+function stepResult(){
+  var key=S.goal==="sub"?S.sub:S.goal;
+  var ol=el("ol",{"class":"steps"},T.steps[key].map(function(t){return el("li",{text:t})}));
+  var a=el("a",{"class":"cta",id:"out",href:buildLink(S.region,key),rel:"noopener",text:T.open});
+  var ref=el("p",{"class":"sub",text:T.ref_l+": "+(REF||T.ref_none),style:"margin-top:14px"});
+  render(el("div",{},[el("h1",{text:T.res_t}),el("p",{"class":"sub",text:T.res_s}),el("div",{"class":"box"},[ol]),a,ref]),100,backFromEnd);
+}
+function field(id,label,type,auto){
+  var i=el("input",{id:id,name:id,type:type,autocomplete:auto,"aria-describedby":id+"-e"});
+  return [el("label",{"for":id,text:label}),i,el("p",{"class":"err",id:id+"-e"})];
+}
+function stepContact(){
+  var f=el("form",{novalidate:"novalidate"});
+  field("name",T.name,"text","name").concat(field("email",T.email,"email","email"),field("phone",T.phone,"tel","tel")).forEach(function(x){f.appendChild(x)});
+  var cb=el("input",{type:"checkbox",id:"consent","aria-describedby":"consent-e"});
+  f.appendChild(el("label",{"class":"chk","for":"consent"},[cb,el("span",{text:T.consent})]));
+  f.appendChild(el("p",{"class":"err",id:"consent-e"}));
+  f.appendChild(el("button",{type:"submit","class":"cta",text:T.send}));
+  f.onsubmit=function(ev){ev.preventDefault();submitContact(f)};
+  render(el("div",{},[el("h1",{text:T.c_t}),el("p",{"class":"sub",text:T.c_s}),f]),85,backFromEnd);
+}
+function submitContact(f){
+  var v={name:f.elements.name.value.trim(),email:f.elements.email.value.trim(),phone:f.elements.phone.value.trim()};
+  var digits=v.phone.replace(/\D/g,"");
+  var errs={name:v.name.length<2?T.e_name:"",email:/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)?"":T.e_email,
+    phone:(digits.length<8||digits.length>15)?T.e_phone:"",consent:document.getElementById("consent").checked?"":T.e_consent};
+  var first=null;
+  ["name","email","phone","consent"].forEach(function(k){
+    document.getElementById(k+"-e").textContent=errs[k];
+    var i=document.getElementById(k);i.setAttribute("aria-invalid",errs[k]?"true":"false");
+    if(errs[k]&&!first)first=i;
+  });
+  if(first){first.focus();return;}
+  var rec={name:v.name,email:v.email,phone:digits,consent:true,consentText:T.consent,region:S.region,goal:S.goal,sub:S.sub,ref:REF||null,at:new Date().toISOString()};
+  /* shortcut: contato só no localStorage do navegador (teste); trocar por armazenamento no servidor, com política de privacidade e retenção, antes de produção. */
+  try{var all=JSON.parse(localStorage.getItem(STORE)||"[]");all.push(rec);localStorage.setItem(STORE,JSON.stringify(all));}
+  catch(e){document.getElementById("consent-e").textContent=T.e_save;return;}
+  render(el("div",{},[el("h1",{text:T.done_t,"class":"ok"}),el("p",{id:"done",text:T.done_s}),el("p",{"class":"sub",text:T.done_save})]),100);
+}
+stepRegion();
+</script>
+</body>
+</html>

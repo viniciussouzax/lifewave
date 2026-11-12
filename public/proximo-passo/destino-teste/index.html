@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" /><title>Destino de teste</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:520px;margin:0 auto;padding:24px 16px}dt{font-weight:600;margin-top:10px}</style></head>
+<body><h1>Destino de TESTE</h1>
+<p>Aqui entrará o link rastreável real da loja. Esta página não leva a nenhuma loja.</p>
+<dl id="d"></dl>
+<p><a href="/proximo-passo/">Voltar ao formulário</a></p>
+<p><small>LifeWave Independent Brand Partner. Conteúdo de um Brand Partner independente.</small></p>
+<script>
+var p=new URLSearchParams(location.search),d=document.getElementById("d");
+["regiao","objetivo","ref"].forEach(function(k){var a=document.createElement("dt");a.textContent=k;var b=document.createElement("dd");b.textContent=p.get(k)||"-";d.appendChild(a);d.appendChild(b);});
+</script></body></html>
