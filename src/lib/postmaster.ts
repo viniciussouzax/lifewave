@@ -26,7 +26,9 @@
 export interface AvisoDeInscricao {
     nome: string; email: string; ddi: string; telefone: string;
     origem: Record<string, string>;
-    webinarId: string; sessao: string; everwebinarUserId: string;
+    webinarId?: string; sessao?: string; everwebinarUserId?: string;
+    /** Outra campanha do postmaster que não a do webinar (ex.: o formulário da CTA final). */
+    campanha?: string;
 }
 
 const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
@@ -39,9 +41,16 @@ function lerEnv() {
     return { url, segredo };
 }
 
-export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<void> {
+/** O aviso está ligado (URL https e segredo no ambiente)? */
+export function postmasterConfigurado(): boolean {
     const { url, segredo } = lerEnv();
-    if (!url || !segredo || !/^https:\/\//.test(url)) return;
+    return !!url && !!segredo && /^https:\/\//.test(url);
+}
+
+/** true se o postmaster aceitou o aviso; quem só quer registrar a origem (a home) ignora o retorno. */
+export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<boolean> {
+    const { url, segredo } = lerEnv();
+    if (!url || !segredo || !/^https:\/\//.test(url)) return false;
     const [primeiro, ...resto] = a.nome.split(' ');
     const corpo: Record<string, string> = {
         email: a.email,
@@ -49,11 +58,11 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
         last_name: resto.join(' '),
         phone_country_code: a.ddi,
         phone: a.telefone,
-        webinar_id: a.webinarId,
-        date: a.sessao,
-        everwebinar_user_id: a.everwebinarUserId,
+        webinar_id: a.webinarId ?? '',
+        date: a.sessao ?? '',
+        everwebinar_user_id: a.everwebinarUserId ?? '',
         site: 'brandpartner.team',
-        campanha: CAMPANHA,
+        campanha: a.campanha || CAMPANHA,
     };
     for (const k of UTM) {
         const v = String(a.origem?.[k] ?? '').trim().slice(0, 100);
@@ -67,12 +76,13 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
                 body: JSON.stringify(corpo),
                 signal: AbortSignal.timeout(limite),
             });
-            if (res.ok) return;
+            if (res.ok) return true;
             const motivo = `${res.status} ${(await res.text()).slice(0, 200)}`;
-            if (res.status < 500 && res.status !== 429) { console.error(`[postmaster] inscrição recusada: ${motivo}`); return; }
+            if (res.status < 500 && res.status !== 429) { console.error(`[postmaster] inscrição recusada: ${motivo}`); return false; }
             console.error(`[postmaster] tentativa ${i + 1} falhou: ${motivo}`);
         } catch (e) {
             console.error(`[postmaster] tentativa ${i + 1} não avisou:`, (e as Error).message);
         }
     }
+    return false;
 }

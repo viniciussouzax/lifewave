@@ -89,7 +89,7 @@ footer b{color:var(--ink)}
   </div>
 </header>
 <main>
-  <div class="test" role="note">VERSÃO DE TESTE. Links de saída são provisórios e nenhum dado é enviado a serviço externo.</div>
+  <div class="test" role="note">VERSÃO DE TESTE. Links de saída são provisórios. Na América Latina, o contato enviado vai a um Brand Partner de verdade.</div>
   <div class="card">
     <p class="meta"><span id="stepLabel">Etapa 1 de 3</span></p>
     <div class="bar" id="prog" role="progressbar" aria-label="Progresso" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-valuetext="Etapa 1 de 3"></div>
@@ -128,9 +128,8 @@ var I18N = {
     consent:"Concordo em ser contatado por um Brand Partner independente da LifeWave por telefone, WhatsApp ou e-mail para tratar do meu cadastro. Posso pedir para parar a qualquer momento.",
     send:"Enviar contato",
     e_name:"Informe seu nome.",e_email:"Informe um e-mail válido.",e_phone:"Informe um telefone válido (8 a 15 dígitos).",e_consent:"Marque a caixa para continuar.",
-    e_save:"Não foi possível salvar neste navegador.",
-    done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega.",
-    done_save:"Em modo de teste, o contato ficou salvo só neste navegador."
+    e_save:"Não foi possível enviar agora. Tente de novo em instantes.",
+    done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega."
   }
 };
 var qs=new URLSearchParams(location.search);
@@ -138,14 +137,13 @@ var LANG=I18N[qs.get("lang")]?qs.get("lang"):"pt";
 var T=I18N[LANG];
 document.documentElement.lang={pt:"pt-BR",en:"en",es:"es"}[LANG]||"pt-BR";
 /* Indicador: só letras, números, _ e - */
-var REF=(qs.get("ref")||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
+var REF=(qs.get("utm_source")||qs.get("ref")||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
 /* Links de saída de TESTE. shortcut: um destino de teste para todas as regiões; trocar pelos links rastreáveis reais (nunca a URL direta da loja) quando o master enviar a tabela. */
 var DEST_BASE="/next-step/destino-teste/";
 function buildLink(region,goal){
   var p=new URLSearchParams({regiao:region,objetivo:goal,ref:REF||"padrao"});
   return DEST_BASE+"?"+p.toString();
 }
-var STORE="bp_leads_teste";
 var S={region:null,goal:null,sub:null};
 var view=document.getElementById("view"),prog=document.getElementById("prog"),stepLabel=document.getElementById("stepLabel");
 var SVGNS="http://www.w3.org/2000/svg";
@@ -220,6 +218,8 @@ function stepContact(){
   var cb=el("input",{type:"checkbox",id:"consent","aria-describedby":"consent-e"});
   f.appendChild(el("label",{"class":"chk","for":"consent"},[cb,el("span",{text:T.consent})]));
   f.appendChild(el("p",{"class":"err",id:"consent-e",role:"alert"}));
+  /* Isca contra robô: fora da tela e do teclado; quem preenche é script. */
+  f.appendChild(el("input",{type:"text",name:"site",tabindex:"-1",autocomplete:"off","aria-hidden":"true",style:"position:absolute;left:-9999px;width:1px;height:1px;opacity:0"}));
   f.appendChild(el("button",{type:"submit","class":"cta",text:T.send}));
   f.onsubmit=function(ev){ev.preventDefault();submitContact(f)};
   render(el("div",{},[el("h1",{text:T.c_t}),el("p",{"class":"sub",text:T.c_s}),f]),total(),total(),backFromEnd);
@@ -236,11 +236,17 @@ function submitContact(f){
     if(errs[k]&&!first)first=i;
   });
   if(first){first.focus();return;}
-  var rec={name:v.name,email:v.email,phone:digits,consent:true,consentText:T.consent,region:S.region,goal:S.goal,sub:S.sub,ref:REF||null,at:new Date().toISOString()};
-  /* shortcut: contato só no localStorage do navegador (teste); trocar por armazenamento no servidor, com política de privacidade e retenção, antes de produção. */
-  try{var all=JSON.parse(localStorage.getItem(STORE)||"[]");all.push(rec);localStorage.setItem(STORE,JSON.stringify(all));}
-  catch(e){document.getElementById("consent-e").textContent=T.e_save;return;}
-  render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s}),el("p",{"class":"ref",text:T.done_save})]),total(),total());
+  var btn=f.querySelector("button[type=submit]");
+  if(btn.disabled)return;
+  btn.disabled=true;
+  var body={nome:v.name,email:v.email,telefone:digits,consentimento:true,regiao:S.region,objetivo:S.goal,sub:S.sub||"",site:f.elements.site.value,origem:{utm_source:REF}};
+  /* O servidor entrega o contato ao postmaster (/api/next-step/lead); só mostra "recebemos" se ele confirmou. */
+  fetch("/api/next-step/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+    .then(function(r){if(!r.ok)throw new Error(r.status);})
+    .then(function(){
+      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s})]),total(),total());
+    })
+    .catch(function(){btn.disabled=false;document.getElementById("consent-e").textContent=T.e_save;});
 }
 stepRegion();
 </script>
