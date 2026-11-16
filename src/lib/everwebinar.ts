@@ -7,7 +7,8 @@
  *     Com "Auto-detect the user's time zone", os horários já vêm no fuso pedido ("GMT-3").
  *   · /everwebinar/register (webinar_id, first_name, email, schedule, date?, last_name?, timezone?,
  *     ip_address?, phone_country_code "+55", phone só dígitos, twilio_consent 1/0 — obrigatório com telefone;
- *     campos personalizados: o rótulo do campo é o nome do parâmetro)
+ *     campos personalizados: `custom_fields[<rótulo do campo>]=valor`. Testado em 16/11/2026 no
+ *     webinar 2: `ref=valor` (só o rótulo) é aceito e descartado; `custom_fields[ref]=valor` grava)
  *     → { user: { user_id, live_room_url, replay_room_url, thank_you_url, date, timezone } }
  *
  * A chave (EVERWEBINAR_API_KEY) é lida em runtime e nunca vai para o navegador nem para log.
@@ -185,7 +186,7 @@ export function parametrosDaInscricao(p: PedidoDeInscricao): Record<string, stri
     const date = resto.join('|');
     const comFone = !!(p.telefone && p.ddi);
     const extras: Record<string, string> = {};
-    for (const [k, v] of Object.entries(p.extras ?? {})) if (k && v && !RESERVADOS.has(k.toLowerCase())) extras[k] = v;
+    for (const [k, v] of Object.entries(p.extras ?? {})) if (k && v && !RESERVADOS.has(k.toLowerCase())) extras[`custom_fields[${k}]`] = v;
     return {
         webinar_id: p.webinarId, schedule, date: date || undefined,
         first_name: primeiro, last_name: sobrenome || undefined, email: p.email,
