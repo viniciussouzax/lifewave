@@ -67,8 +67,8 @@ no repositório `viniciussouzax/brazilian-conference` (pasta `C:\Users\azuos\Des
 **O que continua neste repositório (Astro):**
 - Rotas da API: `/api/webinar/horarios` e `/api/webinar/inscricao` (`src/lib/everwebinar.ts`), chave em
   `EVERWEBINAR_API_KEY` (Vercel). `src/data/webinar.json`: `webinarId` (2 = português) e `camposOrigem`
-  (UTMs enviadas como campos personalizados do webinar; hoje só `utm_source`, o código dos links do
-  postmaster; o campo precisa existir no EverWebinar com esse rótulo exato).
+  (em qual campo personalizado do webinar vai cada UTM: `{ "ref": "utm_source" }` manda o `utm_source`,
+  o código dos links do postmaster, no campo `ref`; o campo precisa existir no EverWebinar com esse rótulo exato).
 - EverWebinar simulado para dev (`EVERWEBINAR_FAKE=1`, `everwebinarFake.ts`).
 - Os botões `.wj-embed-button` dos artigos levam para `/#inscricao`.
 - `ApresentacaoLanding.astro` (landing antiga com o embed) ficou só para reverter.
