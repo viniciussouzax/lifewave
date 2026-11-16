@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" /><title>Abrindo o cadastro</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:520px;margin:0 auto;padding:48px 16px;text-align:center;color:#0b2a5c}</style></head>
+<body>
+<p>Abrindo o cadastro…</p>
+<p><a id="seguir" href="/next-step/destino-teste/">Se não abrir, toque aqui</a></p>
+<!--
+  Passagem do "Abrir link de cadastro" do /next-step. É a PÁGINA DE CONFIRMAÇÃO do rastreio de vendas do
+  EverWebinar (Goal tracking): o script lê o cookie que o /next-step gravou (wj_user, o inscrito) e avisa o
+  EverWebinar, que marca purchased_live/purchased_replay = Yes. Aqui "comprou" quer dizer "clicou na oferta e abriu
+  o link de cadastro"; o preço 1.00 só conta quantos chegaram. Uma página só pode ter um código de rastreio.
+-->
+<script src="https://event.webinarjam.com/t/sale/13qvo4byip/v2?price=1.00&currency=USD"></script>
+<script>
+/* Segue com a mesma query (regiao, objetivo, ref). O aviso ao EverWebinar é assíncrono: espera um pouco para ele sair.
+   shortcut: destino de teste fixo; trocar pelo link de indicação de quem trouxe quando houver os links por objetivo. */
+var destino="/next-step/destino-teste/"+location.search;
+document.getElementById("seguir").href=destino;
+setTimeout(function(){location.replace(destino);},1200);
+</script>
+</body></html>
