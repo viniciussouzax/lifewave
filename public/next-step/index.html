@@ -26,12 +26,12 @@ body{margin:0;background:#1a73eb;color:var(--text);font:400 1rem/1.5 var(--body)
 #prism{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#1a73eb}
 #prism::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 60% at 28% 42%,rgba(236,246,255,.82) 0%,rgba(236,246,255,.5) 45%,rgba(236,246,255,0) 75%)}
 header{position:relative;z-index:1}
-.head{max-width:1280px;margin:0 auto;padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.head{max-width:1280px;margin:0 auto;padding:24px 24px 0;display:flex;flex-direction:column;align-items:center;gap:12px}
 .logo{display:block;width:50%;max-width:200px;flex:none}
 .logo span{position:relative;display:block}
 .logo img{display:block;width:100%;height:auto;opacity:0}
 .logo i{position:absolute;inset:0;background:#0b2a5c;-webkit-mask:url(/next-step/logo-brandpartner.png) center/contain no-repeat;mask:url(/next-step/logo-brandpartner.png) center/contain no-repeat}
-.indep{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right;line-height:1.3}
+.indep{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3}
 @media (min-width:640px){.head{padding:32px 40px 0}}
 @media (min-width:768px){.logo{width:154px}}
 @media (min-width:1024px){.head{max-width:1152px;padding:28.8px 43.2px 0}.logo{width:181px}}
@@ -95,7 +95,6 @@ footer b{color:var(--ink)}
   </div>
 </header>
 <main>
-  <div class="test" role="note">VERSÃO DE TESTE. Links de saída são provisórios. Na América Latina, o contato enviado vai a um Brand Partner de verdade.</div>
   <div class="card">
     <p class="meta"><span id="stepLabel">Etapa 1 de 3</span></p>
     <div class="bar" id="prog" role="progressbar" aria-label="Progresso" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-valuetext="Etapa 1 de 3"></div>
@@ -103,9 +102,6 @@ footer b{color:var(--ink)}
     <noscript><p>Este formulário precisa de JavaScript para funcionar.</p></noscript>
   </div>
 </main>
-<footer>
-  <b>LifeWave Independent Brand Partner.</b> Este conteúdo é de um Brand Partner independente e não é da LifeWave Ltd. Resultados variam de pessoa para pessoa.
-</footer>
 </div>
 <script>
 /* Textos por idioma. shortcut: só pt preenchido; en e es entram aqui com as mesmas chaves quando houver tradução aprovada. */
