@@ -7,9 +7,9 @@
  *
  * - Valida os campos (mensagens em pt-BR, por campo)
  * - Rate limit: 8 por IP a cada 10 min (in-memory, como o /api/subscribe)
- * - Origem: as UTMs listadas em "camposOrigem" (webinar.json) vão como campos personalizados do
- *   webinar — cada uma precisa existir no EverWebinar com esse rótulo exato. Hoje só utm_source,
- *   que leva o código dos links do postmaster (r…) até o webhook dele; o resto fica no tracking-kit.
+ * - Origem: "camposOrigem" (webinar.json) diz em qual campo personalizado do webinar vai cada UTM
+ *   ({ "ref": "utm_source" }); o campo precisa existir no EverWebinar com esse rótulo exato. Hoje o
+ *   utm_source (o código dos links do postmaster, r…) vai no campo "ref"; o resto fica no tracking-kit.
  * - O rastreamento (Lead) é feito no navegador pelo tracking-kit, com o mesmo event_id no servidor.
  * - Sessão que acabou de começar (o minuto "Ao vivo" da página): se o EverWebinar recusar, inscreve
  *   na sessão seguinte (sessaoSeguinte), sem erro para a pessoa.
@@ -87,11 +87,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     if (!webinarId || !key) return json({ ok: false, error: 'As inscrições estão indisponíveis agora. Tente de novo em instantes.' }, 503);
 
     const extras: Record<string, string> = {};
-    const camposOrigem: string[] = Array.isArray(cfg?.camposOrigem) ? cfg.camposOrigem.filter((k: string) => UTM.includes(k)) : [];
-    if (camposOrigem.length && b?.origem && typeof b.origem === 'object') {
-        for (const k of camposOrigem) {
-            const v = String(b.origem[k] ?? '').trim().slice(0, 100);
-            if (v) extras[k] = v;
+    // camposOrigem: { "<rótulo do campo no EverWebinar>": "<utm>" } (ex.: { "ref": "utm_source" });
+    // a lista antiga (["utm_source"]) manda cada utm num campo com o mesmo nome.
+    const mapa: Record<string, unknown> = Array.isArray(cfg?.camposOrigem)
+        ? Object.fromEntries(cfg.camposOrigem.map((k: string) => [k, k]))
+        : cfg?.camposOrigem && typeof cfg.camposOrigem === 'object' ? cfg.camposOrigem : {};
+    if (b?.origem && typeof b.origem === 'object') {
+        for (const [campo, utm] of Object.entries(mapa)) {
+            if (typeof utm !== 'string' || !UTM.includes(utm)) continue;
+            const v = String(b.origem[utm] ?? '').trim().slice(0, 100);
+            if (v) extras[campo] = v;
         }
     }
 
