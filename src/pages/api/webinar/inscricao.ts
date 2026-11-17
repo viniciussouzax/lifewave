@@ -135,7 +135,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         waitUntil(avisarInscricaoNoPostmaster({
             nome: dados.nome, email: dados.email, ddi: dados.ddi, telefone: dados.telefone, origem,
             webinarId, sessao: r.rotulo, everwebinarUserId: r.userId,
-            pid, salaUrl: r.liveRoomUrl, inicio: r.inicio || undefined, whatsapp: dados.whatsapp,
+            pid, salaUrl: r.liveRoomUrl, replayUrl: r.replayRoomUrl || undefined, inicio: r.inicio || undefined, whatsapp: dados.whatsapp,
         }).catch((e) => console.error('[postmaster] aviso da inscrição:', (e as Error).message)));
         return json({ ok: true, pid, sala: r });
     } catch (e) {

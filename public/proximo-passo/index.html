@@ -72,7 +72,7 @@ input[type=text],input[type=email],input[type=tel],input[type=number],textarea{b
 @media (min-width:768px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
 input[readonly]{background:#f4f6fa;color:var(--muted)}
 /* Endereço no padrão de checkout: duas colunas a partir de 400 px, uma no celular estreito. */
-.indicacao{margin:0 0 14px;padding:8px 12px;border-radius:.625rem;background:#eef4fc;color:var(--ink);font-size:.875rem;overflow-wrap:anywhere}
+.indicacao{margin:16px auto 0;max-width:34rem;text-align:center;color:var(--ink);opacity:.75;font-size:.8125rem;overflow-wrap:anywhere}
 input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--err);box-shadow:0 0 0 1px var(--err)}
 .err{color:var(--err);font-size:.875rem;font-weight:500;margin:6px 0 0}
 .err:empty{margin:0}
@@ -108,12 +108,12 @@ footer b{color:var(--ink)}
 </header>
 <main>
   <div class="card">
-    <p class="indicacao" id="indicacao" role="status"></p>
     <p class="meta"><span id="stepLabel">Etapa 1 de 3</span></p>
     <div class="bar" id="prog" role="progressbar" aria-label="Progresso" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-valuetext="Etapa 1 de 3"></div>
     <div id="view" class="view"></div>
     <noscript><p>Este formulário precisa de JavaScript para funcionar.</p></noscript>
   </div>
+  <p class="indicacao" id="indicacao" role="status"></p>
 </main>
 </div>
 <script>
@@ -127,16 +127,12 @@ var I18N = {
     g_q:"O que você quer?", g_s:"Escolha uma opção.",
     goals:{bp:["Ser Brand Partner","Cadastro na empresa com passo a passo."],
            sub:["Ser cliente preferencial","Cadastro como cliente com compra recorrente."]},
-    s_q:"Como você prefere começar?", s_s:"Duas formas de criar o cadastro de consumidor.",
-    subs:{"2.2":["Cadastro com 3 envelopes de X39","Você compra 3 envelopes de X39 e ativa a assinatura de X39 ou de outro produto."],
-          "2.3":["Cadastro com taxa de adesão","Você paga a taxa de cadastro, compra 1 envelope de X39 e ativa a assinatura de X39."]},
     back:"Voltar", open:"Abrir link de cadastro",
     res_t:"Seu próximo passo", res_s:"Siga o passo a passo e use o link abaixo.",
     ref_l:"Indicação", ref_cod:"código", ref_equipe:"equipe LifeWave Brand Partner",
     steps:{
       bp:["Abra o link abaixo.","Escolha a opção de cadastro como Brand Partner.","Preencha seus dados e confirme o e-mail.","Fale com quem indicou você para os primeiros passos."],
-      "2.2":["Abra o link abaixo.","Crie o cadastro de consumidor.","Adicione 3 envelopes de X39 ao pedido.","Ative a assinatura de X39 ou de outro produto e finalize."],
-      "2.3":["Abra o link abaixo.","Crie o cadastro de consumidor e pague a taxa de adesão.","Compre 1 envelope de X39.","Ative a assinatura de X39 e finalize."]},
+      sub:["Abra o link abaixo.","Crie o seu cadastro de cliente preferencial.","Escolha os produtos e a assinatura que preferir e finalize."]},
     c_t:"Quase lá. Deixe seu contato", c_s:"Um Brand Partner vai falar com você para fazer o cadastro e a entrega.",
     name:"Nome",email:"E-mail",phone:"Telefone com DDD",
     consent:"Concordo em ser contatado por um Brand Partner independente da LifeWave por telefone, WhatsApp ou e-mail para tratar do meu cadastro. Posso pedir para parar a qualquer momento.",
@@ -243,7 +239,7 @@ function options(list,onPick){
     b.onclick=function(){onPick(o.v)};ul.appendChild(el("li",{},[b]));
   });return ul;
 }
-function total(){return S.goal==="sub"?5:4;}
+function total(){return 4;}
 function stepRegion(){
   S={region:null,pais:null,entrega:false,goal:null,sub:null};
   var n=el("div",{},[el("h1",{text:T.r_q}),el("p",{"class":"sub",text:T.r_s}),
@@ -261,20 +257,14 @@ function stepCountry(){
 function stepGoal(){
   var n=el("div",{},[el("h1",{text:T.g_q}),el("p",{"class":"sub",text:T.g_s}),
     options(Object.keys(T.goals).map(function(k){return{v:k,t:T.goals[k][0],d:T.goals[k][1]}}),function(v){
-      S.goal=v;S.sub=null;
-      if(v==="sub")stepSub();else next();
+      S.goal=v;S.sub=null;next();
     })]);
   render(n,3,total(),stepCountry);
 }
-function stepSub(){
-  var n=el("div",{},[el("h1",{text:T.s_q}),el("p",{"class":"sub",text:T.s_s}),
-    options(Object.keys(T.subs).map(function(k){return{v:k,t:T.subs[k][0],d:T.subs[k][1]}}),function(v){S.sub=v;next();})]);
-  render(n,4,5,stepGoal);
-}
-function backFromEnd(){ if(S.goal==="sub")stepSub(); else stepGoal(); }
+function backFromEnd(){ stepGoal(); }
 function next(){ if(S.entrega)stepResult(); else stepContact(); }
 function stepResult(){
-  var key=S.goal==="sub"?S.sub:S.goal;
+  var key=S.goal;
   var ol=el("ol",{"class":"steps"},T.steps[key].map(function(t){return el("li",{},[el("span",{text:t})])}));
   var a=el("a",{"class":"cta",id:"out",href:buildLink(S.goal),rel:"noopener",text:T.open});
   render(el("div",{},[el("h1",{text:T.res_t}),el("p",{"class":"sub",text:T.res_s}),el("div",{"class":"box"},[ol]),a]),total(),total(),backFromEnd);
