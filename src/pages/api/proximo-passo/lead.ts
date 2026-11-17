@@ -15,7 +15,7 @@
  *   não preenche. shortcut: sem Turnstile (a página não tem o widget); acrescentar se aparecer spam.
  */
 import type { APIRoute } from 'astro';
-import { avisarInscricaoNoPostmaster, avisarProximoPasso, postmasterConfigurado } from '../../../lib/postmaster';
+import { avisarInscricaoNoPostmaster, avisarProximoPasso, PID, postmasterConfigurado } from '../../../lib/postmaster';
 
 export const prerender = false;
 
@@ -57,9 +57,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const email = String(b?.email ?? '').trim().toLowerCase().slice(0, 200);
     const telefone = String(b?.telefone ?? '').replace(/\D/g, '').slice(0, 15);
     const erros: Record<string, string> = {};
+    // Com o código da pessoa, e-mail e telefone podem ficar como estão (mascarados na tela): o postmaster usa os da inscrição.
+    const pid = PID.test(String(b?.pid ?? '')) ? String(b.pid) : '';
     if (nome.length < 2) erros.nome = 'nome';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) erros.email = 'email';
-    if (telefone.length < 8) erros.telefone = 'telefone';
+    if (!(pid && !email) && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) erros.email = 'email';
+    if (!(pid && !telefone) && telefone.length < 8) erros.telefone = 'telefone';
     const objetivo = ({ bp: 'bp', sub: 'preferencial' } as const)[String(b?.objetivo ?? '') as 'bp' | 'sub'];
     // O valor inteiro tem de ser o código: "Brasil" não vira "BR" por corte.
     const pais = String(b?.pais ?? '').trim().toUpperCase();
@@ -80,10 +82,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     if (fonte) origem.utm_source = fonte;
     if (escolha) origem.utm_content = escolha;
 
-    const entregue = await avisarInscricaoNoPostmaster({ nome, email, ddi: '', telefone, origem, campanha: CAMPANHA })
+    // Sem e-mail e telefone novos (a pessoa do pid manteve os dela), não há inscrição nova a avisar.
+    const entregue = (pid && !email && !telefone ? true : await avisarInscricaoNoPostmaster({ nome, email, ddi: '', telefone, origem, campanha: CAMPANHA, ...(pid ? { pid } : {}) }))
         && await avisarProximoPasso({
             acao: 'formulario', objetivo: objetivo!, sub: curto(b?.sub, 4) || undefined, continente, pais,
-            comEntrega: false, codigo: fonte || undefined, nome, email, telefone,
+            comEntrega: false, codigo: fonte || undefined, nome, ...(email ? { email } : {}), ...(telefone ? { telefone } : {}),
+            ...(pid ? { pid } : {}),
         });
     return entregue ? json({ ok: true }) : json({ ok: false, error: 'indisponivel' }, 502);
 };

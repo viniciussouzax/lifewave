@@ -6,7 +6,7 @@
  * Body: { objetivo: "bp" | "preferencial", sub?, continente, pais, codigo? }  →  { ok }
  */
 import type { APIRoute } from 'astro';
-import { avisarProximoPasso } from '../../../lib/postmaster';
+import { avisarProximoPasso, PID } from '../../../lib/postmaster';
 
 export const prerender = false;
 
@@ -46,6 +46,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const ok = await avisarProximoPasso({
         acao: 'link', objetivo, sub: curto(b?.sub, 4) || undefined, continente, pais, comEntrega: true,
         codigo: curto(b?.codigo, 40) || undefined,
+        ...(PID.test(String(b?.pid ?? '')) ? { pid: String(b.pid) } : {}),
     });
     return json({ ok }, ok ? 200 : 502);
 };
