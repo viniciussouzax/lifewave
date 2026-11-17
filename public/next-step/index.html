@@ -58,9 +58,8 @@ h1:focus{outline:none}
 /* Bandeira do país (SVG 3x2 de country-flag-icons, MIT; em /next-step/flags). */
 .opt .flag{flex:none;width:30px;height:20px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 .8px var(--line)}
 .opt .lead svg{width:20px;height:20px;margin:0 5px}
-.opt svg.mapa{width:72px;height:30px;margin:0;flex:none}
-.mapa path{fill:#c3cddc}
-.mapa path.on{fill:var(--primary)}
+/* Contorno do continente (Natural Earth 110m, domínio público; em /next-step/continentes). */
+.opt .cont{flex:none;width:56px;height:36px;object-fit:contain}
 :focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 .back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);font:inherit;font-weight:500;padding:10px 4px;margin-top:12px;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .back svg{width:16px;height:16px}
@@ -191,16 +190,6 @@ function icon(path){
   var p=document.createElementNS(SVGNS,"path");p.setAttribute("d",path);s.appendChild(p);return s;
 }
 var GLOBE="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18", CHEVRON="M9 6l6 6-6 6", ARROW_L="M15 6l-6 6 6 6", CHECK="M5 12.5l4.5 4.5L19 7.5";
-/* Mapa-múndi simplificado (desenho próprio, equiretangular 100x50) para mostrar o continente em cada opção.
-   O México (mx) está em América do Norte e em América Latina, como na lista de países. */
-var MAPA={"na": "M4.2 7.8 L11.1 5.6 L22.2 5.0 L27.8 6.1 L33.3 9.7 L34.7 11.7 L30.6 13.3 L27.8 16.7 L27.2 18.1 L23.1 17.8 L17.5 16.1 L15.3 11.7 L11.1 8.3Z M36.1 2.2 L44.4 2.8 L43.1 6.1 L37.5 8.3 L34.7 5.0Z", "mx": "M17.5 16.1 L23.1 17.8 L23.1 20.0 L25.6 20.6 L28.6 22.8 L26.9 22.8 L24.4 21.1 L20.8 19.4Z", "la": "M27.8 22.2 L32.8 21.9 L36.1 25.0 L40.3 26.9 L38.9 31.1 L36.7 32.8 L33.9 35.6 L31.9 40.3 L29.7 38.9 L30.0 34.7 L30.6 30.0 L27.8 26.4Z", "eu": "M47.2 15.0 L47.5 13.1 L48.6 11.7 L51.4 10.6 L52.2 9.2 L51.4 7.8 L54.2 5.6 L58.3 5.3 L61.1 6.4 L61.1 12.5 L57.8 13.6 L56.1 14.7 L53.3 14.4 L50.8 13.3Z M47.2 10.6 L48.3 8.9 L50.6 10.6 L48.6 11.1Z", "af": "M45.3 19.2 L47.2 15.3 L52.8 14.7 L58.9 16.4 L61.9 21.7 L64.2 21.7 L61.1 29.2 L58.9 32.8 L55.6 34.7 L53.3 29.7 L52.5 23.9 L47.8 23.6 L45.3 21.1Z M62.2 28.6 L63.9 29.4 L62.5 31.9 L61.9 31.1Z", "as": "M61.1 6.4 L66.7 4.2 L77.8 3.6 L88.9 4.7 L100.0 6.1 L94.4 8.3 L88.9 11.1 L86.1 13.9 L83.9 16.7 L80.0 19.4 L79.2 22.2 L77.8 24.2 L77.2 20.8 L75.0 18.9 L72.2 22.8 L70.0 19.4 L66.7 18.1 L65.3 18.1 L61.9 21.7 L59.7 16.1 L57.8 13.6 L61.1 12.5Z M86.1 16.4 L89.2 13.6 L89.4 12.5 L88.9 15.3Z M76.4 23.6 L79.4 26.7 L82.8 27.2 L83.1 24.7 L82.5 23.1 L80.6 24.4Z M83.3 20.0 L85.0 22.8 L83.9 23.1Z", "oc": "M81.7 31.1 L86.1 28.3 L89.4 28.1 L92.5 32.5 L91.1 35.6 L88.3 34.7 L81.9 34.4Z M97.8 34.7 L99.4 35.6 L96.4 37.8Z"};
-var MAPA_DO={na:["na","mx"],la:["la","mx"],eu:["eu"],as:["as"],oc:["oc"],af:["af"]};
-function mapa(regiao){
-  var s=document.createElementNS(SVGNS,"svg");s.setAttribute("viewBox","3 1 97 40");s.setAttribute("class","mapa");s.setAttribute("aria-hidden","true");
-  Object.keys(MAPA).forEach(function(k){var p=document.createElementNS(SVGNS,"path");p.setAttribute("d",MAPA[k]);
-    if((MAPA_DO[regiao]||[]).indexOf(k)>=0)p.setAttribute("class","on");s.appendChild(p);});
-  return s;
-}
 function el(tag,attrs,kids){var e=document.createElement(tag);for(var k in (attrs||{})){if(k==="text")e.textContent=attrs[k];else e.setAttribute(k,attrs[k]);}(kids||[]).forEach(function(c){e.appendChild(c)});return e;}
 /* Indicador de etapa: cur de total (total passa de 3 para 4 quando o caminho tem a escolha 2.2/2.3). */
 function setStep(cur,tot){
@@ -224,7 +213,7 @@ function options(list,onPick){
     /* Bandeira (o.flag) ou ícone (o.ico) à esquerda do texto; o nome do país continua sendo o rótulo do botão. */
     if(o.flag)txt=el("span",{"class":"lead"},[el("img",{"class":"flag",src:o.flag,alt:"",width:"30",height:"20",loading:"lazy"}),txt]);
     else if(o.ico)txt=el("span",{"class":"lead"},[icon(o.ico),txt]);
-    else if(o.map)txt=el("span",{"class":"lead"},[mapa(o.map),txt]);
+    else if(o.cont)txt=el("span",{"class":"lead"},[el("img",{"class":"cont",src:"/next-step/continentes/"+o.cont+".svg",alt:"",width:"56",height:"36"}),txt]);
     var b=el("button",{type:"button","class":"opt","data-v":o.v},[txt,icon(CHEVRON)]);
     b.onclick=function(){onPick(o.v)};ul.appendChild(el("li",{},[b]));
   });return ul;
@@ -233,7 +222,7 @@ function total(){return S.goal==="sub"?5:4;}
 function stepRegion(){
   S={region:null,pais:null,entrega:false,goal:null,sub:null};
   var n=el("div",{},[el("h1",{text:T.r_q}),el("p",{"class":"sub",text:T.r_s}),
-    options(Object.keys(T.regions).map(function(k){return{v:k,t:T.regions[k],map:k}}),function(v){S.region=v;stepCountry();})]);
+    options(Object.keys(T.regions).map(function(k){return{v:k,t:T.regions[k],cont:k}}),function(v){S.region=v;stepCountry();})]);
   render(n,1,4);
 }
 function stepCountry(){
