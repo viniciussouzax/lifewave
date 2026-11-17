@@ -2,7 +2,7 @@
  * api/next-step/registro.ts: a pessoa de um país com entrega abriu o link da LifeWave pela passagem
  * /next-step/cadastro/. Sem dado pessoal: só objetivo, país e o código de quem trouxe, para o postmaster contar.
  *
- * POST /api/next-step/registro (text/plain com JSON, para o navegador mandar sem consulta prévia)
+ * POST /api/next-step/registro (JSON; text/plain é barrado pela checagem de origem do Astro)
  * Body: { objetivo: "bp" | "preferencial" | "avulsa", sub?, continente, pais, codigo? }  →  { ok }
  */
 import type { APIRoute } from 'astro';
