@@ -103,11 +103,10 @@ footer b{color:var(--ink)}
 @media (min-width:600px){.card{padding:28px 28px 24px}h1{font-size:1.875rem}}
 @media (prefers-reduced-motion:reduce){.view{animation:none}*{transition:none!important}}
 /* Passagem para a LifeWave (/proximo-passo/cadastro/): cópia desta página com o carregamento no cartão. */
-.espera{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:12px 0 4px}
+.espera{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:8px 0 4px}
 .spin{width:36px;height:36px;border-radius:50%;border:3px solid var(--soft);border-top-color:var(--primary);animation:g .8s linear infinite}
 @keyframes g{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}
-.msg{margin:0;font:300 1.375rem/1.25 var(--display);color:var(--ink)}
 .espera a{font-size:.8125rem;color:var(--muted);text-underline-offset:3px}
 </style>
 </head>
@@ -121,9 +120,12 @@ footer b{color:var(--ink)}
 </header>
 <main>
   <div class="card">
+    <p class="meta"><span id="stepLabel">Etapa 4 de 4</span></p>
+    <div class="bar" id="prog" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <h1>Abrindo a LifeWave</h1>
+    <p class="sub">Você vai para o cadastro no site oficial da LifeWave.</p>
     <div class="espera" role="status" aria-live="polite">
       <div class="spin" aria-hidden="true"></div>
-      <p class="msg">Abrindo a LifeWave…</p>
       <a id="seguir" href="https://lifewave.com/wellnesspatchesoficial">Se não abrir, toque aqui</a>
     </div>
   </div>
