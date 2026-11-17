@@ -61,11 +61,14 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) erros.email = 'email';
     if (telefone.length < 8) erros.telefone = 'telefone';
     const objetivo = ({ bp: 'bp', sub: 'preferencial', once: 'avulsa' } as const)[String(b?.objetivo ?? '') as 'bp' | 'sub' | 'once'];
-    const pais = curto(b?.pais, 2).toUpperCase();
+    // O valor inteiro tem de ser o código: "Brasil" não vira "BR" por corte.
+    const pais = String(b?.pais ?? '').trim().toUpperCase();
+    const continente = String(b?.regiao ?? '').trim();
     const endereco = String(b?.endereco ?? '').trim().replace(/\s+/g, ' ').slice(0, 500);
     const quantidade = Number(b?.quantidade);
     if (!objetivo) erros.objetivo = 'objetivo';
     if (!/^[A-Z]{2}$/.test(pais)) erros.pais = 'pais';
+    if (!/^[a-z]{2}$/.test(continente)) erros.regiao = 'regiao';
     if (objetivo === 'avulsa' && endereco.length < 8) erros.endereco = 'endereco';
     if (objetivo === 'avulsa' && !(Number.isInteger(quantidade) && quantidade >= 1 && quantidade <= 99)) erros.quantidade = 'quantidade';
     if (b?.consentimento !== true) erros.consentimento = 'consentimento';
@@ -83,7 +86,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     const entregue = await avisarInscricaoNoPostmaster({ nome, email, ddi: '', telefone, origem, campanha: CAMPANHA })
         && await avisarProximoPasso({
-            acao: 'formulario', objetivo: objetivo!, sub: curto(b?.sub, 4) || undefined, continente: curto(b?.regiao, 20), pais,
+            acao: 'formulario', objetivo: objetivo!, sub: curto(b?.sub, 4) || undefined, continente, pais,
             comEntrega: false, codigo: fonte || undefined, nome, email, telefone,
             ...(objetivo === 'avulsa' ? { endereco, quantidade } : {}),
         });

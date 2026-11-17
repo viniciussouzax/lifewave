@@ -39,10 +39,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         return json({ ok: false }, 400);
     }
     const objetivo = OBJETIVOS.find((o) => o === b?.objetivo);
-    const pais = curto(b?.pais, 2).toUpperCase();
-    if (!objetivo || !/^[A-Z]{2}$/.test(pais)) return json({ ok: false }, 400);
+    // O valor inteiro tem de ser o código: "Brasil" não vira "BR" por corte.
+    const pais = String(b?.pais ?? '').trim().toUpperCase();
+    const continente = String(b?.continente ?? '').trim();
+    if (!objetivo || !/^[A-Z]{2}$/.test(pais) || !/^[a-z]{2}$/.test(continente)) return json({ ok: false }, 400);
     const ok = await avisarProximoPasso({
-        acao: 'link', objetivo, sub: curto(b?.sub, 4) || undefined, continente: curto(b?.continente, 20), pais, comEntrega: true,
+        acao: 'link', objetivo, sub: curto(b?.sub, 4) || undefined, continente, pais, comEntrega: true,
         codigo: curto(b?.codigo, 40) || undefined,
     });
     return json({ ok }, ok ? 200 : 502);
