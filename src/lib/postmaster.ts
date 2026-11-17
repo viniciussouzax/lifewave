@@ -86,3 +86,44 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
     }
     return false;
 }
+
+/** POST num caminho do webhook do projeto (`<url>/<caminho>`), com o segredo; o JSON da resposta ou null. Uma tentativa. */
+async function chamarPostmaster(caminho: string, corpo: unknown, limiteMs: number): Promise<any> {
+    const { url, segredo } = lerEnv();
+    if (!url || !segredo || !/^https:\/\//.test(url)) return null;
+    try {
+        const res = await fetch(`${url}/${caminho}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${segredo}` },
+            body: JSON.stringify(corpo),
+            signal: AbortSignal.timeout(limiteMs),
+        });
+        if (!res.ok) { console.error(`[postmaster] ${caminho}: ${res.status} ${(await res.text()).slice(0, 200)}`); return null; }
+        return await res.json();
+    } catch (e) {
+        console.error(`[postmaster] ${caminho}:`, (e as Error).message);
+        return null;
+    }
+}
+
+/**
+ * O nome do canal de quem trouxe na LifeWave (lifewave.com/<nome>), resolvido pelo postmaster a partir do código
+ * (`utm_source`). null = sem canal com link (o /next-step usa o do administrador).
+ */
+export async function nomeDeQuemTrouxe(codigo: string): Promise<string | null> {
+    const j = await chamarPostmaster('indicacao', { codigo }, 3000);
+    const nome = typeof j?.nome === 'string' ? j.nome : '';
+    return /^[A-Za-z0-9._-]{1,80}$/.test(nome) ? nome : null;
+}
+
+export interface ProximoPasso {
+    acao: 'link' | 'formulario';
+    objetivo: 'bp' | 'preferencial' | 'avulsa';
+    sub?: string; continente: string; pais: string; comEntrega: boolean; codigo?: string;
+    nome?: string; email?: string; ddi?: string; telefone?: string; endereco?: string; quantidade?: number;
+}
+
+/** A escolha da pessoa no /next-step (e a encomenda) vai ao postmaster, que avisa quem trouxe. true = gravado. */
+export async function avisarProximoPasso(p: ProximoPasso): Promise<boolean> {
+    return !!(await chamarPostmaster('proximo-passo', p, 4000))?.ok;
+}

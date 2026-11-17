@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" /><title>Abrindo o cadastro</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:520px;margin:0 auto;padding:48px 16px;text-align:center;color:#0b2a5c}</style></head>
+<body>
+<p>Abrindo a LifeWave…</p>
+<p><a id="seguir" href="https://lifewave.com/wellnesspatchesoficial">Se não abrir, toque aqui</a></p>
+<!--
+  Passagem do "Abrir link de cadastro" do /next-step. É a PÁGINA DE CONFIRMAÇÃO do rastreio de vendas do
+  EverWebinar (Goal tracking): o script lê o cookie que o /next-step gravou (wj_user, o inscrito) e avisa o
+  EverWebinar, que marca purchased_live/purchased_replay = Yes. Aqui "comprou" quer dizer "clicou na oferta e abriu
+  o link da LifeWave"; o preço 1.00 só conta quantos chegaram. Uma página só pode ter um código de rastreio.
+-->
+<script src="https://event.webinarjam.com/t/sale/13qvo4byip/v2?price=1.00&currency=USD"></script>
+<script>
+var q=new URLSearchParams(location.search);
+/* Só segue para a LifeWave: um "para" de outro site faria desta página um redirecionador aberto. */
+var destino="https://lifewave.com/wellnesspatchesoficial";
+try{var u=new URL(q.get("para")||"");if(u.protocol==="https:"&&/^(www\.)?lifewave\.com$/.test(u.hostname))destino=u.href;}catch(e){}
+document.getElementById("seguir").href=destino;
+/* O clique também vai ao postmaster (quem foi direto para o link não preenche nada). keepalive: termina mesmo com a saída. */
+try{
+  fetch("/api/next-step/registro",{method:"POST",keepalive:true,headers:{"Content-Type":"text/plain;charset=UTF-8"},
+    body:JSON.stringify({objetivo:q.get("objetivo")||"",sub:q.get("sub")||"",continente:q.get("continente")||"",pais:q.get("pais")||"",codigo:q.get("ref")||""})}).catch(function(){});
+}catch(e){}
+/* O aviso ao EverWebinar é assíncrono: espera um pouco para ele sair. */
+setTimeout(function(){location.replace(destino);},1200);
+</script>
+</body></html>
