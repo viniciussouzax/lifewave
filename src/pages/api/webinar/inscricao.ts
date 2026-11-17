@@ -2,8 +2,12 @@
  * api/webinar/inscricao.ts — inscreve no webinar da home pela API do EverWebinar.
  *
  * POST /api/webinar/inscricao
- * Body: { horario: "schedule|date", nome, email, ddi: "+55", telefone, consentimento, fuso: "GMT-3", origem?: { utm_* } }
- * → { ok: true, sala: { userId, inicio, rotulo, liveRoomUrl, replayRoomUrl } }
+ * Body: { horario: "schedule|date", nome, email, ddi: "+55", telefone, consentimento, whatsapp?, fuso: "GMT-3", origem?: { utm_* } }
+ * → { ok: true, pid, sala: { userId, inicio, rotulo, liveRoomUrl, replayRoomUrl } }
+ *
+ * - O código da pessoa (`pid`, funil Brand Partner): gerado aqui, vai ao postmaster (com a sala, o início e o
+ *   consentimento do WhatsApp) e, com "campoPid" no webinar.json, a um campo personalizado do EverWebinar
+ *   (o campo precisa existir lá com esse rótulo). O navegador guarda e leva em todo link.
  *
  * - Valida os campos (mensagens em pt-BR, por campo)
  * - Rate limit: 8 por IP a cada 10 min (in-memory, como o /api/subscribe)
@@ -16,6 +20,8 @@
  * - O postmaster é avisado de cada inscrição com as UTMs (o utm_source é o código do link casca),
  *   para saber o dono, o canal e o perfil que trouxe a pessoa (lib/postmaster.ts).
  */
+import { randomBytes } from 'node:crypto';
+import { waitUntil } from '@vercel/functions';
 import type { APIRoute } from 'astro';
 import { readData } from '../../../lib/readData';
 import { inscrever, normalizarFuso, readEverwebinarEnv, sessaoSeguinte, type PedidoDeInscricao } from '../../../lib/everwebinar';
@@ -54,7 +60,7 @@ function conferir(b: any) {
     else if (telefone.length < 6 || telefone.length + ddi.length - 1 > 15) erros.telefone = 'Confira o número do WhatsApp.';
     return {
         erros,
-        dados: { nome, email, horario, ddi, telefone, consentimento: b?.consentimento === true, fuso: normalizarFuso(b?.fuso) ?? 'GMT+0' },
+        dados: { nome, email, horario, ddi, telefone, consentimento: b?.consentimento === true, whatsapp: b?.whatsapp === true, fuso: normalizarFuso(b?.fuso) ?? 'GMT+0' },
     };
 }
 
@@ -86,7 +92,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const { key, fake } = readEverwebinarEnv();
     if (!webinarId || !key) return json({ ok: false, error: 'As inscrições estão indisponíveis agora. Tente de novo em instantes.' }, 503);
 
+    const pid = randomBytes(16).toString('base64url');
     const extras: Record<string, string> = {};
+    const campoPid = String(cfg?.campoPid ?? '').trim();
+    if (campoPid) extras[campoPid] = pid;
     // camposOrigem: { "<rótulo do campo no EverWebinar>": "<utm>" } (ex.: { "ref": "utm_source" });
     // a lista antiga (["utm_source"]) manda cada utm num campo com o mesmo nome.
     const mapa: Record<string, unknown> = Array.isArray(cfg?.camposOrigem)
@@ -118,15 +127,17 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         }
         if (!r.liveRoomUrl) throw new Error('inscrição sem link da sala');
         // Já inscrito: avisa o postmaster (com o código de origem) sem deixar falha dele afetar a resposta.
+        // Depois da resposta (waitUntil): o aviso tem até 2,5 s + 4 s e a pessoa não espera por ele.
         const origem: Record<string, string> = {};
         if (b?.origem && typeof b.origem === 'object') {
             for (const k of UTM) if (typeof b.origem[k] === 'string') origem[k] = b.origem[k];
         }
-        await avisarInscricaoNoPostmaster({
+        waitUntil(avisarInscricaoNoPostmaster({
             nome: dados.nome, email: dados.email, ddi: dados.ddi, telefone: dados.telefone, origem,
             webinarId, sessao: r.rotulo, everwebinarUserId: r.userId,
-        });
-        return json({ ok: true, sala: r });
+            pid, salaUrl: r.liveRoomUrl, inicio: r.inicio || undefined, whatsapp: dados.whatsapp,
+        }).catch((e) => console.error('[postmaster] aviso da inscrição:', (e as Error).message)));
+        return json({ ok: true, pid, sala: r });
     } catch (e) {
         console.error('[erro everwebinar] inscrição:', (e as Error).message);
         return json({ ok: false, error: 'Não foi possível concluir a sua inscrição agora. Tente de novo em instantes.' }, 502);

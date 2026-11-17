@@ -1,10 +1,10 @@
 /**
- * api/next-step/indicacao.ts: o nome do canal de quem trouxe na LifeWave, para o /next-step montar o link certo.
+ * api/proximo-passo/indicacao.ts: o nome do canal de quem trouxe na LifeWave, para o /proximo-passo montar o link certo.
  *
- * GET /api/next-step/indicacao?codigo=<utm_source>  →  { nome: "maria" | null }
+ * GET /api/proximo-passo/indicacao?codigo=<utm_source>  →  { nome: "maria" | null }
  *
  * O postmaster resolve o código (lib/postmaster.ts `nomeDeQuemTrouxe`) e devolve só o nome do link do canal; nada
- * mais sai daqui. Sem resposta, `nome: null` e o /next-step usa o link do administrador. Limite por IP.
+ * mais sai daqui. Sem resposta, `nome: null` e o /proximo-passo usa o link do administrador. Limite por IP.
  */
 import type { APIRoute } from 'astro';
 import { nomeDeQuemTrouxe } from '../../../lib/postmaster';

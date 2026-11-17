@@ -29,6 +29,12 @@ export interface AvisoDeInscricao {
     webinarId?: string; sessao?: string; everwebinarUserId?: string;
     /** Outra campanha do postmaster que não a do webinar (ex.: o formulário da CTA final). */
     campanha?: string;
+    /** O código da pessoa (funil Brand Partner): vai em todo link; o postmaster guarda na inscrição. */
+    pid?: string;
+    /** O link pessoal da sala do EverWebinar e o início da sessão (ISO): a sala de espera de outro aparelho usa. */
+    salaUrl?: string; inicio?: string;
+    /** A pessoa aceitou receber os lembretes pelo WhatsApp. */
+    whatsapp?: boolean;
 }
 
 const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
@@ -63,6 +69,10 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
         everwebinar_user_id: a.everwebinarUserId ?? '',
         site: 'brandpartner.team',
         campanha: a.campanha || CAMPANHA,
+        ...(a.pid ? { pid: a.pid } : {}),
+        ...(a.salaUrl ? { sala_url: a.salaUrl } : {}),
+        ...(a.inicio ? { session_start: a.inicio } : {}),
+        ...(a.whatsapp ? { whatsapp_consent: '1' } : {}),
     };
     for (const k of UTM) {
         const v = String(a.origem?.[k] ?? '').trim().slice(0, 100);
@@ -108,7 +118,7 @@ async function chamarPostmaster(caminho: string, corpo: unknown, limiteMs: numbe
 
 /**
  * O nome do canal de quem trouxe na LifeWave (lifewave.com/<nome>), resolvido pelo postmaster a partir do código
- * (`utm_source`). null = sem canal com link (o /next-step usa o do administrador).
+ * (`utm_source`). null = sem canal com link (o /proximo-passo usa o do administrador).
  */
 export async function nomeDeQuemTrouxe(codigo: string): Promise<string | null> {
     const j = await chamarPostmaster('indicacao', { codigo }, 3000);
@@ -118,12 +128,32 @@ export async function nomeDeQuemTrouxe(codigo: string): Promise<string | null> {
 
 export interface ProximoPasso {
     acao: 'link' | 'formulario';
-    objetivo: 'bp' | 'preferencial' | 'avulsa';
-    sub?: string; continente: string; pais: string; comEntrega: boolean; codigo?: string;
-    nome?: string; email?: string; ddi?: string; telefone?: string; endereco?: string; quantidade?: number;
+    objetivo: 'bp' | 'preferencial';
+    sub?: string; continente: string; pais: string; comEntrega: boolean; codigo?: string; pid?: string;
+    nome?: string; email?: string; ddi?: string; telefone?: string;
 }
 
-/** A escolha da pessoa no /next-step (e a encomenda) vai ao postmaster, que avisa quem trouxe. true = gravado. */
+/** A escolha da pessoa no /proximo-passo vai ao postmaster, que avisa quem trouxe. true = gravado. */
 export async function avisarProximoPasso(p: ProximoPasso): Promise<boolean> {
     return !!(await chamarPostmaster('proximo-passo', p, 4000))?.ok;
+}
+
+/** O formato do código da pessoa: 16 bytes aleatórios em base64url. */
+export const PID = /^[A-Za-z0-9_-]{22}$/;
+
+export interface PessoaDoPid {
+    primeiroNome: string; codigo: string | null; nomeIndicacao: string | null; inicio: number | null;
+    salaUrl: string | null; emailMascarado: string; telefoneMascarado: string;
+}
+/** Quem é o dono de um código de pessoa (`/pessoa` do postmaster); null = desconhecido ou fora do ar. */
+export async function pessoaDoPid(pid: string): Promise<PessoaDoPid | null> {
+    if (!PID.test(pid)) return null;
+    return (await chamarPostmaster('pessoa', { pid }, 3000))?.pessoa ?? null;
+}
+
+export type Marco = 'entrou_sala' | 'chegou_proximo_passo';
+/** Um marco da pessoa no funil (`/marco` do postmaster): a régua de lembretes usa. */
+export async function marcarNoPostmaster(pid: string, marco: Marco): Promise<boolean> {
+    if (!PID.test(pid)) return false;
+    return !!(await chamarPostmaster('marco', { pid, marco }, 3000))?.ok;
 }

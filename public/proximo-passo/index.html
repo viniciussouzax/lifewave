@@ -30,7 +30,7 @@ header{position:relative;z-index:1}
 .logo{display:block;width:50%;max-width:200px;flex:none}
 .logo span{position:relative;display:block}
 .logo img{display:block;width:100%;height:auto;opacity:0}
-.logo i{position:absolute;inset:0;background:#0b2a5c;-webkit-mask:url(/next-step/logo-brandpartner.png) center/contain no-repeat;mask:url(/next-step/logo-brandpartner.png) center/contain no-repeat}
+.logo i{position:absolute;inset:0;background:#0b2a5c;-webkit-mask:url(/proximo-passo/logo-brandpartner.png) center/contain no-repeat;mask:url(/proximo-passo/logo-brandpartner.png) center/contain no-repeat}
 .indep{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3}
 @media (min-width:640px){.head{padding:32px 40px 0}}
 @media (min-width:768px){.logo{width:154px}}
@@ -55,10 +55,10 @@ h1:focus{outline:none}
 .opt span.d{display:block;color:var(--muted);font-size:.8125rem;margin-top:2px}
 .opt svg{flex:none;width:20px;height:20px;color:var(--primary)}
 .opt .lead{display:flex;align-items:center;gap:12px;min-width:0}
-/* Bandeira do país (SVG 3x2 de country-flag-icons, MIT; em /next-step/flags). */
+/* Bandeira do país (SVG 3x2 de country-flag-icons, MIT; em /proximo-passo/flags). */
 .opt .flag{flex:none;width:30px;height:20px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 .8px var(--line)}
 .opt .lead svg{width:20px;height:20px;margin:0 5px}
-/* Contorno do continente (Natural Earth 110m, domínio público; em /next-step/continentes). */
+/* Contorno do continente (Natural Earth 110m, domínio público; em /proximo-passo/continentes). */
 .opt .cont{flex:none;width:56px;height:36px;object-fit:contain}
 :focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 .back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);font:inherit;font-weight:500;padding:10px 4px;margin-top:12px;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
@@ -72,10 +72,7 @@ input[type=text],input[type=email],input[type=tel],input[type=number],textarea{b
 @media (min-width:768px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
 input[readonly]{background:#f4f6fa;color:var(--muted)}
 /* Endereço no padrão de checkout: duas colunas a partir de 400 px, uma no celular estreito. */
-.par{display:grid;grid-template-columns:1fr;gap:0 12px}
-@media (min-width:400px){.par{grid-template-columns:1fr 1fr}}
-.par>div{min-width:0}
-.secao{margin:18px 0 2px;color:var(--ink);font-weight:500;font-size:.9375rem}
+.indicacao{margin:0 0 14px;padding:8px 12px;border-radius:.625rem;background:#eef4fc;color:var(--ink);font-size:.875rem;overflow-wrap:anywhere}
 input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--err);box-shadow:0 0 0 1px var(--err)}
 .err{color:var(--err);font-size:.875rem;font-weight:500;margin:6px 0 0}
 .err:empty{margin:0}
@@ -106,11 +103,12 @@ footer b{color:var(--ink)}
 <div id="prism" aria-hidden="true"></div>
 <header>
   <div class="head">
-    <a class="logo" href="/" aria-label="LifeWave Brand Partner"><span><img src="/next-step/logo-brandpartner.png" alt="LifeWave Brand Partner" width="877" height="312" /><i aria-hidden="true"></i></span></a>
+    <a class="logo" href="/" aria-label="LifeWave Brand Partner"><span><img src="/proximo-passo/logo-brandpartner.png" alt="LifeWave Brand Partner" width="877" height="312" /><i aria-hidden="true"></i></span></a>
   </div>
 </header>
 <main>
   <div class="card">
+    <p class="indicacao" id="indicacao" role="status"></p>
     <p class="meta"><span id="stepLabel">Etapa 1 de 3</span></p>
     <div class="bar" id="prog" role="progressbar" aria-label="Progresso" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" aria-valuetext="Etapa 1 de 3"></div>
     <div id="view" class="view"></div>
@@ -128,19 +126,17 @@ var I18N = {
     p_q:"Em que país você mora?", p_s:"A entrega da LifeWave depende do país.", p_outro:"Outro país",
     g_q:"O que você quer?", g_s:"Escolha uma opção.",
     goals:{bp:["Ser Brand Partner","Cadastro na empresa com passo a passo."],
-           sub:["Ser consumidor com assinatura","Cadastro como cliente com compra recorrente."],
-           once:["Comprar uma vez","Compra avulsa na loja, sem assinatura."]},
+           sub:["Ser cliente preferencial","Cadastro como cliente com compra recorrente."]},
     s_q:"Como você prefere começar?", s_s:"Duas formas de criar o cadastro de consumidor.",
     subs:{"2.2":["Cadastro com 3 envelopes de X39","Você compra 3 envelopes de X39 e ativa a assinatura de X39 ou de outro produto."],
           "2.3":["Cadastro com taxa de adesão","Você paga a taxa de cadastro, compra 1 envelope de X39 e ativa a assinatura de X39."]},
-    back:"Voltar", open:"Abrir link de cadastro", open_once:"Abrir a loja",
+    back:"Voltar", open:"Abrir link de cadastro",
     res_t:"Seu próximo passo", res_s:"Siga o passo a passo e use o link abaixo.",
-    ref_l:"Indicado por", ref_none:"sem indicador (link padrão)",
+    ref_l:"Indicação", ref_cod:"código", ref_equipe:"equipe LifeWave Brand Partner",
     steps:{
       bp:["Abra o link abaixo.","Escolha a opção de cadastro como Brand Partner.","Preencha seus dados e confirme o e-mail.","Fale com quem indicou você para os primeiros passos."],
       "2.2":["Abra o link abaixo.","Crie o cadastro de consumidor.","Adicione 3 envelopes de X39 ao pedido.","Ative a assinatura de X39 ou de outro produto e finalize."],
-      "2.3":["Abra o link abaixo.","Crie o cadastro de consumidor e pague a taxa de adesão.","Compre 1 envelope de X39.","Ative a assinatura de X39 e finalize."],
-      once:["Abra o link abaixo para a loja.","Escolha o envelope de X39.","Finalize a compra sem assinatura."]},
+      "2.3":["Abra o link abaixo.","Crie o cadastro de consumidor e pague a taxa de adesão.","Compre 1 envelope de X39.","Ative a assinatura de X39 e finalize."]},
     c_t:"Quase lá. Deixe seu contato", c_s:"Um Brand Partner vai falar com você para fazer o cadastro e a entrega.",
     name:"Nome",email:"E-mail",phone:"Telefone com DDD",
     consent:"Concordo em ser contatado por um Brand Partner independente da LifeWave por telefone, WhatsApp ou e-mail para tratar do meu cadastro. Posso pedir para parar a qualquer momento.",
@@ -149,12 +145,7 @@ var I18N = {
     e_save:"Não foi possível enviar agora. Tente de novo em instantes.",
     done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega.",
     c_s_bp:"A LifeWave ainda não atende o seu país diretamente. Um Brand Partner vai falar com você para fazer o cadastro.",
-    c_t_enc:"Faça sua encomenda", c_s_enc:"A LifeWave ainda não entrega no seu país. Deixe o pedido: um Brand Partner confirma com você e orienta o pagamento.",
-    place:"Onde você mora", end_t:"Endereço de entrega", a1:"Endereço (rua e número)", a2:"Complemento (opcional)", cidade:"Cidade",
-    estado:"Estado, província ou região (opcional)", cep:"CEP ou código postal", pais_l:"País",
-    e_a1:"Informe a rua e o número.", e_cidade:"Informe a cidade.", e_cep:"Informe o CEP ou código postal.", e_pais:"Informe o país.",
-    qty:"Quantidade de envelopes de X39", e_qty:"Informe uma quantidade de 1 a 99.", send_enc:"Enviar encomenda",
-    done_t_enc:"Recebemos sua encomenda", done_s_enc:"Um Brand Partner vai falar com você para confirmar o pedido e orientar o pagamento."
+    place:"Onde você mora"
   }
 };
 var qs=new URLSearchParams(location.search);
@@ -166,8 +157,8 @@ document.documentElement.lang={pt:"pt-BR",en:"en",es:"es"}[LANG]||"pt-BR";
    (lifewave.com, Worldwide Offices); fora dela ("ZZ" = outro país) a pessoa vai a um formulário e um Brand Partner atende. */
 var CFG={
   admin:"wellnesspatchesoficial",
-  links:{bp:"/enrollment/enrollerselection",sub:"/enrollment/enrollerselection",once:"/store/product/39000.009.009"},
-  objetivo:{bp:"bp",sub:"preferencial",once:"avulsa"},
+  links:{bp:"/enrollment/enrollerselection",sub:"/enrollment/enrollerselection"},
+  objetivo:{bp:"bp",sub:"preferencial"},
   paises:{
     na:[["US","Estados Unidos",1],["CA","Canadá",1],["MX","México",1]],
     la:[["MX","México",1],["BR","Brasil",0],["AR","Argentina",0],["CL","Chile",0],["CO","Colômbia",0],["PE","Peru",0],["PY","Paraguai",0],["UY","Uruguai",0]],
@@ -184,12 +175,34 @@ function origemGuardada(){
 }
 var REF=(qs.get("utm_source")||qs.get("ref")||origemGuardada()).replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
 var NOME=CFG.admin;
-if(REF)fetch("/api/next-step/indicacao?codigo="+encodeURIComponent(REF))
-  .then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.nome)NOME=j.nome;}).catch(function(){});
-/* Passa pela página de rastreio (/next-step/cadastro/), que avisa o EverWebinar e o postmaster e segue para o link. */
+/* O código da pessoa (funil Brand Partner): o do link vale e fica guardado; sem ele, o guardado neste aparelho. */
+var PID=(function(){var re=/^[A-Za-z0-9_-]{22}$/,u=qs.get("pid")||"";
+  try{if(re.test(u)){localStorage.setItem("bp_pid",u);return u;}var s=localStorage.getItem("bp_pid")||"";return re.test(s)?s:"";}
+  catch(e){return re.test(u)?u:"";}})();
+/* A pessoa do código (primeiro nome, quem trouxe, e-mail e telefone mascarados), para outro aparelho. */
+var PESSOA=null;
+if(PID){
+  fetch("/api/marco",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({pid:PID,marco:"chegou_proximo_passo"})}).catch(function(){});
+  fetch("/api/pessoa?pid="+encodeURIComponent(PID)).then(function(r){return r.ok?r.json():null}).then(function(j){
+    PESSOA=j&&j.pessoa||null;
+    /* Sem código de quem trouxe na URL nem no aparelho: vale o da inscrição da pessoa. */
+    if(PESSOA&&!REF&&PESSOA.codigo){REF=String(PESSOA.codigo).replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);if(PESSOA.nomeIndicacao)NOME=PESSOA.nomeIndicacao;mostrarIndicacao();}
+  }).catch(function(){});
+}
+/* Quem trouxe fica à vista em todas as etapas (pedido do dono, 17/11/2026): o nome do link da LifeWave que vai ser
+   usado e o código, para conferir. Sem código, o link da equipe. */
+function mostrarIndicacao(){
+  var e=document.getElementById("indicacao");e.textContent="";
+  e.appendChild(document.createTextNode(T.ref_l+": "));
+  e.appendChild(el("strong",{text:NOME}));
+  e.appendChild(document.createTextNode(REF?" · "+T.ref_cod+" "+REF:" ("+T.ref_equipe+")"));
+}
+if(REF)fetch("/api/proximo-passo/indicacao?codigo="+encodeURIComponent(REF))
+  .then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.nome){NOME=j.nome;mostrarIndicacao();}}).catch(function(){});
+/* Passa pela página de rastreio (/proximo-passo/cadastro/), que avisa o EverWebinar e o postmaster e segue para o link. */
 function buildLink(goal){
-  var p=new URLSearchParams({para:"https://lifewave.com/"+encodeURIComponent(NOME)+CFG.links[goal],objetivo:CFG.objetivo[goal],sub:S.sub||"",continente:S.region,pais:S.pais,ref:REF});
-  return "/next-step/cadastro/?"+p.toString();
+  var p=new URLSearchParams({para:"https://lifewave.com/"+encodeURIComponent(NOME)+CFG.links[goal],objetivo:CFG.objetivo[goal],sub:S.sub||"",continente:S.region,pais:S.pais,ref:REF,pid:PID});
+  return "/proximo-passo/cadastro/?"+p.toString();
 }
 function nomeDoPais(){var a=(CFG.paises[S.region]||[]).filter(function(x){return x[0]===S.pais})[0];return a?a[1]:T.p_outro;}
 var S={region:null,pais:null,entrega:false,goal:null,sub:null};
@@ -225,7 +238,7 @@ function options(list,onPick){
     /* Bandeira (o.flag) ou ícone (o.ico) à esquerda do texto; o nome do país continua sendo o rótulo do botão. */
     if(o.flag)txt=el("span",{"class":"lead"},[el("img",{"class":"flag",src:o.flag,alt:"",width:"30",height:"20",loading:"lazy"}),txt]);
     else if(o.ico)txt=el("span",{"class":"lead"},[icon(o.ico),txt]);
-    else if(o.cont)txt=el("span",{"class":"lead"},[el("img",{"class":"cont",src:"/next-step/continentes/"+o.cont+".svg",alt:"",width:"56",height:"36"}),txt]);
+    else if(o.cont)txt=el("span",{"class":"lead"},[el("img",{"class":"cont",src:"/proximo-passo/continentes/"+o.cont+".svg",alt:"",width:"56",height:"36"}),txt]);
     var b=el("button",{type:"button","class":"opt","data-v":o.v},[txt,icon(CHEVRON)]);
     b.onclick=function(){onPick(o.v)};ul.appendChild(el("li",{},[b]));
   });return ul;
@@ -238,7 +251,7 @@ function stepRegion(){
   render(n,1,4);
 }
 function stepCountry(){
-  var lista=(CFG.paises[S.region]||[]).map(function(x){return{v:x[0],t:x[1],flag:"/next-step/flags/"+x[0]+".svg"}}).concat([{v:"ZZ",t:T.p_outro,ico:GLOBE}]);
+  var lista=(CFG.paises[S.region]||[]).map(function(x){return{v:x[0],t:x[1],flag:"/proximo-passo/flags/"+x[0]+".svg"}}).concat([{v:"ZZ",t:T.p_outro,ico:GLOBE}]);
   var n=el("div",{},[el("h1",{text:T.p_q}),el("p",{"class":"sub",text:T.p_s}),
     options(lista,function(v){
       S.pais=v;var a=(CFG.paises[S.region]||[]).filter(function(x){return x[0]===v})[0];S.entrega=!!(a&&a[2]);stepGoal();
@@ -263,9 +276,8 @@ function next(){ if(S.entrega)stepResult(); else stepContact(); }
 function stepResult(){
   var key=S.goal==="sub"?S.sub:S.goal;
   var ol=el("ol",{"class":"steps"},T.steps[key].map(function(t){return el("li",{},[el("span",{text:t})])}));
-  var a=el("a",{"class":"cta",id:"out",href:buildLink(S.goal),rel:"noopener",text:S.goal==="once"?T.open_once:T.open});
-  var ref=el("p",{"class":"ref",text:T.ref_l+": "+(REF||T.ref_none)});
-  render(el("div",{},[el("h1",{text:T.res_t}),el("p",{"class":"sub",text:T.res_s}),el("div",{"class":"box"},[ol]),a,ref]),total(),total(),backFromEnd);
+  var a=el("a",{"class":"cta",id:"out",href:buildLink(S.goal),rel:"noopener",text:T.open});
+  render(el("div",{},[el("h1",{text:T.res_t}),el("p",{"class":"sub",text:T.res_s}),el("div",{"class":"box"},[ol]),a]),total(),total(),backFromEnd);
 }
 function field(id,label,type,auto){
   var attrs={id:id,name:id,type:type,autocomplete:auto,"aria-describedby":id+"-e"};
@@ -276,51 +288,35 @@ function field(id,label,type,auto){
    Nunca buscados no servidor por um id da URL: um link encaminhado mostraria os dados de outra pessoa. */
 function contatoGuardado(){try{return JSON.parse(localStorage.getItem("bp_contato")||"null")||{};}catch(e){return {};}}
 function stepContact(){
-  var g=contatoGuardado(),enc=S.goal==="once";
+  var g=contatoGuardado();
   var f=el("form",{novalidate:"novalidate"});
   f.appendChild(el("p",{"class":"ref",text:T.place+": "+nomeDoPais()+" ("+T.regions[S.region]+")"}));
   field("name",T.name,"text","name").concat(field("email",T.email,"email","email"),field("phone",T.phone,"tel","tel")).forEach(function(x){f.appendChild(x)});
-  if(enc){
-    /* Endereço no padrão internacional de checkout, com o autocomplete de cada parte; o país é o escolhido antes
-       (só "Outro país" é digitado). */
-    f.appendChild(el("p",{"class":"secao",text:T.end_t}));
-    field("a1",T.a1,"text","address-line1").concat(field("a2",T.a2,"text","address-line2")).forEach(function(x){f.appendChild(x)});
-    f.appendChild(el("div",{"class":"par"},[el("div",{},field("cidade",T.cidade,"text","address-level2")),el("div",{},field("estado",T.estado,"text","address-level1"))]));
-    f.appendChild(el("div",{"class":"par"},[el("div",{},field("cep",T.cep,"text","postal-code")),el("div",{},field("pais",T.pais_l,"text","country-name"))]));
-    field("qty",T.qty,"number","off").forEach(function(x){f.appendChild(x)});
-  }
   var cb=el("input",{type:"checkbox",id:"consent","aria-describedby":"consent-e"});
   f.appendChild(el("label",{"class":"chk","for":"consent"},[cb,el("span",{text:T.consent})]));
   f.appendChild(el("p",{"class":"err",id:"consent-e",role:"alert"}));
   /* Isca contra robô: fora da tela e do teclado; quem preenche é script. */
   f.appendChild(el("input",{type:"text",name:"site",tabindex:"-1",autocomplete:"off","aria-hidden":"true",style:"position:absolute;left:-9999px;width:1px;height:1px;opacity:0"}));
-  f.appendChild(el("button",{type:"submit","class":"cta",text:enc?T.send_enc:T.send}));
+  f.appendChild(el("button",{type:"submit","class":"cta",text:T.send}));
   f.onsubmit=function(ev){ev.preventDefault();submitContact(f)};
-  render(el("div",{},[el("h1",{text:enc?T.c_t_enc:T.c_t}),el("p",{"class":"sub",text:enc?T.c_s_enc:T.c_s_bp}),f]),total(),total(),backFromEnd);
+  render(el("div",{},[el("h1",{text:T.c_t}),el("p",{"class":"sub",text:T.c_s_bp}),f]),total(),total(),backFromEnd);
   if(g.nome)f.elements.name.value=g.nome;
   if(g.email)f.elements.email.value=g.email;
   if(g.telefone)f.elements.phone.value=((g.ddi||"")+" "+g.telefone).trim();
-  if(enc){
-    var q=f.elements.qty;q.min="1";q.max="99";q.step="1";q.inputMode="numeric";
-    if(S.pais!=="ZZ"){f.elements.pais.value=nomeDoPais();f.elements.pais.readOnly=true;}
+  /* Outro aparelho: o código da pessoa diz quem é. E-mail e telefone aparecem só mascarados; em branco, valem os da inscrição. */
+  if(PESSOA){
+    if(!g.nome&&PESSOA.primeiroNome)f.elements.name.value=PESSOA.primeiroNome;
+    if(!g.email&&PESSOA.emailMascarado)f.elements.email.placeholder=PESSOA.emailMascarado+" (deixe em branco para manter)";
+    if(!g.telefone&&PESSOA.telefoneMascarado)f.elements.phone.placeholder=PESSOA.telefoneMascarado+" (deixe em branco para manter)";
   }
 }
 function submitContact(f){
-  var enc=S.goal==="once";
-  var v={name:f.elements.name.value.trim(),email:f.elements.email.value.trim(),phone:f.elements.phone.value.trim(),
-    qty:enc?Number(f.elements.qty.value):0};
-  var end=enc?{linha1:f.elements.a1.value.trim(),linha2:f.elements.a2.value.trim(),cidade:f.elements.cidade.value.trim(),
-    estado:f.elements.estado.value.trim(),cep:f.elements.cep.value.trim(),pais:f.elements.pais.value.trim()}:null;
+  var v={name:f.elements.name.value.trim(),email:f.elements.email.value.trim(),phone:f.elements.phone.value.trim()};
   var digits=v.phone.replace(/\D/g,"");
-  var errs={name:v.name.length<2?T.e_name:"",email:/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)?"":T.e_email,
-    phone:(digits.length<8||digits.length>15)?T.e_phone:"",consent:document.getElementById("consent").checked?"":T.e_consent};
+  var manter=!!(PID&&PESSOA);
+  var errs={name:v.name.length<2?T.e_name:"",email:(manter&&!v.email)||/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)?"":T.e_email,
+    phone:(manter&&!digits)||(digits.length>=8&&digits.length<=15)?"":T.e_phone,consent:document.getElementById("consent").checked?"":T.e_consent};
   var campos=["name","email","phone"];
-  if(enc){
-    errs.a1=end.linha1.length<4?T.e_a1:"";errs.cidade=end.cidade.length<2?T.e_cidade:"";
-    errs.cep=/^[A-Za-z0-9][A-Za-z0-9 -]{1,11}$/.test(end.cep)?"":T.e_cep;errs.pais=end.pais.length<2?T.e_pais:"";
-    errs.qty=(Number.isInteger(v.qty)&&v.qty>=1&&v.qty<=99)?"":T.e_qty;
-    campos.push("a1","cidade","cep","pais","qty");
-  }
   campos.push("consent");
   var first=null;
   campos.forEach(function(k){
@@ -333,21 +329,22 @@ function submitContact(f){
   if(btn.disabled)return;
   btn.disabled=true;
   var body={nome:v.name,email:v.email,telefone:digits,consentimento:true,regiao:S.region,pais:S.pais,objetivo:S.goal,sub:S.sub||"",
-    endereco:end,quantidade:enc?v.qty:0,site:f.elements.site.value,origem:{utm_source:REF}};
-  /* O servidor entrega o contato ao postmaster (/api/next-step/lead); só mostra "recebemos" se ele confirmou. */
-  fetch("/api/next-step/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+    site:f.elements.site.value,origem:{utm_source:REF},pid:PID};
+  /* O servidor entrega o contato ao postmaster (/api/proximo-passo/lead); só mostra "recebemos" se ele confirmou. */
+  fetch("/api/proximo-passo/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
     .then(function(r){if(!r.ok)throw new Error(r.status);})
     .then(function(){
-      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:enc?T.done_t_enc:T.done_t}),el("p",{id:"done",text:enc?T.done_s_enc:T.done_s})]),total(),total());
+      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s})]),total(),total());
     })
     .catch(function(){btn.disabled=false;document.getElementById("consent-e").textContent=T.e_save;});
 }
+mostrarIndicacao();
 stepRegion();
 </script>
-<script src="/next-step/prism.js"></script>
+<script src="/proximo-passo/prism.js"></script>
 <!-- Rastreio de vendas do EverWebinar (Goal tracking), página do produto: o botão de oferta traz wj_user (o inscrito),
      wj_product_id e wj_l, e este script os guarda num cookie deste domínio por 48 h. A página de confirmação é
-     /next-step/cadastro/, por onde passa o "Abrir link de cadastro": lá o EverWebinar marca o inscrito. -->
+     /proximo-passo/cadastro/, por onde passa o "Abrir link de cadastro": lá o EverWebinar marca o inscrito. -->
 <script src="https://event.webinarjam.com/t/sale/cookie.js"></script>
 </body>
 </html>

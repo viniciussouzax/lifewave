@@ -1,28 +1,26 @@
 /**
- * api/next-step/lead.ts: recebe o contato do formulário da CTA final (/next-step) e o entrega ao postmaster.
+ * api/proximo-passo/lead.ts: recebe o contato do formulário da CTA final (/proximo-passo) e o entrega ao postmaster.
  *
- * POST /api/next-step/lead
- * Body: { nome, email, telefone, consentimento: true, origem?: { utm_source }, regiao, pais, objetivo, sub?,
- *         endereco?: { linha1, linha2?, cidade, estado?, cep, pais }, quantidade?, site?: "" }
- *         (endereço e quantidade só na encomenda, objetivo "once"; o endereço vai ao postmaster numa linha só,
- *         na ordem de etiqueta: rua e número, complemento, cidade e estado, código postal, país)
+ * POST /api/proximo-passo/lead
+ * Body: { nome, email, telefone, consentimento: true, origem?: { utm_source }, regiao, pais, objetivo: "bp" | "sub", sub?, site?: "" }
+ *         (só Brand Partner e cliente preferencial; a compra avulsa saiu em 17/11/2026)
  * → { ok: true }
  *
  * - Nada fica guardado aqui: o contato vai direto ao webhook do postmaster (lib/postmaster.ts), que grava o
  *   lead com quem indicou (o `utm_source` é o código do link casca) e o leva ao atendimento. Depois, a escolha
- *   (continente, país, objetivo) e a encomenda vão ao `/proximo-passo` do postmaster, que avisa quem trouxe.
+ *   (continente, país, objetivo) vai ao `/proximo-passo` do postmaster, que avisa quem trouxe.
  * - Sem POSTMASTER_WEBHOOK_URL/SECRET o aviso não acontece; a rota então recusa (503), para o formulário
  *   nunca dizer "recebemos" sem ter entregue.
  * - Contra robô: limite por IP (como /api/webinar/inscricao) e o campo isca `site`, que gente de verdade
  *   não preenche. shortcut: sem Turnstile (a página não tem o widget); acrescentar se aparecer spam.
  */
 import type { APIRoute } from 'astro';
-import { avisarInscricaoNoPostmaster, avisarProximoPasso, postmasterConfigurado } from '../../../lib/postmaster';
+import { avisarInscricaoNoPostmaster, avisarProximoPasso, PID, postmasterConfigurado } from '../../../lib/postmaster';
 
 export const prerender = false;
 
-/** O slug da campanha no postmaster. shortcut: cadastrar `next-step` lá; sem ela o lead entra fora das campanhas. */
-const CAMPANHA = 'next-step';
+/** O slug da campanha no postmaster. shortcut: cadastrar `proximo-passo` lá; sem ela o lead entra fora das campanhas. */
+const CAMPANHA = 'proximo-passo';
 const LIMITE = 8;
 const JANELA_MS = 10 * 60 * 1000;
 const tentativas = new Map<string, { n: number; ate: number }>();
@@ -59,22 +57,18 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const email = String(b?.email ?? '').trim().toLowerCase().slice(0, 200);
     const telefone = String(b?.telefone ?? '').replace(/\D/g, '').slice(0, 15);
     const erros: Record<string, string> = {};
+    // Com o código da pessoa, e-mail e telefone podem ficar como estão (mascarados na tela): o postmaster usa os da inscrição.
+    const pid = PID.test(String(b?.pid ?? '')) ? String(b.pid) : '';
     if (nome.length < 2) erros.nome = 'nome';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) erros.email = 'email';
-    if (telefone.length < 8) erros.telefone = 'telefone';
-    const objetivo = ({ bp: 'bp', sub: 'preferencial', once: 'avulsa' } as const)[String(b?.objetivo ?? '') as 'bp' | 'sub' | 'once'];
+    if (!(pid && !email) && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) erros.email = 'email';
+    if (!(pid && !telefone) && telefone.length < 8) erros.telefone = 'telefone';
+    const objetivo = ({ bp: 'bp', sub: 'preferencial' } as const)[String(b?.objetivo ?? '') as 'bp' | 'sub'];
     // O valor inteiro tem de ser o código: "Brasil" não vira "BR" por corte.
     const pais = String(b?.pais ?? '').trim().toUpperCase();
     const continente = String(b?.regiao ?? '').trim();
-    const parte = (k: string, max: number) => String(b?.endereco?.[k] ?? '').trim().replace(/\s+/g, ' ').slice(0, max);
-    const end = { linha1: parte('linha1', 150), linha2: parte('linha2', 100), cidade: parte('cidade', 80), estado: parte('estado', 60), cep: parte('cep', 12), pais: parte('pais', 60) };
-    const endereco = [end.linha1, end.linha2, [end.cidade, end.estado].filter(Boolean).join(' - '), end.cep, end.pais].filter(Boolean).join(', ');
-    const quantidade = Number(b?.quantidade);
     if (!objetivo) erros.objetivo = 'objetivo';
     if (!/^[A-Z]{2}$/.test(pais)) erros.pais = 'pais';
     if (!/^[a-z]{2}$/.test(continente)) erros.regiao = 'regiao';
-    if (objetivo === 'avulsa' && (end.linha1.length < 4 || end.cidade.length < 2 || end.pais.length < 2 || !/^[A-Za-z0-9][A-Za-z0-9 -]{1,11}$/.test(end.cep))) erros.endereco = 'endereco';
-    if (objetivo === 'avulsa' && !(Number.isInteger(quantidade) && quantidade >= 1 && quantidade <= 99)) erros.quantidade = 'quantidade';
     if (b?.consentimento !== true) erros.consentimento = 'consentimento';
     if (Object.keys(erros).length) return json({ ok: false, erros }, 422);
 
@@ -88,11 +82,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     if (fonte) origem.utm_source = fonte;
     if (escolha) origem.utm_content = escolha;
 
-    const entregue = await avisarInscricaoNoPostmaster({ nome, email, ddi: '', telefone, origem, campanha: CAMPANHA })
+    // Sem e-mail e telefone novos (a pessoa do pid manteve os dela), não há inscrição nova a avisar.
+    const entregue = (pid && !email && !telefone ? true : await avisarInscricaoNoPostmaster({ nome, email, ddi: '', telefone, origem, campanha: CAMPANHA, ...(pid ? { pid } : {}) }))
         && await avisarProximoPasso({
             acao: 'formulario', objetivo: objetivo!, sub: curto(b?.sub, 4) || undefined, continente, pais,
-            comEntrega: false, codigo: fonte || undefined, nome, email, telefone,
-            ...(objetivo === 'avulsa' ? { endereco, quantidade } : {}),
+            comEntrega: false, codigo: fonte || undefined, nome, ...(email ? { email } : {}), ...(telefone ? { telefone } : {}),
+            ...(pid ? { pid } : {}),
         });
     return entregue ? json({ ok: true }) : json({ ok: false, error: 'indisponivel' }, 502);
 };
