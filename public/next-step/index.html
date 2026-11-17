@@ -58,9 +58,9 @@ h1:focus{outline:none}
 .back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);font:inherit;font-weight:500;padding:10px 4px;margin-top:12px;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .back svg{width:16px;height:16px}
 label{display:block;font-weight:500;color:var(--ink);font-size:.8125rem;margin:14px 0 6px}
-input[type=text],input[type=email],input[type=tel]{width:100%;font:inherit;font-weight:300;font-size:1rem;letter-spacing:inherit;color:var(--text);padding:10px 12px;border:.8px solid var(--field);border-radius:9px;background:#fff;min-height:44px}
-@media (min-width:640px){input[type=text],input[type=email],input[type=tel]{font-size:.875rem}}
-input[aria-invalid=true]{border-color:var(--err);box-shadow:0 0 0 1px var(--err)}
+input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;font:inherit;font-weight:300;font-size:1rem;letter-spacing:inherit;color:var(--text);padding:10px 12px;border:.8px solid var(--field);border-radius:9px;background:#fff;min-height:44px}
+@media (min-width:640px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
+input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--err);box-shadow:0 0 0 1px var(--err)}
 .err{color:var(--err);font-size:.875rem;font-weight:500;margin:6px 0 0}
 .err:empty{margin:0}
 .chk{display:flex;gap:12px;align-items:flex-start;font-weight:400;color:var(--text);font-size:.875rem;margin-top:18px}
@@ -108,7 +108,8 @@ var I18N = {
   pt: {
     step:"Etapa", of:"de",
     r_q:"Onde você mora?", r_s:"Assim levamos você ao caminho certo.",
-    regions:{na:"América do Norte",eu:"Europa",as:"Ásia",la:"América Latina",af:"África"},
+    regions:{na:"América do Norte",la:"América Latina",eu:"Europa",as:"Ásia",oc:"Oceania",af:"África"},
+    p_q:"Em que país você mora?", p_s:"A entrega da LifeWave depende do país.", p_outro:"Outro país",
     g_q:"O que você quer?", g_s:"Escolha uma opção.",
     goals:{bp:["Ser Brand Partner","Cadastro na empresa com passo a passo."],
            sub:["Ser consumidor com assinatura","Cadastro como cliente com compra recorrente."],
@@ -116,7 +117,7 @@ var I18N = {
     s_q:"Como você prefere começar?", s_s:"Duas formas de criar o cadastro de consumidor.",
     subs:{"2.2":["Cadastro com 3 envelopes de X39","Você compra 3 envelopes de X39 e ativa a assinatura de X39 ou de outro produto."],
           "2.3":["Cadastro com taxa de adesão","Você paga a taxa de cadastro, compra 1 envelope de X39 e ativa a assinatura de X39."]},
-    back:"Voltar", open:"Abrir link de cadastro (TESTE)",
+    back:"Voltar", open:"Abrir link de cadastro", open_once:"Abrir a loja",
     res_t:"Seu próximo passo", res_s:"Siga o passo a passo e use o link abaixo.",
     ref_l:"Indicado por", ref_none:"sem indicador (link padrão)",
     steps:{
@@ -130,22 +131,50 @@ var I18N = {
     send:"Enviar contato",
     e_name:"Informe seu nome.",e_email:"Informe um e-mail válido.",e_phone:"Informe um telefone válido (8 a 15 dígitos).",e_consent:"Marque a caixa para continuar.",
     e_save:"Não foi possível enviar agora. Tente de novo em instantes.",
-    done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega."
+    done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega.",
+    c_s_bp:"A LifeWave ainda não atende o seu país diretamente. Um Brand Partner vai falar com você para fazer o cadastro.",
+    c_t_enc:"Faça sua encomenda", c_s_enc:"A LifeWave ainda não entrega no seu país. Deixe o pedido: um Brand Partner confirma com você e orienta o pagamento.",
+    place:"Onde você mora", addr:"Endereço de entrega (rua, número, cidade, CEP)", qty:"Quantidade de envelopes de X39",
+    e_addr:"Informe o endereço de entrega.", e_qty:"Informe uma quantidade de 1 a 99.", send_enc:"Enviar encomenda",
+    done_t_enc:"Recebemos sua encomenda", done_s_enc:"Um Brand Partner vai falar com você para confirmar o pedido e orientar o pagamento."
   }
 };
 var qs=new URLSearchParams(location.search);
 var LANG=I18N[qs.get("lang")]?qs.get("lang"):"pt";
 var T=I18N[LANG];
 document.documentElement.lang={pt:"pt-BR",en:"en",es:"es"}[LANG]||"pt-BR";
-/* Indicador: só letras, números, _ e - */
-var REF=(qs.get("utm_source")||qs.get("ref")||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
-/* Links de saída de TESTE. shortcut: um destino de teste para todas as regiões; trocar pelos links rastreáveis reais (nunca a URL direta da loja) quando o master enviar a tabela. */
-var DEST_BASE="/next-step/cadastro/"; /* passagem: avisa o EverWebinar (página de confirmação) e segue para o destino */
-function buildLink(region,goal){
-  var p=new URLSearchParams({regiao:region,objetivo:goal,ref:REF||"padrao"});
-  return DEST_BASE+"?"+p.toString();
+/* CONFIGURAÇÃO DO CAMINHO (pedido do dono, 16/11/2026). O link da LifeWave leva o nome do canal de quem trouxe
+   (o postmaster resolve o código); sem ele, vale o do administrador. Países: só a lista oficial de mercados
+   (lifewave.com, Worldwide Offices); fora dela ("ZZ" = outro país) a pessoa vai a um formulário e um Brand Partner atende. */
+var CFG={
+  admin:"wellnesspatchesoficial",
+  links:{bp:"/enrollment/enrollerselection",sub:"/enrollment/enrollerselection",once:"/store/product/39000.009.009"},
+  objetivo:{bp:"bp",sub:"preferencial",once:"avulsa"},
+  paises:{
+    na:[["US","Estados Unidos",1],["CA","Canadá",1],["MX","México",1]],
+    la:[["MX","México",1],["BR","Brasil",0],["AR","Argentina",0],["CL","Chile",0],["CO","Colômbia",0],["PE","Peru",0],["PY","Paraguai",0],["UY","Uruguai",0]],
+    eu:[["IE","Irlanda",1],["DE","Alemanha",1],["ES","Espanha",1],["FR","França",1],["IT","Itália",1],["PL","Polônia",1],["PT","Portugal",1],["GB","Reino Unido",1],["RO","Romênia",1],["CH","Suíça",1]],
+    as:[["KR","Coreia do Sul",1],["PH","Filipinas",1],["ID","Indonésia",1],["JP","Japão",1],["MY","Malásia",1],["SG","Singapura",1],["TW","Taiwan",1],["TH","Tailândia",1]],
+    oc:[["AU","Austrália",1],["NZ","Nova Zelândia",1]],
+    af:[["ZA","África do Sul",0]]
+  }
+};
+/* Quem trouxe: o código da URL (o botão de oferta repassa a utm) e, sem ele, a origem guardada neste navegador (30 dias). */
+function origemGuardada(){
+  try{var o=JSON.parse(localStorage.getItem("bp_origem")||"null");if(!o)return "";
+    if(o.em&&Date.now()-Number(o.em)>30*864e5)return "";var v=o.v||o;return String(v.utm_source||"");}catch(e){return "";}
 }
-var S={region:null,goal:null,sub:null};
+var REF=(qs.get("utm_source")||qs.get("ref")||origemGuardada()).replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);
+var NOME=CFG.admin;
+if(REF)fetch("/api/next-step/indicacao?codigo="+encodeURIComponent(REF))
+  .then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.nome)NOME=j.nome;}).catch(function(){});
+/* Passa pela página de rastreio (/next-step/cadastro/), que avisa o EverWebinar e o postmaster e segue para o link. */
+function buildLink(goal){
+  var p=new URLSearchParams({para:"https://lifewave.com/"+encodeURIComponent(NOME)+CFG.links[goal],objetivo:CFG.objetivo[goal],sub:S.sub||"",continente:S.region,pais:S.pais,ref:REF});
+  return "/next-step/cadastro/?"+p.toString();
+}
+function nomeDoPais(){var a=(CFG.paises[S.region]||[]).filter(function(x){return x[0]===S.pais})[0];return a?a[1]:T.p_outro;}
+var S={region:null,pais:null,entrega:false,goal:null,sub:null};
 var view=document.getElementById("view"),prog=document.getElementById("prog"),stepLabel=document.getElementById("stepLabel");
 var SVGNS="http://www.w3.org/2000/svg";
 function icon(path){
@@ -179,12 +208,20 @@ function options(list,onPick){
     b.onclick=function(){onPick(o.v)};ul.appendChild(el("li",{},[b]));
   });return ul;
 }
-function total(){return S.goal==="sub"?4:3;}
+function total(){return S.goal==="sub"?5:4;}
 function stepRegion(){
-  S={region:null,goal:null,sub:null};
+  S={region:null,pais:null,entrega:false,goal:null,sub:null};
   var n=el("div",{},[el("h1",{text:T.r_q}),el("p",{"class":"sub",text:T.r_s}),
-    options(Object.keys(T.regions).map(function(k){return{v:k,t:T.regions[k]}}),function(v){S.region=v;stepGoal();})]);
-  render(n,1,3);
+    options(Object.keys(T.regions).map(function(k){return{v:k,t:T.regions[k]}}),function(v){S.region=v;stepCountry();})]);
+  render(n,1,4);
+}
+function stepCountry(){
+  var lista=(CFG.paises[S.region]||[]).map(function(x){return{v:x[0],t:x[1]}}).concat([{v:"ZZ",t:T.p_outro}]);
+  var n=el("div",{},[el("h1",{text:T.p_q}),el("p",{"class":"sub",text:T.p_s}),
+    options(lista,function(v){
+      S.pais=v;var a=(CFG.paises[S.region]||[]).filter(function(x){return x[0]===v})[0];S.entrega=!!(a&&a[2]);stepGoal();
+    })]);
+  render(n,2,4,stepRegion);
 }
 function stepGoal(){
   var n=el("div",{},[el("h1",{text:T.g_q}),el("p",{"class":"sub",text:T.g_s}),
@@ -192,19 +229,19 @@ function stepGoal(){
       S.goal=v;S.sub=null;
       if(v==="sub")stepSub();else next();
     })]);
-  render(n,2,3,stepRegion);
+  render(n,3,total(),stepCountry);
 }
 function stepSub(){
   var n=el("div",{},[el("h1",{text:T.s_q}),el("p",{"class":"sub",text:T.s_s}),
     options(Object.keys(T.subs).map(function(k){return{v:k,t:T.subs[k][0],d:T.subs[k][1]}}),function(v){S.sub=v;next();})]);
-  render(n,3,4,stepGoal);
+  render(n,4,5,stepGoal);
 }
 function backFromEnd(){ if(S.goal==="sub")stepSub(); else stepGoal(); }
-function next(){ if(S.region==="la")stepContact(); else stepResult(); }
+function next(){ if(S.entrega)stepResult(); else stepContact(); }
 function stepResult(){
   var key=S.goal==="sub"?S.sub:S.goal;
   var ol=el("ol",{"class":"steps"},T.steps[key].map(function(t){return el("li",{},[el("span",{text:t})])}));
-  var a=el("a",{"class":"cta",id:"out",href:buildLink(S.region,key),rel:"noopener",text:T.open});
+  var a=el("a",{"class":"cta",id:"out",href:buildLink(S.goal),rel:"noopener",text:S.goal==="once"?T.open_once:T.open});
   var ref=el("p",{"class":"ref",text:T.ref_l+": "+(REF||T.ref_none)});
   render(el("div",{},[el("h1",{text:T.res_t}),el("p",{"class":"sub",text:T.res_s}),el("div",{"class":"box"},[ol]),a,ref]),total(),total(),backFromEnd);
 }
@@ -213,25 +250,45 @@ function field(id,label,type,auto){
   if(type==="tel")attrs.inputmode="tel";
   return [el("label",{"for":id,text:label}),el("input",attrs),el("p",{"class":"err",id:id+"-e",role:"alert"})];
 }
+/* Os dados que a pessoa digitou na inscrição do webinar, NESTE navegador (bp_contato): o formulário já vem preenchido.
+   Nunca buscados no servidor por um id da URL: um link encaminhado mostraria os dados de outra pessoa. */
+function contatoGuardado(){try{return JSON.parse(localStorage.getItem("bp_contato")||"null")||{};}catch(e){return {};}}
 function stepContact(){
+  var g=contatoGuardado(),enc=S.goal==="once";
   var f=el("form",{novalidate:"novalidate"});
+  f.appendChild(el("p",{"class":"ref",text:T.place+": "+nomeDoPais()+" ("+T.regions[S.region]+")"}));
   field("name",T.name,"text","name").concat(field("email",T.email,"email","email"),field("phone",T.phone,"tel","tel")).forEach(function(x){f.appendChild(x)});
+  if(enc){
+    f.appendChild(el("label",{"for":"addr",text:T.addr}));
+    f.appendChild(el("textarea",{id:"addr",name:"addr",rows:"3",autocomplete:"street-address","aria-describedby":"addr-e"}));
+    f.appendChild(el("p",{"class":"err",id:"addr-e",role:"alert"}));
+    field("qty",T.qty,"number","off").forEach(function(x){f.appendChild(x)});
+  }
   var cb=el("input",{type:"checkbox",id:"consent","aria-describedby":"consent-e"});
   f.appendChild(el("label",{"class":"chk","for":"consent"},[cb,el("span",{text:T.consent})]));
   f.appendChild(el("p",{"class":"err",id:"consent-e",role:"alert"}));
   /* Isca contra robô: fora da tela e do teclado; quem preenche é script. */
   f.appendChild(el("input",{type:"text",name:"site",tabindex:"-1",autocomplete:"off","aria-hidden":"true",style:"position:absolute;left:-9999px;width:1px;height:1px;opacity:0"}));
-  f.appendChild(el("button",{type:"submit","class":"cta",text:T.send}));
+  f.appendChild(el("button",{type:"submit","class":"cta",text:enc?T.send_enc:T.send}));
   f.onsubmit=function(ev){ev.preventDefault();submitContact(f)};
-  render(el("div",{},[el("h1",{text:T.c_t}),el("p",{"class":"sub",text:T.c_s}),f]),total(),total(),backFromEnd);
+  render(el("div",{},[el("h1",{text:enc?T.c_t_enc:T.c_t}),el("p",{"class":"sub",text:enc?T.c_s_enc:T.c_s_bp}),f]),total(),total(),backFromEnd);
+  if(g.nome)f.elements.name.value=g.nome;
+  if(g.email)f.elements.email.value=g.email;
+  if(g.telefone)f.elements.phone.value=((g.ddi||"")+" "+g.telefone).trim();
+  if(enc){var q=f.elements.qty;q.min="1";q.max="99";q.step="1";q.inputMode="numeric";}
 }
 function submitContact(f){
-  var v={name:f.elements.name.value.trim(),email:f.elements.email.value.trim(),phone:f.elements.phone.value.trim()};
+  var enc=S.goal==="once";
+  var v={name:f.elements.name.value.trim(),email:f.elements.email.value.trim(),phone:f.elements.phone.value.trim(),
+    addr:enc?f.elements.addr.value.trim():"",qty:enc?Number(f.elements.qty.value):0};
   var digits=v.phone.replace(/\D/g,"");
   var errs={name:v.name.length<2?T.e_name:"",email:/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)?"":T.e_email,
     phone:(digits.length<8||digits.length>15)?T.e_phone:"",consent:document.getElementById("consent").checked?"":T.e_consent};
+  var campos=["name","email","phone"];
+  if(enc){errs.addr=v.addr.length<8?T.e_addr:"";errs.qty=(Number.isInteger(v.qty)&&v.qty>=1&&v.qty<=99)?"":T.e_qty;campos.push("addr","qty");}
+  campos.push("consent");
   var first=null;
-  ["name","email","phone","consent"].forEach(function(k){
+  campos.forEach(function(k){
     document.getElementById(k+"-e").textContent=errs[k];
     var i=document.getElementById(k);i.setAttribute("aria-invalid",errs[k]?"true":"false");
     if(errs[k]&&!first)first=i;
@@ -240,12 +297,13 @@ function submitContact(f){
   var btn=f.querySelector("button[type=submit]");
   if(btn.disabled)return;
   btn.disabled=true;
-  var body={nome:v.name,email:v.email,telefone:digits,consentimento:true,regiao:S.region,objetivo:S.goal,sub:S.sub||"",site:f.elements.site.value,origem:{utm_source:REF}};
+  var body={nome:v.name,email:v.email,telefone:digits,consentimento:true,regiao:S.region,pais:S.pais,objetivo:S.goal,sub:S.sub||"",
+    endereco:v.addr,quantidade:enc?v.qty:0,site:f.elements.site.value,origem:{utm_source:REF}};
   /* O servidor entrega o contato ao postmaster (/api/next-step/lead); só mostra "recebemos" se ele confirmou. */
   fetch("/api/next-step/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
     .then(function(r){if(!r.ok)throw new Error(r.status);})
     .then(function(){
-      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s})]),total(),total());
+      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:enc?T.done_t_enc:T.done_t}),el("p",{id:"done",text:enc?T.done_s_enc:T.done_s})]),total(),total());
     })
     .catch(function(){btn.disabled=false;document.getElementById("consent-e").textContent=T.e_save;});
 }
