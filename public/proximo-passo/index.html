@@ -179,14 +179,20 @@ var PID=(function(){var re=/^[A-Za-z0-9_-]{22}$/,u=qs.get("pid")||"";
   catch(e){return re.test(u)?u:"";}})();
 /* A pessoa do código (primeiro nome, quem trouxe, e-mail e telefone mascarados), para outro aparelho. */
 var PESSOA=null;
-if(PID){
-  fetch("/api/marco",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({pid:PID,marco:"chegou_proximo_passo"})}).catch(function(){});
-  fetch("/api/pessoa?pid="+encodeURIComponent(PID)).then(function(r){return r.ok?r.json():null}).then(function(j){
+if(PID)fetch("/api/marco",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({pid:PID,marco:"chegou_proximo_passo"})}).catch(function(){});
+function json(u){return fetch(u).then(function(r){return r.ok?r.json():null}).catch(function(){return null});}
+/* QUEM TROUXE, CONFIRMADO ANTES DE APARECER (dono, 17/11/2026: "nascer sem, confirmar e fixar o correto"): a pessoa
+   do pid (outro aparelho) e o nome do link do código. A indicação e o link da loja só saem depois disto; sem
+   resposta em 5 s, vale o que já se sabe (o link da equipe quando não há código). */
+var INDICACAO=Promise.race([
+  (PID?json("/api/pessoa?pid="+encodeURIComponent(PID)):Promise.resolve(null)).then(function(j){
     PESSOA=j&&j.pessoa||null;
     /* Sem código de quem trouxe na URL nem no aparelho: vale o da inscrição da pessoa. */
-    if(PESSOA&&!REF&&PESSOA.codigo){REF=String(PESSOA.codigo).replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);if(PESSOA.nomeIndicacao)NOME=PESSOA.nomeIndicacao;mostrarIndicacao();}
-  }).catch(function(){});
-}
+    if(PESSOA&&!REF&&PESSOA.codigo){REF=String(PESSOA.codigo).replace(/[^A-Za-z0-9_-]/g,"").slice(0,40);if(PESSOA.nomeIndicacao){NOME=PESSOA.nomeIndicacao;return;}}
+    if(REF)return json("/api/proximo-passo/indicacao?codigo="+encodeURIComponent(REF)).then(function(k){if(k&&k.nome)NOME=k.nome;});
+  }),
+  new Promise(function(r){setTimeout(r,5000)})
+]);
 /* Quem trouxe fica à vista em todas as etapas (pedido do dono, 17/11/2026): o nome do link da LifeWave que vai ser
    usado e o código, para conferir. Sem código, o link da equipe. */
 function mostrarIndicacao(){
@@ -195,8 +201,6 @@ function mostrarIndicacao(){
   e.appendChild(el("strong",{text:NOME}));
   e.appendChild(document.createTextNode(REF?" · "+T.ref_cod+" "+REF:" ("+T.ref_equipe+")"));
 }
-if(REF)fetch("/api/proximo-passo/indicacao?codigo="+encodeURIComponent(REF))
-  .then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.nome){NOME=j.nome;mostrarIndicacao();}}).catch(function(){});
 /* Passa pela página de rastreio (/proximo-passo/cadastro/), que avisa o EverWebinar e o postmaster e segue para o link. */
 function buildLink(goal){
   var p=new URLSearchParams({para:"https://lifewave.com/"+encodeURIComponent(NOME)+CFG.links[goal],objetivo:CFG.objetivo[goal],sub:S.sub||"",continente:S.region,pais:S.pais,ref:REF,pid:PID});
@@ -268,7 +272,9 @@ function next(){ if(S.entrega)stepResult(); else stepContact(); }
 function stepResult(){
   var key=S.goal;
   var ol=el("ol",{"class":"steps"},T.steps[key].map(function(t){return el("li",{},[el("span",{text:t})])}));
-  var a=el("a",{"class":"cta",id:"out",href:buildLink(S.goal),rel:"noopener",text:T.open});
+  /* O link só ganha o endereço com quem trouxe já confirmado (quase sempre já está, depois de três escolhas). */
+  var a=el("a",{"class":"cta",id:"out",rel:"noopener","aria-disabled":"true",text:T.open});
+  INDICACAO.then(function(){a.href=buildLink(S.goal);a.removeAttribute("aria-disabled");});
   render(el("div",{},[el("h1",{text:T.res_t}),el("p",{"class":"sub",text:T.res_s}),el("div",{"class":"box"},[ol]),a]),total(),total(),backFromEnd);
 }
 function field(id,label,type,auto){
@@ -329,7 +335,7 @@ function submitContact(f){
     })
     .catch(function(){btn.disabled=false;document.getElementById("envio-e").textContent=T.e_save;});
 }
-mostrarIndicacao();
+INDICACAO.then(mostrarIndicacao);
 stepRegion();
 </script>
 <script src="/proximo-passo/prism.js"></script>
