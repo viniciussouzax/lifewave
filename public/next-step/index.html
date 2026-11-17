@@ -64,8 +64,12 @@ h1:focus{outline:none}
 .back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);font:inherit;font-weight:500;padding:10px 4px;margin-top:12px;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .back svg{width:16px;height:16px}
 label{display:block;font-weight:500;color:var(--ink);font-size:.8125rem;margin:14px 0 6px}
-input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;font:inherit;font-weight:300;font-size:1rem;letter-spacing:inherit;color:var(--text);padding:10px 12px;border:.8px solid var(--field);border-radius:9px;background:#fff;min-height:44px}
-@media (min-width:640px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
+/* Os campos iguais aos do formulário da home (Input do shadcn, em rem): 2,75rem com a borda, .25/.625rem por dentro,
+   canto .625rem e a sombra leve; 14 px de texto a partir de 768 px. Como na home (escala.css), a partir de 1024 px a
+   base do rem cai para 90%: equivale ao zoom de 90% do navegador. */
+@media (min-width:1024px){html{font-size:90%}}
+input[type=text],input[type=email],input[type=tel],input[type=number],textarea{box-sizing:border-box;width:100%;font:inherit;font-weight:300;font-size:1rem;line-height:1.5rem;letter-spacing:inherit;color:var(--text);padding:.25rem .625rem;border:.8px solid var(--field);border-radius:.625rem;background:#fff;height:2.75rem;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (min-width:768px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
 input[readonly]{background:#f4f6fa;color:var(--muted)}
 /* Endereço no padrão de checkout: duas colunas a partir de 400 px, uma no celular estreito. */
 .par{display:grid;grid-template-columns:1fr;gap:0 12px}
