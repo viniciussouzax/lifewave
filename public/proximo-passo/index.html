@@ -88,6 +88,8 @@ ol.steps li:last-child{margin-bottom:0}
 ol.steps li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:.8125rem;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:-1px}
 .box{background:var(--soft);border-radius:12px;padding:16px;margin-top:4px}
 .ref{margin:14px 0 0;font-size:.8125rem;color:var(--muted);text-align:center}
+.onde{margin:0 0 6px;font-size:.875rem;color:var(--muted);text-align:left}
+.aceite{margin:10px 0 0;font-size:.75rem;line-height:1.45;color:var(--muted);text-align:left}
 .done{text-align:center;padding:8px 0 4px}
 .done .ico{width:56px;height:56px;border-radius:50%;background:#e3f3ea;color:var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .done .ico svg{width:30px;height:30px}
@@ -124,9 +126,9 @@ var I18N = {
     r_q:"Onde você mora?", r_s:"Assim levamos você ao caminho certo.",
     regions:{na:"América do Norte",la:"América Latina",eu:"Europa",as:"Ásia",oc:"Oceania",af:"África"},
     p_q:"Em que país você mora?", p_s:"A entrega da LifeWave depende do país.", p_outro:"Outro país",
-    g_q:"O que você quer?", g_s:"Escolha uma opção.",
-    goals:{bp:["Ser Brand Partner","Cadastro na empresa com passo a passo."],
-           sub:["Ser cliente preferencial","Cadastro como cliente com compra recorrente."]},
+    g_q:"Como você quer participar da LifeWave?", g_s:"Escolha a opção que melhor representa seu objetivo.",
+    goals:{bp:["Quero construir meu próprio negócio","Seja um Brand Partner e tenha a oportunidade de desenvolver uma atividade comercial com os produtos LifeWave."],
+           sub:["Quero consumir com benefícios e descontos","Seja um Cliente Preferencial e aproveite condições especiais para comprar os produtos LifeWave para uso próprio."]},
     back:"Voltar", open:"Abrir link de cadastro",
     res_t:"Seu próximo passo", res_s:"Siga o passo a passo e use o link abaixo.",
     ref_l:"Indicação", ref_cod:"código", ref_equipe:"equipe LifeWave Brand Partner",
@@ -135,9 +137,9 @@ var I18N = {
       sub:["Abra o link abaixo.","Crie o seu cadastro de cliente preferencial.","Escolha os produtos e a assinatura que preferir e finalize."]},
     c_t:"Quase lá. Deixe seu contato", c_s:"Um Brand Partner vai falar com você para fazer o cadastro e a entrega.",
     name:"Nome",email:"E-mail",phone:"Telefone com DDD",
-    consent:"Concordo em ser contatado por um Brand Partner independente da LifeWave por telefone, WhatsApp ou e-mail para tratar do meu cadastro. Posso pedir para parar a qualquer momento.",
+    consent:"Ao enviar, você aceita o contato de um Brand Partner independente da LifeWave por telefone, WhatsApp ou e-mail para tratar do seu cadastro. Pode pedir para parar a qualquer momento.",
     send:"Enviar contato",
-    e_name:"Informe seu nome.",e_email:"Informe um e-mail válido.",e_phone:"Informe um telefone válido (8 a 15 dígitos).",e_consent:"Marque a caixa para continuar.",
+    e_name:"Informe seu nome.",e_email:"Informe um e-mail válido.",e_phone:"Informe um telefone válido (8 a 15 dígitos).",
     e_save:"Não foi possível enviar agora. Tente de novo em instantes.",
     done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega.",
     c_s_bp:"A LifeWave ainda não atende o seu país diretamente. Um Brand Partner vai falar com você para fazer o cadastro.",
@@ -280,14 +282,14 @@ function contatoGuardado(){try{return JSON.parse(localStorage.getItem("bp_contat
 function stepContact(){
   var g=contatoGuardado();
   var f=el("form",{novalidate:"novalidate"});
-  f.appendChild(el("p",{"class":"ref",text:T.place+": "+nomeDoPais()+" ("+T.regions[S.region]+")"}));
+  f.appendChild(el("p",{"class":"onde",text:T.place+": "+nomeDoPais()+" ("+T.regions[S.region]+")"}));
   field("name",T.name,"text","name").concat(field("email",T.email,"email","email"),field("phone",T.phone,"tel","tel")).forEach(function(x){f.appendChild(x)});
-  var cb=el("input",{type:"checkbox",id:"consent","aria-describedby":"consent-e"});
-  f.appendChild(el("label",{"class":"chk","for":"consent"},[cb,el("span",{text:T.consent})]));
-  f.appendChild(el("p",{"class":"err",id:"consent-e",role:"alert"}));
+
   /* Isca contra robô: fora da tela e do teclado; quem preenche é script. */
   f.appendChild(el("input",{type:"text",name:"site",tabindex:"-1",autocomplete:"off","aria-hidden":"true",style:"position:absolute;left:-9999px;width:1px;height:1px;opacity:0"}));
   f.appendChild(el("button",{type:"submit","class":"cta",text:T.send}));
+  f.appendChild(el("p",{"class":"err",id:"envio-e",role:"alert"}));
+  f.appendChild(el("p",{"class":"aceite",text:T.consent}));
   f.onsubmit=function(ev){ev.preventDefault();submitContact(f)};
   render(el("div",{},[el("h1",{text:T.c_t}),el("p",{"class":"sub",text:T.c_s_bp}),f]),total(),total(),backFromEnd);
   if(g.nome)f.elements.name.value=g.nome;
@@ -305,9 +307,8 @@ function submitContact(f){
   var digits=v.phone.replace(/\D/g,"");
   var manter=!!(PID&&PESSOA);
   var errs={name:v.name.length<2?T.e_name:"",email:(manter&&!v.email)||/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)?"":T.e_email,
-    phone:(manter&&!digits)||(digits.length>=8&&digits.length<=15)?"":T.e_phone,consent:document.getElementById("consent").checked?"":T.e_consent};
+    phone:(manter&&!digits)||(digits.length>=8&&digits.length<=15)?"":T.e_phone,};
   var campos=["name","email","phone"];
-  campos.push("consent");
   var first=null;
   campos.forEach(function(k){
     document.getElementById(k+"-e").textContent=errs[k];
@@ -326,7 +327,7 @@ function submitContact(f){
     .then(function(){
       render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s})]),total(),total());
     })
-    .catch(function(){btn.disabled=false;document.getElementById("consent-e").textContent=T.e_save;});
+    .catch(function(){btn.disabled=false;document.getElementById("envio-e").textContent=T.e_save;});
 }
 mostrarIndicacao();
 stepRegion();
