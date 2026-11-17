@@ -54,6 +54,10 @@ h1:focus{outline:none}
 .opt strong{display:block;color:var(--ink);font-weight:500;font-size:.9375rem}
 .opt span.d{display:block;color:var(--muted);font-size:.8125rem;margin-top:2px}
 .opt svg{flex:none;width:20px;height:20px;color:var(--primary)}
+.opt .lead{display:flex;align-items:center;gap:12px;min-width:0}
+/* Bandeira do país (SVG 3x2 de country-flag-icons, MIT; em /next-step/flags). */
+.opt .flag{flex:none;width:30px;height:20px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 .8px var(--line)}
+.opt .lead svg{width:20px;height:20px;margin:0 5px}
 :focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 .back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);font:inherit;font-weight:500;padding:10px 4px;margin-top:12px;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .back svg{width:16px;height:16px}
@@ -183,7 +187,7 @@ function icon(path){
   s.setAttribute("stroke-width","2");s.setAttribute("stroke-linecap","round");s.setAttribute("stroke-linejoin","round");s.setAttribute("aria-hidden","true");
   var p=document.createElementNS(SVGNS,"path");p.setAttribute("d",path);s.appendChild(p);return s;
 }
-var CHEVRON="M9 6l6 6-6 6", ARROW_L="M15 6l-6 6 6 6", CHECK="M5 12.5l4.5 4.5L19 7.5";
+var GLOBE="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18", CHEVRON="M9 6l6 6-6 6", ARROW_L="M15 6l-6 6 6 6", CHECK="M5 12.5l4.5 4.5L19 7.5";
 function el(tag,attrs,kids){var e=document.createElement(tag);for(var k in (attrs||{})){if(k==="text")e.textContent=attrs[k];else e.setAttribute(k,attrs[k]);}(kids||[]).forEach(function(c){e.appendChild(c)});return e;}
 /* Indicador de etapa: cur de total (total passa de 3 para 4 quando o caminho tem a escolha 2.2/2.3). */
 function setStep(cur,tot){
@@ -204,6 +208,9 @@ function options(list,onPick){
   var ul=el("ul",{"class":"opts"});
   list.forEach(function(o){
     var txt=el("span",{},[el("strong",{text:o.t})].concat(o.d?[el("span",{"class":"d",text:o.d})]:[]));
+    /* Bandeira (o.flag) ou ícone (o.ico) à esquerda do texto; o nome do país continua sendo o rótulo do botão. */
+    if(o.flag)txt=el("span",{"class":"lead"},[el("img",{"class":"flag",src:o.flag,alt:"",width:"30",height:"20",loading:"lazy"}),txt]);
+    else if(o.ico)txt=el("span",{"class":"lead"},[icon(o.ico),txt]);
     var b=el("button",{type:"button","class":"opt","data-v":o.v},[txt,icon(CHEVRON)]);
     b.onclick=function(){onPick(o.v)};ul.appendChild(el("li",{},[b]));
   });return ul;
@@ -216,7 +223,7 @@ function stepRegion(){
   render(n,1,4);
 }
 function stepCountry(){
-  var lista=(CFG.paises[S.region]||[]).map(function(x){return{v:x[0],t:x[1]}}).concat([{v:"ZZ",t:T.p_outro}]);
+  var lista=(CFG.paises[S.region]||[]).map(function(x){return{v:x[0],t:x[1],flag:"/next-step/flags/"+x[0]+".svg"}}).concat([{v:"ZZ",t:T.p_outro,ico:GLOBE}]);
   var n=el("div",{},[el("h1",{text:T.p_q}),el("p",{"class":"sub",text:T.p_s}),
     options(lista,function(v){
       S.pais=v;var a=(CFG.paises[S.region]||[]).filter(function(x){return x[0]===v})[0];S.entrega=!!(a&&a[2]);stepGoal();
