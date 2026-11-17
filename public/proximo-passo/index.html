@@ -72,7 +72,11 @@ input[type=text],input[type=email],input[type=tel],input[type=number],textarea{b
 @media (min-width:768px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
 input[readonly]{background:#f4f6fa;color:var(--muted)}
 /* Endereço no padrão de checkout: duas colunas a partir de 400 px, uma no celular estreito. */
-.indicacao{margin:16px auto 0;max-width:34rem;text-align:center;color:var(--ink);opacity:.75;font-size:.8125rem;overflow-wrap:anywhere}
+.indicacao{margin:16px auto 0;max-width:34rem;text-align:center;min-height:1.75rem}
+.indicacao .badge{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.75);border:1px solid rgba(11,42,92,.12);color:var(--ink);font-size:.8125rem;overflow-wrap:anywhere}
+.indicacao .badge strong{font-weight:500}
+.indicacao .cod{color:var(--muted);font-variant-numeric:tabular-nums}
+.indicacao .cod::before{content:"·";margin-right:8px;color:var(--muted)}
 input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--err);box-shadow:0 0 0 1px var(--err)}
 .err{color:var(--err);font-size:.875rem;font-weight:500;margin:6px 0 0}
 .err:empty{margin:0}
@@ -131,7 +135,7 @@ var I18N = {
            sub:["Quero consumir com benefícios e descontos","Seja um Cliente Preferencial e aproveite condições especiais para comprar os produtos LifeWave para uso próprio."]},
     back:"Voltar", open:"Abrir link de cadastro",
     res_t:"Seu próximo passo", res_s:"Siga o passo a passo e use o link abaixo.",
-    ref_l:"Indicação", ref_cod:"código", ref_equipe:"equipe LifeWave Brand Partner",
+
     steps:{
       bp:["Abra o link abaixo.","Escolha a opção de cadastro como Brand Partner.","Preencha seus dados e confirme o e-mail.","Fale com quem indicou você para os primeiros passos."],
       sub:["Abra o link abaixo.","Crie o seu cadastro de cliente preferencial.","Escolha os produtos e a assinatura que preferir e finalize."]},
@@ -195,11 +199,10 @@ var INDICACAO=Promise.race([
 ]);
 /* Quem trouxe fica à vista em todas as etapas (pedido do dono, 17/11/2026): o nome do link da LifeWave que vai ser
    usado e o código, para conferir. Sem código, o link da equipe. */
+/* Um badge só com o nome e o código (dono, 17/11/2026: "não precisa ter indicador"). */
 function mostrarIndicacao(){
   var e=document.getElementById("indicacao");e.textContent="";
-  e.appendChild(document.createTextNode(T.ref_l+": "));
-  e.appendChild(el("strong",{text:NOME}));
-  e.appendChild(document.createTextNode(REF?" · "+T.ref_cod+" "+REF:" ("+T.ref_equipe+")"));
+  e.appendChild(el("span",{"class":"badge"},[el("strong",{text:NOME})].concat(REF?[el("span",{"class":"cod",text:REF})]:[])));
 }
 /* Passa pela página de rastreio (/proximo-passo/cadastro/), que avisa o EverWebinar e o postmaster e segue para o link. */
 function buildLink(goal){
