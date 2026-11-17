@@ -73,6 +73,32 @@ no repositório `viniciussouzax/brazilian-conference` (pasta `C:\Users\azuos\Des
 - Os botões `.wj-embed-button` dos artigos levam para `/#inscricao`.
 - `ApresentacaoLanding.astro` (landing antiga com o embed) ficou só para reverter.
 
+**A origem segue de página em página (16/11/2026):** a utm de quem trouxe vai do cadastro para `/sala?utm_source=…`
+e da sala para o link individual do EverWebinar (`comOrigem`, no repositório do webinar). O botão de oferta do
+EverWebinar repassa a query até o `/next-step`. A inscrição também guarda o contato no navegador (`bp_contato`) para
+o formulário do `/next-step` vir preenchido; nunca vai por URL.
+
+### 2b. Próximo passo (CTA final do webinar) — `public/next-step/` (16/11/2026)
+Página estática (não gerada pelo build do webinar). Fluxo: **continente → país → objetivo** (Brand Partner,
+consumidor com assinatura, compra avulsa). Tudo configurável no bloco `CFG` no topo do script.
+- **Quem trouxe:** `utm_source`/`ref` da URL; sem eles, a origem guardada no navegador (`bp_origem`, 30 dias).
+  `/api/next-step/indicacao` pergunta ao postmaster (`<webhook>/indicacao`) o nome do canal na LifeWave
+  (`lifewave.com/<nome>`); sem canal com link, vale `CFG.admin` (`wellnesspatchesoficial`).
+- **País com entrega da LifeWave** (`CFG.paises`, só a lista oficial de mercados): vai ao link de quem trouxe,
+  `…/enrollment/enrollerselection` (Brand Partner e assinatura) ou `…/store/product/39000.009.009` (compra avulsa),
+  passando por **`/next-step/cadastro/`**: código de confirmação do rastreio de vendas do EverWebinar (preço 1.00;
+  "comprou" = clicou na oferta e abriu o link), aviso ao postmaster (`/api/next-step/registro` →
+  `<webhook>/proximo-passo`, acao `link`) e redirecionamento só para `https://lifewave.com`.
+- **País sem entrega** (ou "Outro país"): formulário (`/api/next-step/lead`): contato; na compra avulsa também o
+  endereço no padrão de checkout (rua e número, complemento, cidade, estado, código postal, país) e a quantidade.
+  Vai ao postmaster como inscrição da campanha `next-step` e em `<webhook>/proximo-passo` (acao `formulario`), que
+  grava cifrado e avisa quem trouxe no sino.
+- **Rastreio do EverWebinar:** `/next-step` carrega `event.webinarjam.com/t/sale/cookie.js` (guarda `wj_user`,
+  `wj_product_id`, `wj_l` num cookie do domínio por 48 h); o código de confirmação fica só na passagem (uma página,
+  um código).
+- Imagens: bandeiras em `flags/` (country-flag-icons, MIT, licença junto) e contornos dos continentes em
+  `continentes/` (Natural Earth 110m, domínio público).
+
 Histórico da landing anterior (ApresentacaoLanding):
 - Home **deixou de ser** o `LocalHome` e virou uma **landing** (hero em 2 colunas).
 - **Hero:** fundo `#194F90` (azul), texto branco. Coluna esquerda = eyebrow com
