@@ -3,7 +3,9 @@
  *
  * POST /api/next-step/lead
  * Body: { nome, email, telefone, consentimento: true, origem?: { utm_source }, regiao, pais, objetivo, sub?,
- *         endereco?, quantidade?, site?: "" }   (endereço e quantidade só na encomenda, objetivo "once")
+ *         endereco?: { linha1, linha2?, cidade, estado?, cep, pais }, quantidade?, site?: "" }
+ *         (endereço e quantidade só na encomenda, objetivo "once"; o endereço vai ao postmaster numa linha só,
+ *         na ordem de etiqueta: rua e número, complemento, cidade e estado, código postal, país)
  * → { ok: true }
  *
  * - Nada fica guardado aqui: o contato vai direto ao webhook do postmaster (lib/postmaster.ts), que grava o
@@ -64,12 +66,14 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     // O valor inteiro tem de ser o código: "Brasil" não vira "BR" por corte.
     const pais = String(b?.pais ?? '').trim().toUpperCase();
     const continente = String(b?.regiao ?? '').trim();
-    const endereco = String(b?.endereco ?? '').trim().replace(/\s+/g, ' ').slice(0, 500);
+    const parte = (k: string, max: number) => String(b?.endereco?.[k] ?? '').trim().replace(/\s+/g, ' ').slice(0, max);
+    const end = { linha1: parte('linha1', 150), linha2: parte('linha2', 100), cidade: parte('cidade', 80), estado: parte('estado', 60), cep: parte('cep', 12), pais: parte('pais', 60) };
+    const endereco = [end.linha1, end.linha2, [end.cidade, end.estado].filter(Boolean).join(' - '), end.cep, end.pais].filter(Boolean).join(', ');
     const quantidade = Number(b?.quantidade);
     if (!objetivo) erros.objetivo = 'objetivo';
     if (!/^[A-Z]{2}$/.test(pais)) erros.pais = 'pais';
     if (!/^[a-z]{2}$/.test(continente)) erros.regiao = 'regiao';
-    if (objetivo === 'avulsa' && endereco.length < 8) erros.endereco = 'endereco';
+    if (objetivo === 'avulsa' && (end.linha1.length < 4 || end.cidade.length < 2 || end.pais.length < 2 || !/^[A-Za-z0-9][A-Za-z0-9 -]{1,11}$/.test(end.cep))) erros.endereco = 'endereco';
     if (objetivo === 'avulsa' && !(Number.isInteger(quantidade) && quantidade >= 1 && quantidade <= 99)) erros.quantidade = 'quantidade';
     if (b?.consentimento !== true) erros.consentimento = 'consentimento';
     if (Object.keys(erros).length) return json({ ok: false, erros }, 422);

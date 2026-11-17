@@ -66,6 +66,12 @@ h1:focus{outline:none}
 label{display:block;font-weight:500;color:var(--ink);font-size:.8125rem;margin:14px 0 6px}
 input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;font:inherit;font-weight:300;font-size:1rem;letter-spacing:inherit;color:var(--text);padding:10px 12px;border:.8px solid var(--field);border-radius:9px;background:#fff;min-height:44px}
 @media (min-width:640px){input[type=text],input[type=email],input[type=tel],input[type=number],textarea{font-size:.875rem}}
+input[readonly]{background:#f4f6fa;color:var(--muted)}
+/* Endereço no padrão de checkout: duas colunas a partir de 400 px, uma no celular estreito. */
+.par{display:grid;grid-template-columns:1fr;gap:0 12px}
+@media (min-width:400px){.par{grid-template-columns:1fr 1fr}}
+.par>div{min-width:0}
+.secao{margin:18px 0 2px;color:var(--ink);font-weight:500;font-size:.9375rem}
 input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--err);box-shadow:0 0 0 1px var(--err)}
 .err{color:var(--err);font-size:.875rem;font-weight:500;margin:6px 0 0}
 .err:empty{margin:0}
@@ -140,8 +146,10 @@ var I18N = {
     done_t:"Recebemos seu contato", done_s:"Um Brand Partner entrará em contato com você para fazer o cadastro e combinar a entrega.",
     c_s_bp:"A LifeWave ainda não atende o seu país diretamente. Um Brand Partner vai falar com você para fazer o cadastro.",
     c_t_enc:"Faça sua encomenda", c_s_enc:"A LifeWave ainda não entrega no seu país. Deixe o pedido: um Brand Partner confirma com você e orienta o pagamento.",
-    place:"Onde você mora", addr:"Endereço de entrega (rua, número, cidade, CEP)", qty:"Quantidade de envelopes de X39",
-    e_addr:"Informe o endereço de entrega.", e_qty:"Informe uma quantidade de 1 a 99.", send_enc:"Enviar encomenda",
+    place:"Onde você mora", end_t:"Endereço de entrega", a1:"Endereço (rua e número)", a2:"Complemento (opcional)", cidade:"Cidade",
+    estado:"Estado, província ou região (opcional)", cep:"CEP ou código postal", pais_l:"País",
+    e_a1:"Informe a rua e o número.", e_cidade:"Informe a cidade.", e_cep:"Informe o CEP ou código postal.", e_pais:"Informe o país.",
+    qty:"Quantidade de envelopes de X39", e_qty:"Informe uma quantidade de 1 a 99.", send_enc:"Enviar encomenda",
     done_t_enc:"Recebemos sua encomenda", done_s_enc:"Um Brand Partner vai falar com você para confirmar o pedido e orientar o pagamento."
   }
 };
@@ -269,9 +277,12 @@ function stepContact(){
   f.appendChild(el("p",{"class":"ref",text:T.place+": "+nomeDoPais()+" ("+T.regions[S.region]+")"}));
   field("name",T.name,"text","name").concat(field("email",T.email,"email","email"),field("phone",T.phone,"tel","tel")).forEach(function(x){f.appendChild(x)});
   if(enc){
-    f.appendChild(el("label",{"for":"addr",text:T.addr}));
-    f.appendChild(el("textarea",{id:"addr",name:"addr",rows:"3",autocomplete:"street-address","aria-describedby":"addr-e"}));
-    f.appendChild(el("p",{"class":"err",id:"addr-e",role:"alert"}));
+    /* Endereço no padrão internacional de checkout, com o autocomplete de cada parte; o país é o escolhido antes
+       (só "Outro país" é digitado). */
+    f.appendChild(el("p",{"class":"secao",text:T.end_t}));
+    field("a1",T.a1,"text","address-line1").concat(field("a2",T.a2,"text","address-line2")).forEach(function(x){f.appendChild(x)});
+    f.appendChild(el("div",{"class":"par"},[el("div",{},field("cidade",T.cidade,"text","address-level2")),el("div",{},field("estado",T.estado,"text","address-level1"))]));
+    f.appendChild(el("div",{"class":"par"},[el("div",{},field("cep",T.cep,"text","postal-code")),el("div",{},field("pais",T.pais_l,"text","country-name"))]));
     field("qty",T.qty,"number","off").forEach(function(x){f.appendChild(x)});
   }
   var cb=el("input",{type:"checkbox",id:"consent","aria-describedby":"consent-e"});
@@ -285,17 +296,27 @@ function stepContact(){
   if(g.nome)f.elements.name.value=g.nome;
   if(g.email)f.elements.email.value=g.email;
   if(g.telefone)f.elements.phone.value=((g.ddi||"")+" "+g.telefone).trim();
-  if(enc){var q=f.elements.qty;q.min="1";q.max="99";q.step="1";q.inputMode="numeric";}
+  if(enc){
+    var q=f.elements.qty;q.min="1";q.max="99";q.step="1";q.inputMode="numeric";
+    if(S.pais!=="ZZ"){f.elements.pais.value=nomeDoPais();f.elements.pais.readOnly=true;}
+  }
 }
 function submitContact(f){
   var enc=S.goal==="once";
   var v={name:f.elements.name.value.trim(),email:f.elements.email.value.trim(),phone:f.elements.phone.value.trim(),
-    addr:enc?f.elements.addr.value.trim():"",qty:enc?Number(f.elements.qty.value):0};
+    qty:enc?Number(f.elements.qty.value):0};
+  var end=enc?{linha1:f.elements.a1.value.trim(),linha2:f.elements.a2.value.trim(),cidade:f.elements.cidade.value.trim(),
+    estado:f.elements.estado.value.trim(),cep:f.elements.cep.value.trim(),pais:f.elements.pais.value.trim()}:null;
   var digits=v.phone.replace(/\D/g,"");
   var errs={name:v.name.length<2?T.e_name:"",email:/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)?"":T.e_email,
     phone:(digits.length<8||digits.length>15)?T.e_phone:"",consent:document.getElementById("consent").checked?"":T.e_consent};
   var campos=["name","email","phone"];
-  if(enc){errs.addr=v.addr.length<8?T.e_addr:"";errs.qty=(Number.isInteger(v.qty)&&v.qty>=1&&v.qty<=99)?"":T.e_qty;campos.push("addr","qty");}
+  if(enc){
+    errs.a1=end.linha1.length<4?T.e_a1:"";errs.cidade=end.cidade.length<2?T.e_cidade:"";
+    errs.cep=/^[A-Za-z0-9][A-Za-z0-9 -]{1,11}$/.test(end.cep)?"":T.e_cep;errs.pais=end.pais.length<2?T.e_pais:"";
+    errs.qty=(Number.isInteger(v.qty)&&v.qty>=1&&v.qty<=99)?"":T.e_qty;
+    campos.push("a1","cidade","cep","pais","qty");
+  }
   campos.push("consent");
   var first=null;
   campos.forEach(function(k){
@@ -308,7 +329,7 @@ function submitContact(f){
   if(btn.disabled)return;
   btn.disabled=true;
   var body={nome:v.name,email:v.email,telefone:digits,consentimento:true,regiao:S.region,pais:S.pais,objetivo:S.goal,sub:S.sub||"",
-    endereco:v.addr,quantidade:enc?v.qty:0,site:f.elements.site.value,origem:{utm_source:REF}};
+    endereco:end,quantidade:enc?v.qty:0,site:f.elements.site.value,origem:{utm_source:REF}};
   /* O servidor entrega o contato ao postmaster (/api/next-step/lead); só mostra "recebemos" se ele confirmou. */
   fetch("/api/next-step/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
     .then(function(r){if(!r.ok)throw new Error(r.status);})
