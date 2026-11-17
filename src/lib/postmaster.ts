@@ -33,6 +33,8 @@ export interface AvisoDeInscricao {
     pid?: string;
     /** O link pessoal da sala do EverWebinar e o início da sessão (ISO): a sala de espera de outro aparelho usa. */
     salaUrl?: string; inicio?: string;
+    /** O link pessoal da reprise no EverWebinar: a mensagem de quem perdeu leva a ele. */
+    replayUrl?: string;
     /** A pessoa aceitou receber os lembretes pelo WhatsApp. */
     whatsapp?: boolean;
 }
@@ -71,6 +73,7 @@ export async function avisarInscricaoNoPostmaster(a: AvisoDeInscricao): Promise<
         campanha: a.campanha || CAMPANHA,
         ...(a.pid ? { pid: a.pid } : {}),
         ...(a.salaUrl ? { sala_url: a.salaUrl } : {}),
+        ...(a.replayUrl ? { replay_url: a.replayUrl } : {}),
         ...(a.inicio ? { session_start: a.inicio } : {}),
         ...(a.whatsapp ? { whatsapp_consent: '1' } : {}),
     };
