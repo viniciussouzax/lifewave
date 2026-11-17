@@ -16,6 +16,7 @@
  * - O postmaster é avisado de cada inscrição com as UTMs (o utm_source é o código do link casca),
  *   para saber o dono, o canal e o perfil que trouxe a pessoa (lib/postmaster.ts).
  */
+import { waitUntil } from '@vercel/functions';
 import type { APIRoute } from 'astro';
 import { readData } from '../../../lib/readData';
 import { inscrever, normalizarFuso, readEverwebinarEnv, sessaoSeguinte, type PedidoDeInscricao } from '../../../lib/everwebinar';
@@ -118,14 +119,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         }
         if (!r.liveRoomUrl) throw new Error('inscrição sem link da sala');
         // Já inscrito: avisa o postmaster (com o código de origem) sem deixar falha dele afetar a resposta.
+        // Depois da resposta (waitUntil): o aviso tem até 2,5 s + 4 s e a pessoa não espera por ele.
         const origem: Record<string, string> = {};
         if (b?.origem && typeof b.origem === 'object') {
             for (const k of UTM) if (typeof b.origem[k] === 'string') origem[k] = b.origem[k];
         }
-        await avisarInscricaoNoPostmaster({
+        waitUntil(avisarInscricaoNoPostmaster({
             nome: dados.nome, email: dados.email, ddi: dados.ddi, telefone: dados.telefone, origem,
             webinarId, sessao: r.rotulo, everwebinarUserId: r.userId,
-        });
+        }).catch((e) => console.error('[postmaster] aviso da inscrição:', (e as Error).message)));
         return json({ ok: true, sala: r });
     } catch (e) {
         console.error('[erro everwebinar] inscrição:', (e as Error).message);
