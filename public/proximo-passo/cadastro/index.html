@@ -1,10 +1,31 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" /><title>Abrindo o cadastro</title>
-<style>body{font:16px/1.5 system-ui,sans-serif;max-width:520px;margin:0 auto;padding:48px 16px;text-align:center;color:#0b2a5c}</style></head>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<style>
+/* Mesmo fundo, logo e cartão do /proximo-passo: a passagem parece a continuação da página, não uma tela em branco. */
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px 16px;
+  background:radial-gradient(ellipse 55% 60% at 28% 42%,rgba(236,246,255,.82) 0%,rgba(236,246,255,.5) 45%,rgba(236,246,255,0) 75%),#1a73eb;
+  font:400 1rem/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#0b2a5c;-webkit-font-smoothing:antialiased}
+.card{width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;
+  background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:.8px solid rgba(255,255,255,.6);
+  border-radius:16px;padding:32px 24px 26px;box-shadow:0 30px 60px -30px rgba(8,40,100,.55)}
+.logo{width:150px;aspect-ratio:877/312;background:#0b2a5c;-webkit-mask:url(/proximo-passo/logo-brandpartner.png) center/contain no-repeat;mask:url(/proximo-passo/logo-brandpartner.png) center/contain no-repeat}
+.spin{width:36px;height:36px;border-radius:50%;border:3px solid #eef5fb;border-top-color:#0b2a5c;animation:g .8s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}
+p{margin:0}
+.msg{font-weight:500}
+a{font-size:.8125rem;color:oklch(.45 .04 258);text-underline-offset:3px}
+</style></head>
 <body>
-<p>Abrindo a LifeWave…</p>
-<p><a id="seguir" href="https://lifewave.com/wellnesspatchesoficial">Se não abrir, toque aqui</a></p>
+<main class="card" role="status" aria-live="polite">
+<div class="logo" role="img" aria-label="LifeWave"></div>
+<div class="spin" aria-hidden="true"></div>
+<p class="msg">Abrindo a LifeWave…</p>
+<a id="seguir" href="https://lifewave.com/wellnesspatchesoficial">Se não abrir, toque aqui</a>
+</main>
 <!--
   Passagem do "Abrir link de cadastro" do /proximo-passo. É a PÁGINA DE CONFIRMAÇÃO do rastreio de vendas do
   EverWebinar (Goal tracking): o script lê o cookie que o /proximo-passo gravou (wj_user, o inscrito) e avisa o
