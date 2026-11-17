@@ -1,4 +1,4 @@
-/* Fundo animado do /next-step: o mesmo da homepage (PrismFilm do shadcnspace, WebGL2),
+/* Fundo animado do /proximo-passo: o mesmo da homepage (PrismFilm do shadcnspace, WebGL2),
    com os mesmos parametros de prism-background.tsx. Shaders copiados sem alteracao. */
 (function () {
 'use strict';

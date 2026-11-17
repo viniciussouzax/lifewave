@@ -15,5 +15,32 @@
             "source": "/search/:term",
             "destination": "/search?q=:term"
         }
+    ],
+    "redirects": [
+        {
+            "source": "/sala",
+            "destination": "/sala-de-espera",
+            "permanent": true
+        },
+        {
+            "source": "/sala/",
+            "destination": "/sala-de-espera",
+            "permanent": true
+        },
+        {
+            "source": "/next-step",
+            "destination": "/proximo-passo",
+            "permanent": true
+        },
+        {
+            "source": "/next-step/:resto*",
+            "destination": "/proximo-passo/:resto*",
+            "permanent": true
+        },
+        {
+            "source": "/api/next-step/:resto*",
+            "destination": "/api/proximo-passo/:resto*",
+            "permanent": false
+        }
     ]
 }

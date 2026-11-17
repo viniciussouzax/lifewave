@@ -6,8 +6,8 @@
 <p>Abrindo a LifeWave…</p>
 <p><a id="seguir" href="https://lifewave.com/wellnesspatchesoficial">Se não abrir, toque aqui</a></p>
 <!--
-  Passagem do "Abrir link de cadastro" do /next-step. É a PÁGINA DE CONFIRMAÇÃO do rastreio de vendas do
-  EverWebinar (Goal tracking): o script lê o cookie que o /next-step gravou (wj_user, o inscrito) e avisa o
+  Passagem do "Abrir link de cadastro" do /proximo-passo. É a PÁGINA DE CONFIRMAÇÃO do rastreio de vendas do
+  EverWebinar (Goal tracking): o script lê o cookie que o /proximo-passo gravou (wj_user, o inscrito) e avisa o
   EverWebinar, que marca purchased_live/purchased_replay = Yes. Aqui "comprou" quer dizer "clicou na oferta e abriu
   o link da LifeWave"; o preço 1.00 só conta quantos chegaram. Uma página só pode ter um código de rastreio.
 -->
@@ -20,7 +20,7 @@ try{var u=new URL(q.get("para")||"");if(u.protocol==="https:"&&/^(www\.)?lifewav
 document.getElementById("seguir").href=destino;
 /* O clique também vai ao postmaster (quem foi direto para o link não preenche nada). keepalive: termina mesmo com a saída. */
 try{
-  fetch("/api/next-step/registro",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},
+  fetch("/api/proximo-passo/registro",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},
     body:JSON.stringify({objetivo:q.get("objetivo")||"",sub:q.get("sub")||"",continente:q.get("continente")||"",pais:q.get("pais")||"",codigo:q.get("ref")||""})}).catch(function(){});
 }catch(e){}
 /* O aviso ao EverWebinar é assíncrono: espera um pouco para ele sair. */

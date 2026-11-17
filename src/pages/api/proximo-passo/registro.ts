@@ -1,9 +1,9 @@
 /**
- * api/next-step/registro.ts: a pessoa de um país com entrega abriu o link da LifeWave pela passagem
- * /next-step/cadastro/. Sem dado pessoal: só objetivo, país e o código de quem trouxe, para o postmaster contar.
+ * api/proximo-passo/registro.ts: a pessoa de um país com entrega abriu o link da LifeWave pela passagem
+ * /proximo-passo/cadastro/. Sem dado pessoal: só objetivo, país e o código de quem trouxe, para o postmaster contar.
  *
- * POST /api/next-step/registro (JSON; text/plain é barrado pela checagem de origem do Astro)
- * Body: { objetivo: "bp" | "preferencial" | "avulsa", sub?, continente, pais, codigo? }  →  { ok }
+ * POST /api/proximo-passo/registro (JSON; text/plain é barrado pela checagem de origem do Astro)
+ * Body: { objetivo: "bp" | "preferencial", sub?, continente, pais, codigo? }  →  { ok }
  */
 import type { APIRoute } from 'astro';
 import { avisarProximoPasso } from '../../../lib/postmaster';
@@ -24,7 +24,7 @@ function dentroDoLimite(ip: string): boolean {
 const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
 
-const OBJETIVOS = ['bp', 'preferencial', 'avulsa'] as const;
+const OBJETIVOS = ['bp', 'preferencial'] as const;
 const curto = (v: unknown, max: number) => String(v ?? '').trim().replace(/[^A-Za-z0-9_.-]/g, '').slice(0, max);
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {

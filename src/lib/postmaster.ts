@@ -108,7 +108,7 @@ async function chamarPostmaster(caminho: string, corpo: unknown, limiteMs: numbe
 
 /**
  * O nome do canal de quem trouxe na LifeWave (lifewave.com/<nome>), resolvido pelo postmaster a partir do código
- * (`utm_source`). null = sem canal com link (o /next-step usa o do administrador).
+ * (`utm_source`). null = sem canal com link (o /proximo-passo usa o do administrador).
  */
 export async function nomeDeQuemTrouxe(codigo: string): Promise<string | null> {
     const j = await chamarPostmaster('indicacao', { codigo }, 3000);
@@ -118,12 +118,12 @@ export async function nomeDeQuemTrouxe(codigo: string): Promise<string | null> {
 
 export interface ProximoPasso {
     acao: 'link' | 'formulario';
-    objetivo: 'bp' | 'preferencial' | 'avulsa';
+    objetivo: 'bp' | 'preferencial';
     sub?: string; continente: string; pais: string; comEntrega: boolean; codigo?: string;
-    nome?: string; email?: string; ddi?: string; telefone?: string; endereco?: string; quantidade?: number;
+    nome?: string; email?: string; ddi?: string; telefone?: string;
 }
 
-/** A escolha da pessoa no /next-step (e a encomenda) vai ao postmaster, que avisa quem trouxe. true = gravado. */
+/** A escolha da pessoa no /proximo-passo vai ao postmaster, que avisa quem trouxe. true = gravado. */
 export async function avisarProximoPasso(p: ProximoPasso): Promise<boolean> {
     return !!(await chamarPostmaster('proximo-passo', p, 4000))?.ok;
 }
