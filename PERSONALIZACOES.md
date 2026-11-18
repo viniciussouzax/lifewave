@@ -70,6 +70,11 @@ no repositório `viniciussouzax/brazilian-conference` (pasta `C:\Users\azuos\Des
   (em qual campo personalizado do webinar vai cada UTM: `{ "ref": "utm_source" }` manda o `utm_source`,
   o código dos links do postmaster, no campo `ref`; o campo precisa existir no EverWebinar com esse rótulo exato).
 - EverWebinar simulado para dev (`EVERWEBINAR_FAKE=1`, `everwebinarFake.ts`).
+- **A inscrição não bloqueia, não duplica e deixa registro (18/11/2026):** o Turnstile só é anotado (o formulário espera no
+  máximo 2,5 s pelo comprovante adiantado; a Cloudflare chegou a levar 13 s); o mesmo e-mail no mesmo horário em 30 min
+  recebe a mesma resposta (o mesmo pid e a mesma sala), e envios simultâneos esperam o primeiro; limite de 20 envios
+  válidos por IP em 10 min. Cada envio vai ao postmaster (`/tentativa`, tabela `tentativa_inscricao`, o e-mail só como hash)
+  e ao log numa linha `[inscricao] <resultado> etapa=… turnstile=… ms=…`. Funções com `maxDuration: 60`.
 - Os botões `.wj-embed-button` dos artigos levam para `/#inscricao`.
 - `ApresentacaoLanding.astro` (landing antiga com o embed) ficou só para reverter.
 

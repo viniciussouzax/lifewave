@@ -144,6 +144,26 @@ export async function avisarProximoPasso(p: ProximoPasso): Promise<false | { wha
     return { whatsapp: typeof j.whatsapp === 'string' && /^\d{8,15}$/.test(j.whatsapp) ? j.whatsapp : null };
 }
 
+export interface TentativaDeInscricao {
+    resultado: 'ok' | 'repetida' | 'recusada' | 'erro';
+    /** Onde parou ou o que valeu: validacao, limite, indisponivel, everwebinar, sessao_seguinte, sem_sala... */
+    etapa: string;
+    /** O texto do erro (do provedor), sem dado pessoal. */
+    motivo?: string;
+    /** Vira hash no postmaster; não é guardado. */
+    email?: string;
+    webinarId?: string; sessao?: string; everwebinarUserId?: string; pid?: string;
+    turnstile?: 'conferido' | 'sem' | 'recusado' | 'desligado' | 'indisponivel';
+    ms?: number;
+}
+/**
+ * Cada envio do formulário de inscrição vai ao postmaster (`/tentativa`), para auditar depois: o log da
+ * Vercel guarda só 1 hora. Uma tentativa, nunca atrapalha a inscrição (quem chama não espera).
+ */
+export async function registrarTentativa(t: TentativaDeInscricao): Promise<void> {
+    await chamarPostmaster('tentativa', t, 4000);
+}
+
 /** O formato do código da pessoa: 16 bytes aleatórios em base64url. */
 export const PID = /^[A-Za-z0-9_-]{22}$/;
 
