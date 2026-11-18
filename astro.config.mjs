@@ -86,7 +86,8 @@ function listarPaginasDeCampanha() {
 export default defineConfig({
     site: siteUrl,
     output: 'static',
-    adapter: vercel(),
+    // 60 s: a inscrição soma o EverWebinar (até 12 s por chamada) e a sessão seguinte; o padrão podia cortar antes.
+    adapter: vercel({ maxDuration: 60 }),
     integrations: [
         react(),
         tailwind({ applyBaseStyles: false }),
