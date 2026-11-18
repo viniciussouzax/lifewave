@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const pais = String(b?.pais ?? '').trim().toUpperCase();
     const continente = String(b?.continente ?? '').trim();
     if (!objetivo || !/^[A-Z]{2}$/.test(pais) || !/^[a-z]{2}$/.test(continente)) return json({ ok: false }, 400);
-    const ok = await avisarProximoPasso({
+    const ok = !!await avisarProximoPasso({
         acao: 'link', objetivo, sub: curto(b?.sub, 4) || undefined, continente, pais, comEntrega: true,
         codigo: curto(b?.codigo, 40) || undefined,
         ...(PID.test(String(b?.pid ?? '')) ? { pid: String(b.pid) } : {}),

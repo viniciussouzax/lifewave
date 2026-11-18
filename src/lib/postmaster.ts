@@ -136,9 +136,12 @@ export interface ProximoPasso {
     nome?: string; email?: string; ddi?: string; telefone?: string;
 }
 
-/** A escolha da pessoa no /proximo-passo vai ao postmaster, que avisa quem trouxe. true = gravado. */
-export async function avisarProximoPasso(p: ProximoPasso): Promise<boolean> {
-    return !!(await chamarPostmaster('proximo-passo', p, 4000))?.ok;
+/** A escolha da pessoa no /proximo-passo vai ao postmaster, que avisa quem trouxe. false = não gravado; no
+ *  formulário, `whatsapp` é o número do canal de WhatsApp do projeto (o botão da confirmação), ou null. */
+export async function avisarProximoPasso(p: ProximoPasso): Promise<false | { whatsapp: string | null }> {
+    const j = await chamarPostmaster('proximo-passo', p, 8000);
+    if (!j?.ok) return false;
+    return { whatsapp: typeof j.whatsapp === 'string' && /^\d{8,15}$/.test(j.whatsapp) ? j.whatsapp : null };
 }
 
 /** O formato do código da pessoa: 16 bytes aleatórios em base64url. */
