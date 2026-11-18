@@ -98,8 +98,6 @@ ol.steps li::before{content:counter(s);flex:none;width:26px;height:26px;border-r
 .done .ico{width:56px;height:56px;border-radius:50%;background:#e3f3ea;color:var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .done .ico svg{width:30px;height:30px}
 .done p{margin:0 0 8px}
-.done .conta{margin:14px auto 0;display:inline-flex;gap:8px;align-items:baseline;padding:8px 16px;border-radius:999px;background:var(--soft);color:var(--muted);font-size:.875rem}
-.done .conta strong{color:var(--ink);font:500 1.125rem/1 var(--body);font-variant-numeric:tabular-nums}
 footer{position:relative;z-index:1;font-size:.75rem;line-height:1.5;color:var(--muted);text-align:center;padding:18px 16px 24px;border-top:1px solid var(--line);background:var(--surface)}
 footer b{color:var(--ink)}
 @media (min-width:600px){.card{padding:28px 28px 24px}h1{font-size:1.875rem}}
@@ -147,8 +145,7 @@ var I18N = {
     send:"Enviar contato",
     e_name:"Informe seu nome.",e_email:"Informe um e-mail válido.",e_phone:"Informe um telefone válido (8 a 15 dígitos).",
     e_save:"Não foi possível enviar agora. Tente de novo em instantes.",
-    done_t:"Recebemos seu contato", done_s:"Você vai receber uma mensagem no WhatsApp em até 3 minutos. Depois, um Brand Partner continua a conversa para fazer o cadastro e combinar a entrega.",
-    done_conta:"A mensagem chega em", done_fim:"A mensagem deve chegar a qualquer momento no seu WhatsApp.",
+    done_t:"Recebemos seu contato", done_s:"Um Brand Partner vai entrar em contato com você para fazer o cadastro e combinar a entrega.",
     c_s_bp:"A LifeWave ainda não atende o seu país diretamente. Um Brand Partner vai falar com você para fazer o cadastro.",
     place:"Onde você mora"
   }
@@ -337,12 +334,10 @@ function submitContact(f){
   fetch("/api/proximo-passo/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
     .then(function(r){if(!r.ok)throw new Error(r.status);})
     .then(function(){
-      /* A mensagem automática do WhatsApp (cadastro_recebido) sai em até 3 min: a contagem mostra a espera. */
-      var conta=el("p",{"class":"conta",role:"timer","aria-live":"off"},[document.createTextNode(T.done_conta+" "),el("strong",{text:"3:00"})]);
-      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s}),conta]),total(),total());
-      var fim=Date.now()+180000,relogio=setInterval(function(){var s=Math.max(0,Math.round((fim-Date.now())/1000));
-        if(!s){clearInterval(relogio);conta.textContent=T.done_fim;return;}
-        conta.lastChild.textContent=Math.floor(s/60)+":"+("0"+s%60).slice(-2);},1000);
+      /* shortcut: sem a mensagem automática do WhatsApp (pausada, dono 17/11/2026); a contagem de 3 min volta quando ela for ativada. */
+      render(el("div",{"class":"done"},[el("div",{"class":"ico"},[icon(CHECK)]),el("h1",{text:T.done_t}),el("p",{id:"done",text:T.done_s})]),total(),total());
+      /* Pedido enviado: sem o indicador de etapas. */
+      document.querySelector(".meta").style.display="none";prog.style.display="none";
     })
     .catch(function(){btn.disabled=false;document.getElementById("envio-e").textContent=T.e_save;});
 }
