@@ -89,5 +89,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
             comEntrega: false, codigo: fonte || undefined, nome, ...(email ? { email } : {}), ...(telefone ? { telefone } : {}),
             ...(pid ? { pid } : {}),
         });
-    return entregue ? json({ ok: true }) : json({ ok: false, error: 'indisponivel' }, 502);
+    // `whatsapp`: o número do canal do projeto, para o botão "Ir para o WhatsApp" da confirmação (null sem canal conectado).
+    return entregue ? json({ ok: true, whatsapp: entregue.whatsapp }) : json({ ok: false, error: 'indisponivel' }, 502);
 };
